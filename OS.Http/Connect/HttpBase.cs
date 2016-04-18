@@ -136,9 +136,10 @@ namespace OS.Http.Connect
             }
             else
             {
-                if (request.HttpMothed == HttpMothed.POST)
+                string data = EncodeFormParameters(request);
+                if (!string.IsNullOrEmpty(data))
                 {
-                    var bytes = _defaultEncoding.GetBytes(EncodeFormParameters(request));
+                    var bytes = _defaultEncoding.GetBytes(data);
                     webRequest.ContentLength = bytes.Length;
                     using (var webRequestStream = webRequest.GetRequestStream())
                     {
