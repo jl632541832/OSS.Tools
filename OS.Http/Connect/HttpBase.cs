@@ -111,7 +111,7 @@ namespace OS.Http.Connect
                 {
                     Name = httpCookie.Name,
                     Value = httpCookie.Value.ToString(),
-                    Domain = webRequest.RequestUri.Host
+                    Domain =string.IsNullOrEmpty(httpCookie.Domain)? webRequest.RequestUri.Host:httpCookie.Domain
                 };
                 webRequest.CookieContainer.Add(cookie);
             }
