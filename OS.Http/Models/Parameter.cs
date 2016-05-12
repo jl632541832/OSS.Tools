@@ -1,4 +1,4 @@
-﻿using OS.Common.Extention;
+﻿using System;
 
 namespace OS.Http.Models
 {
@@ -63,5 +63,35 @@ namespace OS.Http.Models
         {
             return string.Format("{0}={1}", Name.UrlEncode(), Value.UrlEncode());
         }
+
+
+
     }
+
+    internal static class UrlExtension
+    {
+        /// <summary>
+        /// Url编码处理
+        /// </summary>
+        public static string UrlEncode(this string input)
+        {
+            if (string.IsNullOrEmpty(input))
+                return string.Empty;
+
+            return Uri.EscapeDataString(input);
+        }
+
+        /// <summary>
+        /// Url编码处理
+        /// </summary>
+        public static string UrlEncode(this object input)
+        {
+            if (input == null)
+                return string.Empty;
+
+            return Uri.EscapeDataString(input.ToString());
+        }
+    }
+
+   
 }

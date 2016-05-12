@@ -1,8 +1,7 @@
-﻿using System.Threading;
-using OS.Http.Interface;
-using OS.Http.Models;
-using System;
+﻿using System;
 using System.IO;
+using System.Threading;
+using OS.Http.Models;
 
 namespace OS.Http.ConsoleTest
 {
@@ -35,7 +34,7 @@ namespace OS.Http.ConsoleTest
         {
             if (!string.IsNullOrEmpty(url))
             {
-                IHttpRequest request = new HttpRequest();
+                OsHttpRequest request = new OsHttpRequest();
                 request.AddressUrl = url;
                 request.HttpMothed = HttpMothed.POST;
                 request.Parameters.Add(new Parameter("name", "test", ParameterType.Form));
@@ -45,14 +44,14 @@ namespace OS.Http.ConsoleTest
 
                     file_stream = new FileStream("E:\\test.txt", FileMode.Open, FileAccess.Read);
 
-                    byte[] bites = new byte[file_stream.Length];
+                    //byte[] bites = new byte[file_stream.Length];
 
-                    using (file_stream)
-                    {
-                        file_stream.Read(bites, 0, bites.Length);
-                    }
+                    //using (file_stream)
+                    //{
+                    //    file_stream.Read(bites, 0, bites.Length);
+                    //}
 
-                    FileParameter file = new FileParameter("test", bites, "test_file", contentType: "text/plain");
+                    FileParameter file = new FileParameter("test", file_stream, "test_file", contentType: "text/plain");
                     request.FileParameterList.Add(file);
 
                     var response = HttpUtil.ExecuteSync(request);
@@ -78,7 +77,7 @@ namespace OS.Http.ConsoleTest
         {
             if (!string.IsNullOrEmpty(url))
             {
-                IHttpRequest request = new HttpRequest();
+                OsHttpRequest request = new OsHttpRequest();
                 request.AddressUrl = url;
                 request.HttpMothed = HttpMothed.POST;
                 request.Parameters.Add(new Parameter("name", "test", ParameterType.Form));
@@ -87,14 +86,14 @@ namespace OS.Http.ConsoleTest
                 {
                     file_stream = new FileStream("E:\\test.txt", FileMode.Open, FileAccess.Read);
 
-                    byte[] bites = new byte[file_stream.Length];
+                    //byte[] bites = new byte[file_stream.Length];
 
-                    using (file_stream)
-                    {
-                        file_stream.Read(bites, 0, bites.Length);
-                    }
+                    //using (file_stream)
+                    //{
+                    //    file_stream.Read(bites, 0, bites.Length);
+                    //}
 
-                    FileParameter file = new FileParameter("test", bites, "test_file", contentType: "text/plain");
+                    FileParameter file = new FileParameter("test", file_stream, "test_file", contentType: "text/plain");
                     request.FileParameterList.Add(file);
                     Console.WriteLine(string.Format("当前主线程ID:{0}", Thread.CurrentThread.ManagedThreadId));
                     HttpUtil.ExecuteAsync(request, res =>

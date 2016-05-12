@@ -43,6 +43,7 @@ namespace OS.Http.Models
                 if (_content == null && RawBytes != null && RawBytes.Length > 0)
                 {
                     Encoding encoding = Encoding.UTF8;
+
                     _content = encoding.GetString(RawBytes);
                 }
                 return _content ?? string.Empty;
