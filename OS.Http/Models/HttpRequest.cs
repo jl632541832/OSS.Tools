@@ -1,9 +1,14 @@
 ﻿
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 
 namespace OS.Http.Models
 {
+    /// <summary>
+    /// 
+    /// </summary>
     public class OsHttpRequest
     {
         public OsHttpRequest()
@@ -13,6 +18,10 @@ namespace OS.Http.Models
         }
 
 
+        /// <summary>
+        ///   自定义属性设置
+        /// </summary>
+        public Action<HttpWebRequest> CustomPropertySetting { get; set; }
 
         /// <summary>
         /// form 参数列表
@@ -83,5 +92,6 @@ namespace OS.Http.Models
         ///   是否使用压缩
         /// </summary>
         public bool IsDecompres { get; set; }
+
     }
 }

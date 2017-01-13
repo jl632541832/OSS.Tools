@@ -85,14 +85,7 @@ namespace OS.Http.ConsoleTest
                 try
                 {
                     file_stream = new FileStream("E:\\test.txt", FileMode.Open, FileAccess.Read);
-
-                    //byte[] bites = new byte[file_stream.Length];
-
-                    //using (file_stream)
-                    //{
-                    //    file_stream.Read(bites, 0, bites.Length);
-                    //}
-
+                    
                     FileParameter file = new FileParameter("test", file_stream, "test_file", contentType: "text/plain");
                     request.FileParameterList.Add(file);
                     Console.WriteLine(string.Format("当前主线程ID:{0}", Thread.CurrentThread.ManagedThreadId));

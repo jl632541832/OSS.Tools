@@ -8,6 +8,9 @@ using OS.Http.Models;
 
 namespace OS.Http.Connect
 {
+    /// <summary>
+    ///  请求基类
+    /// </summary>
     public abstract class HttpBase
     {
         private const string _lineBreak = "\r\n";
@@ -41,17 +44,19 @@ namespace OS.Http.Connect
                 webRequest.Timeout = request.TimeOutMilSeconds;
                 webRequest.ReadWriteTimeout = request.TimeOutMilSeconds;
             }
-
-
+            
             if (!request.HasFile)
             {
                 webRequest.ContentLength = 0;
             }
-
+        
             webRequest.ContentType = "application/x-www-form-urlencoded";  //添加一个默认类型，具体自定义可以在后边重写
 
             PrepareHeaders(webRequest, request);  //  添加头部信息
             PrepareCookies(webRequest, request);  //  添加cookie信息
+
+            request.CustomPropertySetting?.Invoke(webRequest);
+
             return webRequest;
         }
 
