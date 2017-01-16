@@ -10,7 +10,7 @@ namespace OS.Http.Models
         /// 构造函数
         /// </summary>
         /// <param name="name">参数的名称</param>
-        /// <param name="fileStream"></param>
+        /// <param name="fileStream">调用方会自动释放</param>
         /// <param name="filename"></param>
         /// <param name="contentType"></param>
         public FileParameter(string name, Stream fileStream, string filename, string contentType)
