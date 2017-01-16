@@ -158,6 +158,8 @@ namespace OS.Http.Connect
         /// 准备请求的 内容 数据   ===  异步
         /// </summary>
         /// <param name="webRequest">HttpWebRequest请求</param>
+        /// <param name="request"></param>
+        /// <param name="action"></param>
         protected virtual void SendBodyDataAsyncAndCallBack(HttpWebRequest webRequest, OsHttpRequest request,
             Action<OsHttpResponse> action)
         {
