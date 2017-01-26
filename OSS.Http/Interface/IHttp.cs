@@ -1,7 +1,7 @@
 ﻿using System;
-using OS.Http.Models;
+using OSS.Http.Models;
 
-namespace OS.Http.Interface
+namespace OSS.Http.Interface
 {
     public interface IHttp
     {

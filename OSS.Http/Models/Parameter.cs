@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace OS.Http.Models
+namespace OSS.Http.Models
 {
     /// <summary>
     /// 

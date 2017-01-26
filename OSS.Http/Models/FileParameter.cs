@@ -2,7 +2,7 @@
 using System.IO;
 using System.Linq;
 
-namespace OS.Http.Models
+namespace OSS.Http.Models
 {
     public struct FileParameter
     {

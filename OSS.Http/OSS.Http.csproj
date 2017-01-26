@@ -7,8 +7,8 @@
     <ProjectGuid>{5A831C5B-8D82-4A6A-A555-3E04847455D1}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>OS.Http</RootNamespace>
-    <AssemblyName>OS.Http</AssemblyName>
+    <RootNamespace>OSS.Http</RootNamespace>
+    <AssemblyName>OSS.Http</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
@@ -31,7 +31,8 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <Prefer32Bit>false</Prefer32Bit>
-    <DocumentationFile>bin\Release\OS.Http.XML</DocumentationFile>
+    <DocumentationFile>bin\Release\OSS.Http.xml</DocumentationFile>
+    <CodeAnalysisRuleSet>GlobalizationRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="sysglobl" />

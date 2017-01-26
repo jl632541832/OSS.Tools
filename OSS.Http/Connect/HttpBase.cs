@@ -4,9 +4,9 @@ using System.IO;
 using System.Net;
 using System.Text;
 using System.Web;
-using OS.Http.Models;
+using OSS.Http.Models;
 
-namespace OS.Http.Connect
+namespace OSS.Http.Connect
 {
     /// <summary>
     ///  请求基类
@@ -475,7 +475,7 @@ namespace OS.Http.Connect
         /// </summary>
         /// <param name="input">要转化的流</param>
         /// <returns>byte[]</returns>
-        public static byte[] ReadAsBytes(Stream input)
+        protected static byte[] ReadAsBytes(Stream input)
         {
             byte[] buffer = new byte[16 * 1024];
             using (MemoryStream ms = new MemoryStream())

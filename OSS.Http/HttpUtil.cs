@@ -1,9 +1,9 @@
 ﻿using System;
-using OS.Http.Connect;
-using OS.Http.Interface;
-using OS.Http.Models;
+using OSS.Http.Connect;
+using OSS.Http.Interface;
+using OSS.Http.Models;
 
-namespace OS.Http
+namespace OSS.Http
 {
     /// <summary>
     /// 

@@ -1,9 +1,9 @@
 ﻿using System;
 using System.IO;
 using System.Threading;
-using OS.Http.Models;
+using OSS.Http.Models;
 
-namespace OS.Http.ConsoleTest
+namespace OSS.Http.ConsoleTest
 {
     class Program
     {

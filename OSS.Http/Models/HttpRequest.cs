@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 
-namespace OS.Http.Models
+namespace OSS.Http.Models
 {
     /// <summary>
     /// 

@@ -1,12 +1,15 @@
-﻿using OS.Http.Interface; 
+﻿using OSS.Http.Interface; 
 using System;
 using System.Collections.Generic;
 using System.Net;
 using System.Text;
 using System.Web;
 
-namespace OS.Http.Models
+namespace OSS.Http.Models
 {
+    /// <summary>
+    /// 响应信息
+    /// </summary>
     public class OsHttpResponse 
     {
         /// <summary>

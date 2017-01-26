@@ -1,5 +1,5 @@
 ﻿
-namespace OS.Http
+namespace OSS.Http
 {
     /// <summary>
     /// 

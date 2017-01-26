@@ -1,9 +1,9 @@
-﻿using OS.Http.Interface;
-using OS.Http.Models;
+﻿using OSS.Http.Interface;
+using OSS.Http.Models;
 using System;
 using System.Net;
 
-namespace OS.Http.Connect
+namespace OSS.Http.Connect
 {
     internal partial class RestHttp : HttpBase, IHttp
     {
