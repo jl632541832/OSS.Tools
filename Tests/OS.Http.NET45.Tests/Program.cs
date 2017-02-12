@@ -2,7 +2,7 @@
 using OSS.Http;
 using OSS.Http.Models;
 
-namespace OS.Http.NET45.Tests
+namespace OS.Http.NET45.Test
 {
     class Program
     {

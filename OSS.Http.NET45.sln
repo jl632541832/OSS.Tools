@@ -5,7 +5,7 @@ VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OSS.Http.NET45", "OSS.Http\OSS.Http.NET45.csproj", "{5A831C5B-8D82-4A6A-A555-3E04847455D1}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OS.Http.NET45.Tests", "Tests\OS.Http.NET45.Tests\OS.Http.NET45.Tests.csproj", "{F65B8EA8-36E8-42A2-A931-086F6ADA4836}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OS.Http.NET45.Test", "Tests\OS.Http.NET45.Tests\OS.Http.NET45.Test.csproj", "{F65B8EA8-36E8-42A2-A931-086F6ADA4836}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
