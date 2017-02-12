@@ -22,7 +22,7 @@ namespace OSS.Http
     /// <summary>
     /// http请求辅助类
     /// </summary>
-    public static class HttpUtil
+    public static class RestUtil
     {
         private static OsRest m_Client ;
         private static HttpMessageHandler m_MessageHandler;

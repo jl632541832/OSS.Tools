@@ -40,7 +40,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Mos\Enum.cs" />
-    <Compile Include="HttpUtil.cs" />
+    <Compile Include="RestUtil.cs" />
     <Compile Include="Mos\FileParameter.cs" />
     <Compile Include="Mos\HttpRequest.cs" />
     <Compile Include="Mos\Parameter.cs" />

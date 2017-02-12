@@ -1,11 +1,12 @@
 ﻿using System;
+using System.Net.Http;
 using OSS.Http.Mos;
 
 namespace OSS.Http.Test
 {
     class Program
     {
-        static void Main(string[] args)
+        private static void Main(string[] args)
         {
             var req = new OsHttpRequest();
 
@@ -17,6 +18,11 @@ namespace OSS.Http.Test
             content.Wait();
             Console.WriteLine(content.Result);
             Console.Read();
+
+
+            var client = new HttpClient();
+            var resTask = client.GetAsync("http://www.baidu.com");
+
         }
     }
 }

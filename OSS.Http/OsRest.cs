@@ -76,9 +76,6 @@ namespace OSS.Http
             reqMsg.Method = new HttpMethod(request.HttpMothed.ToString());
 
             ConfigReqContent(reqMsg,request);   //  配置内容
-       
-       
-
             return reqMsg;
         }
 
