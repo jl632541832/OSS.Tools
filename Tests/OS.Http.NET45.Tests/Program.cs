@@ -1,6 +1,6 @@
 ﻿using System;
 using OSS.Http;
-using OSS.Http.Models;
+using OSS.Http.Mos;
 
 namespace OS.Http.NET45.Test
 {

@@ -10,7 +10,7 @@
 
 #endregion
 
-namespace OSS.Http
+namespace OSS.Http.Mos
 {
     /// <summary>
     /// 

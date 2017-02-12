@@ -10,9 +10,7 @@
 
 #endregion
 
-using System;
-
-namespace OSS.Http.Models
+namespace OSS.Http.Mos
 {
     /// <summary>
     /// 

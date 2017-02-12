@@ -9,10 +9,11 @@
 *****************************************************************************/
 
 #endregion
+
 using System;
 using System.IO;
 
-namespace OSS.Http.Models
+namespace OSS.Http.Mos
 {
     public struct FileParameter
     {

@@ -15,8 +15,7 @@
 
 using System.Net.Http;
 using System.Threading.Tasks;
-using OSS.Http.Connect;
-using OSS.Http.Models;
+using OSS.Http.Mos;
 
 namespace OSS.Http
 {

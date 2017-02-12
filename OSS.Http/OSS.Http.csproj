@@ -39,12 +39,12 @@
     <None Include="project.json" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Connect\OsRest.cs" />
-    <Compile Include="Enum.cs" />
+    <Compile Include="Mos\Enum.cs" />
     <Compile Include="HttpUtil.cs" />
-    <Compile Include="Models\FileParameter.cs" />
-    <Compile Include="Models\HttpRequest.cs" />
-    <Compile Include="Models\Parameter.cs" />
+    <Compile Include="Mos\FileParameter.cs" />
+    <Compile Include="Mos\HttpRequest.cs" />
+    <Compile Include="Mos\Parameter.cs" />
+    <Compile Include="OsRest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />
