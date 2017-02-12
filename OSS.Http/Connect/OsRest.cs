@@ -1,8 +1,20 @@
-﻿using System;
+﻿#region Copyright (C) 2016 Kevin (OSS开源系列) 公众号：osscoder
+
+/***************************************************************************
+*　　	文件功能描述：Http请求 == 主请求实体
+*
+*　　	创建人： Kevin
+*       创建人Email：1985088337@qq.com
+*       
+*****************************************************************************/
+
+#endregion
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -16,8 +28,10 @@ namespace OSS.Http.Connect
     public class OsRest:HttpClient
     {
         private const string _lineBreak = "\r\n";
-        private static readonly Encoding _defaultEncoding = Encoding.UTF8;
-        
+        public Encoding Encoding { get; set; } = Encoding.UTF8;
+        //private static readonly Dictionary<string,Action<HttpContentHeaders,string>> _notCanAddContentHeaderDics
+        //    =new Dictionary<string, Action<HttpContentHeaders, string>>();
+
         public OsRest():this(new HttpClientHandler(),true) 
         {
         }
@@ -61,11 +75,10 @@ namespace OSS.Http.Connect
             
             reqMsg.RequestUri = ConfigReqUriMsg(request);
             reqMsg.Method = new HttpMethod(request.HttpMothed.ToString());
-            reqMsg.Headers.Add("Content-Type", "application/x-www-form-urlencoded"); //  默认补充，如果头参数中已设置，后边会覆盖
 
-            //ConfigReqHeadersMsg(reqMsg.Headers, request); //  添加头部信息
-            request.HeaderSetting?.Invoke(reqMsg.Headers);
             ConfigReqContent(reqMsg,request);   //  配置内容
+       
+            request.RequestSet?.Invoke(reqMsg);
 
             return reqMsg;
         }
@@ -85,8 +98,7 @@ namespace OSS.Http.Connect
 
             var queryPara = GetReqParameters(request, ParameterType.Query);
             urlAddress = queryPara.Aggregate(urlAddress, (current, p) => string.Concat(current, current.IndexOf("?", StringComparison.CurrentCultureIgnoreCase) < 0 ? "?" : "&", p.ToString()));
-
-
+            
             return new Uri(urlAddress);
         }
 
@@ -98,25 +110,51 @@ namespace OSS.Http.Connect
         /// <returns></returns>
         private void ConfigReqContent(HttpRequestMessage reqMsg, OsHttpRequest req)
         {
-            //var reqContent=new StreamContent();
             var contentStream = new MemoryStream();
+
+            reqMsg.Content = new StreamContent(contentStream);
+            reqMsg.Content.Headers.ContentType = new MediaTypeHeaderValue("application/x-www-form-urlencoded");
 
             if (req.HasFile)
             {
                 string boundary = GetBoundary();
-                WriteMultipartFormData(contentStream, req, boundary);
+                reqMsg.Content.Headers.ContentLength = WriteMultipartFormData(contentStream, req, boundary);
             }
             else
             {
                 string data = GetNormalFormData(req);
                 if (!string.IsNullOrEmpty(data))
                 {
-                    var bytes = _defaultEncoding.GetBytes(data);
-                    contentStream.Write(bytes, 0, bytes.Length);
+                    var bytes = Encoding.GetBytes(data);
+                    int length = bytes.Length;
+                    contentStream.Write(bytes, 0, length);
+                    reqMsg.Content.Headers.ContentLength = length;
                 }
             }
-            reqMsg.Content = new StreamContent(contentStream);
         }
+
+
+        ///// <summary>
+        ///// 准备请求的 头部 数据
+        ///// </summary>
+        ///// <param name="contentHeader"></param>
+        ///// <param name="request"></param>
+        //protected virtual void PrepareHeaders(HttpContentHeaders contentHeader, OsHttpRequest request)
+        //{
+        //    var headerParas = GetReqParameters(request, ParameterType.Header);
+        //    foreach (var header in headerParas)
+        //    {
+        //        if (_notCanAddContentHeaderDics.ContainsKey(header.Name))
+        //        {
+        //            _notCanAddContentHeaderDics[header.Name].Invoke(contentHeader, header.Value.ToString());
+        //        }
+        //        else
+        //        {
+        //            contentHeader.Add(header.Name, header.Value.ToString());
+        //        }
+
+        //    }
+        //}
         #endregion
 
 
@@ -155,25 +193,24 @@ namespace OSS.Http.Connect
         /// </summary> 
         /// <param name="webRequestStream"></param>
         /// <param name="request"></param>
-        private void WriteMultipartFormData(Stream webRequestStream, OsHttpRequest request, string boundary)
+        private int WriteMultipartFormData(Stream webRequestStream, OsHttpRequest request, string boundary)
         {
             var formparas =GetReqParameters(request,ParameterType.Form);
-            foreach (var param in formparas)
-            {
-                //写入form表单中的非文件数据
-                WriteStringTo(webRequestStream, GetMultipartFormData(param, boundary));
-            }
+
+            int contentLength = formparas.Sum(param => WriteStringTo(webRequestStream, GetMultipartFormData(param, boundary)));
+
             foreach (var file in request.FileParameterList)
             {
                 //文件头
-                WriteStringTo(webRequestStream, GetMultipartFileHeader(file, boundary));
+                contentLength+= WriteStringTo(webRequestStream, GetMultipartFileHeader(file, boundary));
                 //文件内容
-                file.Writer(webRequestStream);
+                contentLength += file.Writer(webRequestStream);
                 //文件结尾
-                WriteStringTo(webRequestStream, _lineBreak);
+                contentLength += WriteStringTo(webRequestStream, _lineBreak);
             }
             //写入整个请求的底部信息
-            WriteStringTo(webRequestStream, GetMultipartFooter(boundary));
+            contentLength += WriteStringTo(webRequestStream, GetMultipartFooter(boundary));
+            return contentLength;
         }
 
         /// <summary>
@@ -246,12 +283,35 @@ namespace OSS.Http.Connect
         /// </summary>
         /// <param name="stream"></param>
         /// <param name="toWrite"></param>
-        private static void WriteStringTo(Stream stream, string toWrite)
+        /// <returns>写入的字节数量</returns>
+        private  int WriteStringTo(Stream stream, string toWrite)
         {
-            var bytes = _defaultEncoding.GetBytes(toWrite);
+            var bytes = Encoding.GetBytes(toWrite);
             stream.Write(bytes, 0, bytes.Length);
+            return bytes.Length;
         }
+        //protected static void AddStaticHeaderDictionary()
+        //{
+        //    _notCanAddContentHeaderDics.Add("Accept", (r, v) => r.Accept = v);
+        //    _notCanAddContentHeaderDics.Add("Content-Type", (r, v) => r.ContentType = v);
 
+        //    _notCanAddContentHeaderDics.Add("Date", (r, v) =>
+        //    {
+        //        DateTime parsed;
+        //        if (DateTime.TryParse(v, out parsed))
+        //        {
+        //            r.Date = parsed;
+        //        }
+        //    });
+        //    _notCanAddContentHeaderDics.Add("Host", (r, v) => r.Host = v);
+        //    _notCanAddContentHeaderDics.Add("Connection", (r, v) => r.Connection = v);
+        //    _notCanAddContentHeaderDics.Add("Content-Length", (r, v) => r.ContentLength = Convert.ToInt64(v));
+        //    _notCanAddContentHeaderDics.Add("Expect", (r, v) => r.Expect = v);
+        //    _notCanAddContentHeaderDics.Add("If-Modified-Since", (r, v) => r. = Convert.ToDateTime(v));
+        //    _notCanAddContentHeaderDics.Add("Referer", (r, v) => r.Referer = v);
+        //    _notCanAddContentHeaderDics.Add("Transfer-Encoding", (r, v) => { r.TransferEncoding = v; r.SendChunked = true; });
+        //    _notCanAddContentHeaderDics.Add("User-Agent", (r, v) => r.UserAgent = v);
+        //}
 
         private static List<Parameter> GetReqParameters(OsHttpRequest request,ParameterType type)
         {

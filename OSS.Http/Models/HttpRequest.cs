@@ -1,4 +1,14 @@
-﻿
+﻿#region Copyright (C) 2016 Kevin (OSS开源系列) 公众号：osscoder
+
+/***************************************************************************
+*　　	文件功能描述：Http请求 == 请求实体
+*
+*　　	创建人： Kevin
+*       创建人Email：1985088337@qq.com
+*       
+*****************************************************************************/
+
+#endregion
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,7 +18,7 @@ using System.Net.Http.Headers;
 namespace OSS.Http.Models
 {
     /// <summary>
-    /// 
+    /// 请求实体
     /// </summary>
     public class OsHttpRequest
     {
@@ -45,14 +55,10 @@ namespace OSS.Http.Models
         //public bool UseCookies { get; set; }
 
         /// <summary>
-        ///   头部属性自定义设置
+        ///   reqMessage 设置方法
+        ///    如果当前的设置不能满足需求，可以通过这里再次设置
         /// </summary>
-        public Action<HttpRequestHeaders> HeaderSetting { get; set; }
-
-        /// <summary>
-        ///  HttpClientHandler 自定义属性设置
-        /// </summary>
-        public Action<HttpClientHandler> HandlerSetting { get; set; }
+        public Action<HttpRequestMessage> RequestSet { get; set; }
 
         #region   请求的内容参数
 

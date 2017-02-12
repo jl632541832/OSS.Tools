@@ -1,4 +1,18 @@
-﻿using System;
+﻿#region Copyright (C) 2016 Kevin (OSS开源系列) 公众号：osscoder
+
+/***************************************************************************
+*　　	文件功能描述：Http请求辅助类
+*
+*　　	创建人： Kevin
+*       创建人Email：1985088337@qq.com
+*       
+*    	修改日期：2017-2-12
+*    	修改内容：迁移至HttpClient框架下
+*       
+*****************************************************************************/
+
+#endregion
+
 using System.Net.Http;
 using System.Threading.Tasks;
 using OSS.Http.Connect;
@@ -11,24 +25,25 @@ namespace OSS.Http
     /// </summary>
     public static class HttpUtil
     {
-        private static HttpClientHandler m_Handler;
         private static OsRest m_Client ;
+        private static HttpMessageHandler m_MessageHandler;
 
-        public static Action<HttpClientHandler> SetHandler { get; set; }
-    
+        public static HttpMessageHandler MessageHandler
+        {
+            get { return m_MessageHandler ?? (m_MessageHandler = GetClientHandler()); }
+            set { m_MessageHandler = value; }
+        }
 
         /// <summary>
         /// 同步的请求方式
         /// </summary>
         /// <param name="request">请求的参数</param>
         /// <returns>自定义的Response结果</returns>
-        public static Task<HttpResponseMessage> ExecuteSync(this OsHttpRequest request,HttpCompletionOption completionOption=HttpCompletionOption.ResponseContentRead)
+        public static Task<HttpResponseMessage> SendRest(this OsHttpRequest request,HttpCompletionOption completionOption=HttpCompletionOption.ResponseContentRead)
         {
             if (m_Client==null)
             {
-                m_Handler=new HttpClientHandler();
-                ConfigClientHandler(m_Handler);
-                m_Client=new OsRest(m_Handler);
+                m_Client=new OsRest(MessageHandler);
             }
             return m_Client.RestSend(request, completionOption);
         }
@@ -37,12 +52,15 @@ namespace OSS.Http
         /// 配置请求处理类
         /// </summary>
         /// <returns></returns>
-        public static void ConfigClientHandler(HttpClientHandler reqHandler)
+        private static HttpClientHandler GetClientHandler()
         {
+            var reqHandler = new HttpClientHandler();
+
             reqHandler.AllowAutoRedirect = true;
             reqHandler.MaxAutomaticRedirections = 5;
             reqHandler.UseCookies = true;
-            SetHandler?.Invoke(reqHandler);
+
+            return reqHandler;
         }
 
 

@@ -1,4 +1,15 @@
-﻿
+﻿#region Copyright (C) 2016 Kevin (OSS开源系列) 公众号：osscoder
+
+/***************************************************************************
+*　　	文件功能描述：Http请求公用枚举
+*
+*　　	创建人： Kevin
+*       创建人Email：1985088337@qq.com
+*       
+*****************************************************************************/
+
+#endregion
+
 namespace OSS.Http
 {
     /// <summary>
@@ -7,32 +18,27 @@ namespace OSS.Http
     public enum HttpMothed
     {
         /// <summary>
-        /// 防止没有设置默认值，根据此值判断
-        /// </summary>
-        None,
-
-        /// <summary>
         /// Get
         /// </summary>
-        GET = 10,
+        GET = 0,
 
         /// <summary>
         /// post
         /// </summary>
-        POST = 20,
+        POST = 10,
 
         /// <summary>
         /// PUT
         /// </summary>
-        PUT = 30,
+        PUT = 20,
 
         /// <summary>
         /// DELETE
         /// </summary>
-        DELETE = 40,
-        HEAD=50,
-        OPTIONS=60,
-        TRACE=70
+        DELETE = 30,
+        HEAD=40,
+        OPTIONS=50,
+        TRACE=60
 
     }
 
@@ -81,17 +87,17 @@ namespace OSS.Http
         /// form表单数据
         /// </summary>
         Form,
-        /// <summary>
-        /// 地址中的值    
-        /// </summary>
-        UrlSegment,
         ///// <summary>
-        ///// 头部参数
+        ///// 地址中的值    
         ///// </summary>
-        //Header,
+        //UrlSegment,
         /// <summary>
-        /// cookie
+        /// 头部参数
         /// </summary>
-        Cookie
+        Header,
+        ///// <summary>
+        ///// cookie
+        ///// </summary>
+        //Cookie
     }
 }
