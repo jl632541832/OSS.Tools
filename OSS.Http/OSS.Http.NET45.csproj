@@ -50,11 +50,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Mos\FormParameter.cs" />
+    <Compile Include="Mos\OsHttpRequest.cs" />
     <Compile Include="OsRest.cs" />
     <Compile Include="Mos\Enum.cs" />
     <Compile Include="Mos\FileParameter.cs" />
-    <Compile Include="Mos\HttpRequest.cs" />
-    <Compile Include="Mos\Parameter.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RestUtil.cs" />
   </ItemGroup>
