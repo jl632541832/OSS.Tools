@@ -61,8 +61,7 @@ namespace OSS.Http.Connect
 
             return SendAsync(reqMsg, completionOption, cancellationToken);
         }
-
-
+        
         #region  配置 ReqMsg信息
 
         /// <summary>
@@ -72,35 +71,18 @@ namespace OSS.Http.Connect
         public HttpRequestMessage ConfigureReqMsg(OsHttpRequest request)
         {
             var reqMsg = new HttpRequestMessage();
-            
-            reqMsg.RequestUri = ConfigReqUriMsg(request);
+
+            reqMsg.RequestUri = request.Uri;
             reqMsg.Method = new HttpMethod(request.HttpMothed.ToString());
 
             ConfigReqContent(reqMsg,request);   //  配置内容
        
-            request.RequestSet?.Invoke(reqMsg);
+       
 
             return reqMsg;
         }
 
-        /// <summary>
-        /// 创建请求的 Url 对象
-        /// </summary>
-        /// <param name="request">请求的对象实体</param>
-        /// <returns>返回的 System.Uri 对象</returns>
-        private Uri ConfigReqUriMsg(OsHttpRequest request)
-        {
-            if (string.IsNullOrEmpty(request.AddressUrl))
-            {
-                throw new ArgumentNullException(nameof(request), "无效的请求，请求对象中的 UrlAddress 不能为空");
-            }
-            string urlAddress = request.AddressUrl;
 
-            var queryPara = GetReqParameters(request, ParameterType.Query);
-            urlAddress = queryPara.Aggregate(urlAddress, (current, p) => string.Concat(current, current.IndexOf("?", StringComparison.CurrentCultureIgnoreCase) < 0 ? "?" : "&", p.ToString()));
-            
-            return new Uri(urlAddress);
-        }
 
         /// <summary>
         ///  配置使用的cotent
@@ -110,18 +92,20 @@ namespace OSS.Http.Connect
         /// <returns></returns>
         private void ConfigReqContent(HttpRequestMessage reqMsg, OsHttpRequest req)
         {
-            var contentStream = new MemoryStream();
+            if (req.HttpMothed == HttpMothed.GET) return;
 
+            var contentStream = new MemoryStream();
             reqMsg.Content = new StreamContent(contentStream);
-            reqMsg.Content.Headers.ContentType = new MediaTypeHeaderValue("application/x-www-form-urlencoded");
 
             if (req.HasFile)
             {
                 string boundary = GetBoundary();
+                reqMsg.Content.Headers.ContentType = new MediaTypeHeaderValue(GetMultipartFormContentType(boundary));
                 reqMsg.Content.Headers.ContentLength = WriteMultipartFormData(contentStream, req, boundary);
             }
             else
             {
+                reqMsg.Content.Headers.ContentType = new MediaTypeHeaderValue("application/x-www-form-urlencoded");
                 string data = GetNormalFormData(req);
                 if (!string.IsNullOrEmpty(data))
                 {
@@ -131,6 +115,7 @@ namespace OSS.Http.Connect
                     reqMsg.Content.Headers.ContentLength = length;
                 }
             }
+            req.RequestSet?.Invoke(reqMsg);
         }
 
 
@@ -152,7 +137,6 @@ namespace OSS.Http.Connect
         //        {
         //            contentHeader.Add(header.Name, header.Value.ToString());
         //        }
-
         //    }
         //}
         #endregion
@@ -178,15 +162,15 @@ namespace OSS.Http.Connect
             return $"-----------------------------{boundaryBuilder}";
         }
 
-        ///// <summary>
-        ///// 返回含文件请求的ContentType
-        ///// </summary>
-        ///// <param name="boundary"></param>
-        ///// <returns>返回  WebRequest 的 ContenType 信息</returns>
-        //private static string GetMultipartFormContentType(string boundary)
-        //{
-        //    return string.Format("multipart/form-data; boundary={0}", boundary);
-        //}
+        /// <summary>
+        /// 返回含文件请求的ContentType
+        /// </summary>
+        /// <param name="boundary"></param>
+        /// <returns>返回  WebRequest 的 ContenType 信息</returns>
+        private static string GetMultipartFormContentType(string boundary)
+        {
+            return string.Format("multipart/form-data; boundary={0}", boundary);
+        }
 
         /// <summary>
         /// 写入 Form 的内容值 【 非文件参数 + 文件头 + 文件参数（内部完成） + 请求结束符 】
@@ -195,9 +179,7 @@ namespace OSS.Http.Connect
         /// <param name="request"></param>
         private int WriteMultipartFormData(Stream webRequestStream, OsHttpRequest request, string boundary)
         {
-            var formparas =GetReqParameters(request,ParameterType.Form);
-
-            int contentLength = formparas.Sum(param => WriteStringTo(webRequestStream, GetMultipartFormData(param, boundary)));
+            int contentLength = request.Parameters.Sum(param => WriteStringTo(webRequestStream, GetMultipartFormData(param, boundary)));
 
             foreach (var file in request.FileParameterList)
             {
@@ -219,7 +201,7 @@ namespace OSS.Http.Connect
         /// <param name="param"></param>
         /// <param name="boundary"></param>
         /// <returns></returns>
-        private static string GetMultipartFormData(Parameter param, string boundary)
+        private static string GetMultipartFormData(FormParameter param, string boundary)
         {
             return
                 $"--{boundary}{_lineBreak}Content-Disposition: form-data; name=\"{param.Name}\"{_lineBreak}{_lineBreak}{param.Value}{_lineBreak}";
@@ -256,13 +238,12 @@ namespace OSS.Http.Connect
         /// <returns></returns>
         private static string GetNormalFormData(OsHttpRequest request)
         {
-            var formParas = GetReqParameters(request, ParameterType.Form);
             var formstring = new StringBuilder();
-            foreach (var p in formParas)
+            foreach (var p in request.Parameters)
             {
                 if (formstring.Length > 1)
                     formstring.Append("&");
-                formstring.AppendFormat("{0}={1}", p.Name, p.Value);
+                formstring.AppendFormat(p.ToString());
             }
             if (!string.IsNullOrEmpty(request.CustomBody))
             {
@@ -313,10 +294,6 @@ namespace OSS.Http.Connect
         //    _notCanAddContentHeaderDics.Add("User-Agent", (r, v) => r.UserAgent = v);
         //}
 
-        private static List<Parameter> GetReqParameters(OsHttpRequest request,ParameterType type)
-        {
-            return request.Parameters.Where(p => p.Type == type).ToList() ?? new List<Parameter>();
-        }
         #endregion
     }
 }

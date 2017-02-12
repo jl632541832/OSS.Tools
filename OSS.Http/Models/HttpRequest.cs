@@ -24,14 +24,14 @@ namespace OSS.Http.Models
     {
         public OsHttpRequest()
         {
-            Parameters = new List<Parameter>();
+            Parameters = new List<FormParameter>();
             FileParameterList = new List<FileParameter>();
         }
 
         /// <summary>
         /// 请求地址信息
         /// </summary>
-        public string AddressUrl { get; set; }
+        public Uri Uri{ get; set; }
 
         /// <summary>
         /// 请求方式
@@ -78,7 +78,7 @@ namespace OSS.Http.Models
         /// <summary>
         /// 非文件参数列表
         /// </summary>
-        public List<Parameter> Parameters { get; set; }
+        public List<FormParameter> Parameters { get; set; }
 
         #endregion
 

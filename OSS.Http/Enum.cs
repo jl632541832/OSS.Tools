@@ -72,32 +72,4 @@ namespace OSS.Http
         /// </summary>
         Aborted
     }
-
-
-    /// <summary>
-    /// 平台参数类型
-    /// </summary>
-    public enum ParameterType
-    {
-        /// <summary>
-        /// 属于url请求数据
-        /// </summary>
-        Query,
-        /// <summary>
-        /// form表单数据
-        /// </summary>
-        Form,
-        ///// <summary>
-        ///// 地址中的值    
-        ///// </summary>
-        //UrlSegment,
-        /// <summary>
-        /// 头部参数
-        /// </summary>
-        Header,
-        ///// <summary>
-        ///// cookie
-        ///// </summary>
-        //Cookie
-    }
 }

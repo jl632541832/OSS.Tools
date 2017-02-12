@@ -17,36 +17,22 @@ namespace OSS.Http.Models
     /// <summary>
     /// 
     /// </summary>
-    public struct Parameter
+    public struct FormParameter
     {
         /// <summary>
         /// 构造函数
         /// </summary>
         /// <param name="name"></param>
         /// <param name="value"></param>
-        /// <param name="type"></param>
-        public Parameter(string name, object value,ParameterType type)
+        public FormParameter(string name, object value)
         {
             Name = name;
             Value = value;
-            Type = type;
-            Domain = string.Empty;
+            //Type = type;
+            //Domain = string.Empty;
         }
 
-        /// <summary>
-        /// 构造函数
-        /// </summary>
-        /// <param name="name"></param>
-        /// <param name="value"></param>
-        /// <param name="domain"></param>
-        /// <param name="type"></param>
-        public Parameter(string name, object value,string domain, ParameterType type)
-        {
-            Name = name;
-            Value = value;
-            Type = type;
-            Domain = domain;
-        }
+   
 
         /// <summary>
         /// 参数名称
@@ -56,16 +42,11 @@ namespace OSS.Http.Models
         /// 参数值
         /// </summary>
         public object Value;
-        
-        /// <summary>
-        /// 参数类型
-        /// </summary>
-        public ParameterType Type;
 
-        /// <summary>
-        ///  cookie的域名   -- cookie 类型时需要
-        /// </summary>
-        public string Domain;
+        ///// <summary>
+        /////  cookie的域名   -- cookie 类型时需要
+        ///// </summary>
+        //public string Domain;
 
         /// <summary>
         /// 重写ToString返回   name=value编码后的格式
@@ -73,34 +54,8 @@ namespace OSS.Http.Models
         /// <returns>String</returns>
         public override string ToString()
         {
-            return string.Format("{0}={1}", Name.UrlEncode(), Value.UrlEncode());
+            return $"{Name}={Value}";
         }
     }
-
-    internal static class UrlExtension
-    {
-        /// <summary>
-        /// Url编码处理
-        /// </summary>
-        public static string UrlEncode(this string input)
-        {
-            if (string.IsNullOrEmpty(input))
-                return string.Empty;
-
-            return Uri.EscapeDataString(input);
-        }
-
-        /// <summary>
-        /// Url编码处理
-        /// </summary>
-        public static string UrlEncode(this object input)
-        {
-            if (input == null)
-                return string.Empty;
-
-            return Uri.EscapeDataString(input.ToString());
-        }
-    }
-
-   
+    
 }
