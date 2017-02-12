@@ -175,7 +175,7 @@ namespace OSS.Http.Connect
                 var index = rnd.Next(pattern.Length);
                 boundaryBuilder.Append(pattern[index]);
             }
-            return string.Format("-----------------------------{0}", boundaryBuilder.ToString());
+            return $"-----------------------------{boundaryBuilder}";
         }
 
         ///// <summary>
@@ -221,8 +221,8 @@ namespace OSS.Http.Connect
         /// <returns></returns>
         private static string GetMultipartFormData(Parameter param, string boundary)
         {
-            return string.Format("--{0}{3}Content-Disposition: form-data; name=\"{1}\"{3}{3}{2}{3}",
-                boundary, param.Name, param.Value, _lineBreak);
+            return
+                $"--{boundary}{_lineBreak}Content-Disposition: form-data; name=\"{param.Name}\"{_lineBreak}{_lineBreak}{param.Value}{_lineBreak}";
         }
 
         /// <summary>
@@ -233,8 +233,8 @@ namespace OSS.Http.Connect
         /// <returns></returns>
         private static string GetMultipartFileHeader(FileParameter file, string boundary)
         {
-            return string.Format("--{0}{4}Content-Disposition: form-data; name=\"{1}\"; filename=\"{2}\"{4}Content-Type: {3}{4}{4}",
-                boundary, file.Name, file.FileName, file.ContentType ?? "application/octet-stream", _lineBreak);
+            var conType = file.ContentType ?? "application/octet-stream";
+            return $"--{boundary}{_lineBreak}Content-Disposition: form-data; name=\"{file.Name}\"; filename=\"{file.FileName}\"{_lineBreak}Content-Type: {conType}{_lineBreak}{_lineBreak}";
         }
 
         /// <summary>
@@ -244,7 +244,7 @@ namespace OSS.Http.Connect
         /// <returns></returns>
         private static string GetMultipartFooter(string boundary)
         {
-            return string.Format("--{0}--{1}", boundary, _lineBreak);
+            return $"--{boundary}--{_lineBreak}";
         }
         #endregion
 
