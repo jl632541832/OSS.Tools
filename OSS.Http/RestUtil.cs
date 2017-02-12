@@ -38,7 +38,7 @@ namespace OSS.Http
         /// </summary>
         /// <param name="request">请求的参数</param>
         /// <returns>自定义的Response结果</returns>
-        public static Task<HttpResponseMessage> SendRest(this OsHttpRequest request,HttpCompletionOption completionOption=HttpCompletionOption.ResponseContentRead)
+        public static Task<HttpResponseMessage> RestSend(this OsHttpRequest request,HttpCompletionOption completionOption=HttpCompletionOption.ResponseContentRead)
         {
             if (m_Client==null)
             {

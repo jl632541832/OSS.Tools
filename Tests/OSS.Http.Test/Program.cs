@@ -12,7 +12,7 @@ namespace OSS.Http.Test
 
             req.Uri = new Uri("http://www.baidu.com");
 
-            var result = req.SendRest();
+            var result = req.RestSend();
             result.Wait();
             var content = result.Result.Content.ReadAsStringAsync();
             content.Wait();

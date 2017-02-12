@@ -12,7 +12,7 @@ namespace OS.Http.NET45.Test
 
             req.Uri = new Uri("http://www.baidu.com");
 
-            var result = req.SendRest();
+            var result = req.RestSend();
             result.Wait();
 
             Console.WriteLine(result.Result.Content);
