@@ -1,37 +1,48 @@
 ﻿using System;
+using System.Net.Http;
+using System.Threading.Tasks;
 using OSS.Http.Connect;
-using OSS.Http.Interface;
 using OSS.Http.Models;
 
 namespace OSS.Http
 {
     /// <summary>
-    /// 
+    /// http请求辅助类
     /// </summary>
     public static class HttpUtil
     {
-        private static IHttp httpsync = new RestHttp();
+        private static HttpClientHandler m_Handler;
+        private static OsRest m_Client ;
+
+        public static Action<HttpClientHandler> SetHandler { get; set; }
+    
 
         /// <summary>
         /// 同步的请求方式
         /// </summary>
         /// <param name="request">请求的参数</param>
         /// <returns>自定义的Response结果</returns>
-        public static OsHttpResponse ExecuteSync(this OsHttpRequest request)
+        public static Task<HttpResponseMessage> ExecuteSync(this OsHttpRequest request,HttpCompletionOption completionOption=HttpCompletionOption.ResponseContentRead)
         {
-            return httpsync.ExecuteSync(request);
+            if (m_Client==null)
+            {
+                m_Handler=new HttpClientHandler();
+                ConfigClientHandler(m_Handler);
+                m_Client=new OsRest(m_Handler);
+            }
+            return m_Client.RestSend(request, completionOption);
         }
 
-
         /// <summary>
-        /// 异步的请求方式
+        /// 配置请求处理类
         /// </summary>
-        /// <param name="request">请求的参数</param>
-        /// <param name="callback"></param>
-        /// <returns>自定义的Response结果</returns>
-        public static void ExecuteAsync(this OsHttpRequest request, Action<OsHttpResponse> callback)
+        /// <returns></returns>
+        public static void ConfigClientHandler(HttpClientHandler reqHandler)
         {
-            httpsync.ExecuteAsync(request, callback);
+            reqHandler.AllowAutoRedirect = true;
+            reqHandler.MaxAutomaticRedirections = 5;
+            reqHandler.UseCookies = true;
+            SetHandler?.Invoke(reqHandler);
         }
 
 

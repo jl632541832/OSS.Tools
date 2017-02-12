@@ -14,22 +14,26 @@ namespace OSS.Http
         /// <summary>
         /// Get
         /// </summary>
-        GET = 2,
+        GET = 10,
 
         /// <summary>
         /// post
         /// </summary>
-        POST = 4,
+        POST = 20,
 
         /// <summary>
         /// PUT
         /// </summary>
-        PUT=8,
+        PUT = 30,
 
         /// <summary>
         /// DELETE
         /// </summary>
-        DELETE=16
+        DELETE = 40,
+        HEAD=50,
+        OPTIONS=60,
+        TRACE=70
+
     }
 
     /// <summary>
@@ -54,7 +58,7 @@ namespace OSS.Http
         /// </summary>
         ErrorButResponse,
         /// <summary>
-        /// 超市
+        /// 超时
         /// </summary>
         TimedOut,
         /// <summary>
@@ -81,10 +85,10 @@ namespace OSS.Http
         /// 地址中的值    
         /// </summary>
         UrlSegment,
-        /// <summary>
-        /// 头部参数
-        /// </summary>
-        Header,
+        ///// <summary>
+        ///// 头部参数
+        ///// </summary>
+        //Header,
         /// <summary>
         /// cookie
         /// </summary>

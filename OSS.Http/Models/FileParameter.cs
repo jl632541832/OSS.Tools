@@ -1,6 +1,5 @@
 ﻿using System;
 using System.IO;
-using System.Linq;
 
 namespace OSS.Http.Models
 {
@@ -29,7 +28,6 @@ namespace OSS.Http.Models
             };
             this.FileName = filename;
             this.ContentType = contentType;
-     
             this.Name = name;
         }
         /// <summary>

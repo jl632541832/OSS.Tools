@@ -63,9 +63,6 @@ namespace OSS.Http.Models
         {
             return string.Format("{0}={1}", Name.UrlEncode(), Value.UrlEncode());
         }
-
-
-
     }
 
     internal static class UrlExtension
