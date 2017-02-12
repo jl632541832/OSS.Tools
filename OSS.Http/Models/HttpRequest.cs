@@ -24,7 +24,7 @@ namespace OSS.Http.Models
     {
         public OsHttpRequest()
         {
-            Parameters = new List<FormParameter>();
+            FormParameters = new List<FormParameter>();
             FileParameterList = new List<FileParameter>();
         }
 
@@ -70,15 +70,12 @@ namespace OSS.Http.Models
         /// <summary>
         /// 是否存在文件
         /// </summary>
-        public bool HasFile
-        {
-            get { return FileParameterList.Any(); }
-        }
+        public bool HasFile => FileParameterList.Any();
 
         /// <summary>
         /// 非文件参数列表
         /// </summary>
-        public List<FormParameter> Parameters { get; set; }
+        public List<FormParameter> FormParameters { get; set; }
 
         #endregion
 

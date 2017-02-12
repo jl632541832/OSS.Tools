@@ -179,7 +179,7 @@ namespace OSS.Http.Connect
         /// <param name="request"></param>
         private int WriteMultipartFormData(Stream webRequestStream, OsHttpRequest request, string boundary)
         {
-            int contentLength = request.Parameters.Sum(param => WriteStringTo(webRequestStream, GetMultipartFormData(param, boundary)));
+            int contentLength = request.FormParameters.Sum(param => WriteStringTo(webRequestStream, GetMultipartFormData(param, boundary)));
 
             foreach (var file in request.FileParameterList)
             {
@@ -239,7 +239,7 @@ namespace OSS.Http.Connect
         private static string GetNormalFormData(OsHttpRequest request)
         {
             var formstring = new StringBuilder();
-            foreach (var p in request.Parameters)
+            foreach (var p in request.FormParameters)
             {
                 if (formstring.Length > 1)
                     formstring.Append("&");
