@@ -34,6 +34,11 @@ namespace OSS.Http.Mos
         public Uri Uri{ get; set; }
 
         /// <summary>
+        ///  如果此值设置，则忽略 Uri 值
+        /// </summary>
+        public string AddressUrl { get; set; }
+
+        /// <summary>
         /// 请求方式
         /// </summary>
         public HttpMothed HttpMothed { get; set; }

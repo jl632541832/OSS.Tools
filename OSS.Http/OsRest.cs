@@ -58,7 +58,7 @@ namespace OSS.Http
 
             if (request.TimeOutMilSeconds > 0)
                 this.Timeout = TimeSpan.FromMilliseconds(request.TimeOutMilSeconds);
-
+            
             return SendAsync(reqMsg, completionOption, cancellationToken);
         }
         
@@ -72,10 +72,10 @@ namespace OSS.Http
         {
             var reqMsg = new HttpRequestMessage();
 
-            reqMsg.RequestUri = request.Uri;
+            reqMsg.RequestUri = string.IsNullOrEmpty(request.AddressUrl) ? request.Uri : new Uri(request.AddressUrl);
             reqMsg.Method = new HttpMethod(request.HttpMothed.ToString());
 
-            ConfigReqContent(reqMsg,request);   //  配置内容
+            ConfigReqContent(reqMsg, request); //  配置内容
             return reqMsg;
         }
 

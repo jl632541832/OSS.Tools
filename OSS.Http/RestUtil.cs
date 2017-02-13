@@ -37,8 +37,10 @@ namespace OSS.Http
         /// 同步的请求方式
         /// </summary>
         /// <param name="request">请求的参数</param>
+        /// <param name="completionOption"></param>
         /// <returns>自定义的Response结果</returns>
-        public static Task<HttpResponseMessage> RestSend(this OsHttpRequest request,HttpCompletionOption completionOption=HttpCompletionOption.ResponseContentRead)
+        public static Task<HttpResponseMessage> RestSend(this OsHttpRequest request,
+            HttpCompletionOption completionOption=HttpCompletionOption.ResponseContentRead)
         {
             if (m_Client==null)
             {

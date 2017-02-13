@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Net.Http;
+using System.Net.Http.Headers;
 using OSS.Http.Mos;
 
 namespace OSS.Http.Test
@@ -9,6 +10,7 @@ namespace OSS.Http.Test
         private static void Main(string[] args)
         {
             var req = new OsHttpRequest();
+            req.RequestSet = msg => msg.Content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
 
             req.Uri = new Uri("http://www.baidu.com");
 
