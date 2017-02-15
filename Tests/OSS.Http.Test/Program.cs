@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Net.Http;
 using System.Net.Http.Headers;
+using System.Threading.Tasks;
 using OSS.Http.Mos;
 
 namespace OSS.Http.Test
@@ -12,18 +13,17 @@ namespace OSS.Http.Test
             var req = new OsHttpRequest();
             req.RequestSet = msg => msg.Content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
 
-            req.Uri = new Uri("http://www.baidu.com");
+            req.HttpMothed=HttpMothed.POST;
+            req.AddressUrl = "http://www.baidu.com";
+            req.CustomBody = "name=testname";
+            req.FormParameters.Add(new FormParameter("who","me"));
+
 
             var result = req.RestSend();
             result.Wait();
             var content = result.Result.Content.ReadAsStringAsync();
             content.Wait();
-            Console.WriteLine(content.Result);
-            Console.Read();
-
-
-            var client = new HttpClient();
-            var resTask = client.GetAsync("http://www.baidu.com");
+    
 
         }
     }
