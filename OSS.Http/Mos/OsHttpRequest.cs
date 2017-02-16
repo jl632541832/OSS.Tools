@@ -25,7 +25,7 @@ namespace OSS.Http.Mos
         public OsHttpRequest()
         {
             FormParameters = new List<FormParameter>();
-            FileParameterList = new List<FileParameter>();
+            FileParameters = new List<FileParameter>();
         }
 
         /// <summary>
@@ -70,12 +70,13 @@ namespace OSS.Http.Mos
         /// <summary>
         /// 文件参数列表
         /// </summary>
-        public List<FileParameter> FileParameterList { get; set; }
+        public List<FileParameter> FileParameters { get; set; }
 
         /// <summary>
         /// 是否存在文件
         /// </summary>
-        public bool HasFile => FileParameterList.Any();
+        public bool HasFile => FileParameters.Any();
+
 
         /// <summary>
         /// 非文件参数列表
