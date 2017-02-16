@@ -94,12 +94,13 @@ namespace OSS.Http
             {
                 string boundary = GetBoundary();
                 var content= new MultipartFormDataContent(boundary);
-                content.Headers.TryAddWithoutValidation("Content-Type", $"multipart/form-data;boundary={boundary}");
-
+                
                 WriteMultipartFormContent(content, req.FormParameters);
                 WriteMultipartFormFileContent(content, req.FileParameters);
 
                 reqMsg.Content = content;
+                req.RequestSet?.Invoke(reqMsg);   //  位置不能变，防止外部修改 Content-Type
+                reqMsg.Content.Headers.TryAddWithoutValidation("Content-Type", $"multipart/form-data;boundary={boundary}");
             }
             else
             {
@@ -107,8 +108,9 @@ namespace OSS.Http
                
                 reqMsg.Content = new StringContent(data);
                 reqMsg.Content.Headers.ContentType = new MediaTypeHeaderValue("application/x-www-form-urlencoded");
+                req.RequestSet?.Invoke(reqMsg);
             }
-            req.RequestSet?.Invoke(reqMsg);
+  
         }
 
 
