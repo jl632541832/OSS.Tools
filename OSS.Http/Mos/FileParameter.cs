@@ -26,7 +26,18 @@ namespace OSS.Http.Mos
         /// <param name="contentType"></param>
         public FileParameter(string name, Stream fileStream, string filename, string contentType)
         {
-            this.FileStream = fileStream;
+            this.Writer = s =>
+            {
+                var buffer = new byte[1024];
+                using (fileStream)
+                {
+                    int readCount = 0;
+                    while ((readCount = fileStream.Read(buffer, 0, buffer.Length)) != 0)
+                    {
+                        s.Write(buffer, 0, readCount);
+                    }
+                }
+            };
             this.FileName = filename;
             this.ContentType = contentType;
             this.Name = name;
@@ -39,7 +50,7 @@ namespace OSS.Http.Mos
         /// 读写操作流
         ///  返回的是写入的字节流长度
         /// </summary>
-        public Stream FileStream;
+        public Action<Stream> Writer;
         /// <summary>
         /// 文件名称
         /// </summary>

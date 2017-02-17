@@ -27,6 +27,9 @@ namespace OSS.Http
         private static OsRest m_Client ;
         private static HttpMessageHandler m_MessageHandler;
 
+        /// <summary>
+        ///   消息处理信息
+        /// </summary>
         public static HttpMessageHandler MessageHandler
         {
             get { return m_MessageHandler ?? (m_MessageHandler = GetClientHandler()); }

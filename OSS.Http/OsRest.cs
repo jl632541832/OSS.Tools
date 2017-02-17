@@ -27,17 +27,29 @@ namespace OSS.Http
     /// </summary>
     public class OsRest:HttpClient
     {
-        public Encoding Encoding { get; set; } = Encoding.UTF8;
+        private const string _lineBreak = "\r\n";
+        public  Encoding Encoding { get; set; } = Encoding.UTF8;
         //private static readonly Dictionary<string,Action<HttpContentHeaders,string>> _notCanAddContentHeaderDics
         //    =new Dictionary<string, Action<HttpContentHeaders, string>>();
-
+        /// <summary>
+        ///  构造函数
+        /// </summary>
         public OsRest():this(new HttpClientHandler(),true) 
         {
         }
+        /// <summary>
+        ///   构造函数
+        /// </summary>
+        /// <param name="handler"></param>
         public OsRest(HttpMessageHandler handler) 
             : this(handler,true)
         {
         }
+        /// <summary>
+        ///   构造函数
+        /// </summary>
+        /// <param name="handler"></param>
+        /// <param name="disposeHandler"></param>
         public OsRest(HttpMessageHandler handler,bool disposeHandler) : base(handler, disposeHandler)
         {
         }
@@ -77,8 +89,7 @@ namespace OSS.Http
             ConfigReqContent(reqMsg, request); //  配置内容
             return reqMsg;
         }
-
-
+        
 
         /// <summary>
         ///  配置使用的cotent
@@ -89,18 +100,15 @@ namespace OSS.Http
         private void ConfigReqContent(HttpRequestMessage reqMsg, OsHttpRequest req)
         {
             if (req.HttpMothed == HttpMothed.GET) return;
-
+            string boundary =null;
             if (req.HasFile)
             {
-                string boundary = GetBoundary();
-                var content= new MultipartFormDataContent(boundary);
-                
-                WriteMultipartFormContent(content, req.FormParameters);
-                WriteMultipartFormFileContent(content, req.FileParameters);
+                boundary = GetBoundary();
 
-                reqMsg.Content = content;
-                req.RequestSet?.Invoke(reqMsg);   //  位置不能变，防止外部修改 Content-Type
-                reqMsg.Content.Headers.TryAddWithoutValidation("Content-Type", $"multipart/form-data;boundary={boundary}");
+                var memory=new MemoryStream();
+                WriteMultipartFormData(memory, req, boundary);
+                memory.Seek(0, SeekOrigin.Begin);//设置指针到起点
+                reqMsg.Content = new StreamContent(memory);
             }
             else
             {
@@ -108,68 +116,125 @@ namespace OSS.Http
                
                 reqMsg.Content = new StringContent(data);
                 reqMsg.Content.Headers.ContentType = new MediaTypeHeaderValue("application/x-www-form-urlencoded");
-                req.RequestSet?.Invoke(reqMsg);
             }
-  
+            req.RequestSet?.Invoke(reqMsg);   //  位置不能变，防止外部修改 Content-Type
+            if (req.HasFile)
+            {
+                reqMsg.Content.Headers.Remove("Content-Type");
+                reqMsg.Content.Headers.TryAddWithoutValidation("Content-Type", $"multipart/form-data;boundary={boundary}");
+            }
+
+            //var contetnTask = reqMsg.Content.ReadAsStreamAsync();
+            //contetnTask.Wait();
+            //contetnTask.Result.Position = 0;
+            //using (StreamReader reader=new StreamReader(contetnTask.Result))
+            //{
+            //    string cont = reader.ReadToEnd();
+            //}
         }
 
-
-      
         #endregion
 
 
         #region   请求数据的 内容 处理
 
         #region 处理带文件上传的数据处理
+    
+       
         /// <summary>
-        /// 创建 请求 分割界限
+        /// 写入 Form 的内容值 【 非文件参数 + 文件头 + 文件参数（内部完成） + 请求结束符 】
+        /// </summary> 
+        /// <param name="memory"></param>
+        /// <param name="request"></param>
+        /// <param name="boundary"></param>
+        private void WriteMultipartFormData(Stream memory, OsHttpRequest request, string boundary)
+        {
+            foreach (var param in request.FormParameters)
+            {
+                WriteStringTo(memory, GetMultipartFormData(param, boundary));
+            }
+            foreach (var file in request.FileParameters)
+            {
+                //文件头
+                WriteStringTo(memory, GetMultipartFileHeader(file, boundary));
+                //文件内容
+                file.Writer(memory);
+                //文件结尾
+                WriteStringTo(memory, _lineBreak);
+            }
+            //写入整个请求的底部信息
+            WriteStringTo(memory, GetMultipartFooter(boundary));
+        }
+
+        /// <summary>
+        /// 写入 Form 的内容值（文件头）
         /// </summary>
+        /// <param name="file"></param>
+        /// <param name="boundary"></param>
         /// <returns></returns>
-        private static string GetBoundary()
+        private static string GetMultipartFileHeader(FileParameter file, string boundary)
         {
-            string pattern = "abcdefghijklmnopqrstuvwxyz0123456789";
-            StringBuilder boundaryBuilder = new StringBuilder();
-            Random rnd = new Random();
-            for (int i = 0; i < 10; i++)
-            {
-                var index = rnd.Next(pattern.Length);
-                boundaryBuilder.Append(pattern[index]);
-            }
-            return $"---------{boundaryBuilder}";
+            var conType = file.ContentType ?? "application/octet-stream";
+            return $"--{boundary}{_lineBreak}Content-Disposition: form-data; name={file.Name}; filename={file.FileName}{_lineBreak}Content-Type: {conType}{_lineBreak}{_lineBreak}";
         }
-
-   
         /// <summary>
-        ///   上传文件请求中的分文件参数写入
+        /// 写入 Form 的内容值（非文件参数）
         /// </summary>
-        /// <param name="parentContent"></param>
-        /// <param name="formParams"></param>
-        private static void WriteMultipartFormContent(MultipartFormDataContent parentContent, List<FormParameter> formParams)
+        /// <param name="param"></param>
+        /// <param name="boundary"></param>
+        /// <returns></returns>
+        private static string GetMultipartFormData(FormParameter param, string boundary)
         {
-            foreach (var param in formParams)
-            {
-                var formContent = new StringContent(param.Value.ToString());
-                parentContent.Add(formContent, param.Name);
-            }
+            return
+                $"--{boundary}{_lineBreak}Content-Disposition: form-data; name={param.Name}{_lineBreak}{_lineBreak}{param.Value}{_lineBreak}";
         }
 
         /// <summary>
-        ///  上传文件中的文件参数
+        /// 写入 Form 的内容值  （请求结束符）
         /// </summary>
-        /// <param name="parentContent"></param>
-        /// <param name="filesParams"></param>
-        private static void WriteMultipartFormFileContent(MultipartFormDataContent parentContent,
-            List<FileParameter> filesParams)
+        /// <param name="boundary"></param>
+        /// <returns></returns>
+        private static string GetMultipartFooter(string boundary)
         {
-            foreach (var file in filesParams)
-            {
-                var formContent = new StreamContent(file.FileStream);
-                formContent.Headers.ContentType =
-                    new MediaTypeHeaderValue(file.ContentType ?? "application/octet-stream");
-                parentContent.Add(formContent, file.Name, file.FileName);
-            }
+            return $"{_lineBreak}--{boundary}--{_lineBreak}";
         }
 
+        ///// <summary>
+        /////   上传文件请求中的分文件参数写入
+        ///// </summary>
+        ///// <param name="parentContent"></param>
+        ///// <param name="formParams"></param>
+        //private static void WriteMultipartFormContent(MultipartFormDataContent parentContent, List<FormParameter> formParams,string boundary)
+        //{
+        //    foreach (var param in formParams)
+        //    {
+        //        var content = new StringContent(param.Value.ToString());
+        //        //content.Headers.ContentDisposition = new ContentDispositionHeaderValue("form-data");
+        //        parentContent.Add(content,param.Name);
+        //    }
+        //}
+
+        ///// <summary>
+        /////  上传文件中的文件参数
+        ///// </summary>
+        ///// <param name="parentContent"></param>
+        ///// <param name="filesParams"></param>
+        ///// <param name="boundary"></param>
+        //private  void WriteMultipartFormFileContent(MultipartFormDataContent parentContent,
+        //    List<FileParameter> filesParams,string boundary)
+        //{
+        //    foreach (var file in filesParams)
+        //    {
+        //        var conType = file.ContentType ?? "application/octet-stream";
+        //        var content = new StreamContent(file.FileStream);
+                
+        //        content.Headers.ContentType = new MediaTypeHeaderValue(conType);
+
+        //        parentContent.Add(content, file.Name, file.FileName);
+        //    }
+        //}
+
+        //return $"--{boundary}--{_lineBreak}";
 
         #endregion
 
@@ -208,11 +273,10 @@ namespace OSS.Http
         /// <param name="stream"></param>
         /// <param name="toWrite"></param>
         /// <returns>写入的字节数量</returns>
-        private  int WriteStringTo(Stream stream, string toWrite)
+        private  void WriteStringTo(Stream stream, string toWrite)
         {
             var bytes = Encoding.GetBytes(toWrite);
             stream.Write(bytes, 0, bytes.Length);
-            return bytes.Length;
         }
         //protected static void AddStaticHeaderDictionary()
         //{
@@ -236,6 +300,23 @@ namespace OSS.Http
         //    _notCanAddContentHeaderDics.Add("Transfer-Encoding", (r, v) => { r.TransferEncoding = v; r.SendChunked = true; });
         //    _notCanAddContentHeaderDics.Add("User-Agent", (r, v) => r.UserAgent = v);
         //}
+
+        /// <summary>
+        /// 创建 请求 分割界限
+        /// </summary>
+        /// <returns></returns>
+        private static string GetBoundary()
+        {
+            string pattern = "abcdefghijklmnopqrstuvwxyz0123456789";
+            StringBuilder boundaryBuilder = new StringBuilder();
+            Random rnd = new Random();
+            for (int i = 0; i < 10; i++)
+            {
+                var index = rnd.Next(pattern.Length);
+                boundaryBuilder.Append(pattern[index]);
+            }
+            return $"-------{boundaryBuilder}";
+        }
 
         #endregion
     }
