@@ -26,7 +26,8 @@ namespace OSS.Http.Test
             //content.Wait();
 
             var result= Test().WaitResult();
-            Console.Write(result.StatusCode);
+            var con = result.Content.ReadAsStringAsync().WaitResult();
+            Console.Write(con);
 
             Console.Read();
         }
@@ -41,11 +42,11 @@ namespace OSS.Http.Test
             //return await req.RestSend();
 
             var req = new OsHttpRequest();
-            req.AddressUrl = "http://localhost:59489/Home/Index";
-            req.HttpMothed=HttpMothed.POST;
-            //var imageFile = new FileStream("E:\\11.mp4", FileMode.Open, FileAccess.Read);
-            //req.FileParameters.Add(new FileParameter("media", imageFile, "11.mp4","video/mpeg4"));
-            //req.FormParameters.Add(new FormParameter("description",$"这只是一个上传测试！"));
+            req.AddressUrl = "http://localhost:59489/";
+            req.HttpMothed = HttpMothed.POST;
+            var imageFile = new FileStream("E:\\111.png", FileMode.Open, FileAccess.Read);
+            req.FileParameters.Add(new FileParameter("media", imageFile, "111.png", "image/jpeg")); //video/mpeg4
+            //req.FormParameters.Add(new FormParameter("description", "{\"title\":\"title\", \"introduction\":\"introduction\"}"));
             return await req.RestSend();
         }
     }

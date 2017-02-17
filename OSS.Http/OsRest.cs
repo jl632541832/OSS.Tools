@@ -11,7 +11,6 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Net.Http;
 using System.Net.Http.Headers;
@@ -108,6 +107,7 @@ namespace OSS.Http
                 var memory=new MemoryStream();
                 WriteMultipartFormData(memory, req, boundary);
                 memory.Seek(0, SeekOrigin.Begin);//设置指针到起点
+                
                 reqMsg.Content = new StreamContent(memory);
             }
             else
@@ -123,14 +123,6 @@ namespace OSS.Http
                 reqMsg.Content.Headers.Remove("Content-Type");
                 reqMsg.Content.Headers.TryAddWithoutValidation("Content-Type", $"multipart/form-data;boundary={boundary}");
             }
-
-            //var contetnTask = reqMsg.Content.ReadAsStreamAsync();
-            //contetnTask.Wait();
-            //contetnTask.Result.Position = 0;
-            //using (StreamReader reader=new StreamReader(contetnTask.Result))
-            //{
-            //    string cont = reader.ReadToEnd();
-            //}
         }
 
         #endregion
@@ -175,7 +167,7 @@ namespace OSS.Http
         private static string GetMultipartFileHeader(FileParameter file, string boundary)
         {
             var conType = file.ContentType ?? "application/octet-stream";
-            return $"--{boundary}{_lineBreak}Content-Disposition: form-data; name={file.Name}; filename={file.FileName}{_lineBreak}Content-Type: {conType}{_lineBreak}{_lineBreak}";
+            return $"--{boundary}{_lineBreak}Content-Disposition: form-data; name=\"{file.Name}\"; filename=\"{file.FileName}\"{_lineBreak}Content-Type: {conType}{_lineBreak}{_lineBreak}";
         }
         /// <summary>
         /// 写入 Form 的内容值（非文件参数）
@@ -186,7 +178,7 @@ namespace OSS.Http
         private static string GetMultipartFormData(FormParameter param, string boundary)
         {
             return
-                $"--{boundary}{_lineBreak}Content-Disposition: form-data; name={param.Name}{_lineBreak}{_lineBreak}{param.Value}{_lineBreak}";
+                $"--{boundary}{_lineBreak}Content-Disposition: form-data; name=\"{param.Name}\"{_lineBreak}{_lineBreak}{param.Value}{_lineBreak}";
         }
 
         /// <summary>
@@ -196,45 +188,8 @@ namespace OSS.Http
         /// <returns></returns>
         private static string GetMultipartFooter(string boundary)
         {
-            return $"{_lineBreak}--{boundary}--{_lineBreak}";
+            return $"--{boundary}--{_lineBreak}";
         }
-
-        ///// <summary>
-        /////   上传文件请求中的分文件参数写入
-        ///// </summary>
-        ///// <param name="parentContent"></param>
-        ///// <param name="formParams"></param>
-        //private static void WriteMultipartFormContent(MultipartFormDataContent parentContent, List<FormParameter> formParams,string boundary)
-        //{
-        //    foreach (var param in formParams)
-        //    {
-        //        var content = new StringContent(param.Value.ToString());
-        //        //content.Headers.ContentDisposition = new ContentDispositionHeaderValue("form-data");
-        //        parentContent.Add(content,param.Name);
-        //    }
-        //}
-
-        ///// <summary>
-        /////  上传文件中的文件参数
-        ///// </summary>
-        ///// <param name="parentContent"></param>
-        ///// <param name="filesParams"></param>
-        ///// <param name="boundary"></param>
-        //private  void WriteMultipartFormFileContent(MultipartFormDataContent parentContent,
-        //    List<FileParameter> filesParams,string boundary)
-        //{
-        //    foreach (var file in filesParams)
-        //    {
-        //        var conType = file.ContentType ?? "application/octet-stream";
-        //        var content = new StreamContent(file.FileStream);
-                
-        //        content.Headers.ContentType = new MediaTypeHeaderValue(conType);
-
-        //        parentContent.Add(content, file.Name, file.FileName);
-        //    }
-        //}
-
-        //return $"--{boundary}--{_lineBreak}";
 
         #endregion
 
@@ -278,29 +233,7 @@ namespace OSS.Http
             var bytes = Encoding.GetBytes(toWrite);
             stream.Write(bytes, 0, bytes.Length);
         }
-        //protected static void AddStaticHeaderDictionary()
-        //{
-        //    _notCanAddContentHeaderDics.Add("Accept", (r, v) => r.Accept = v);
-        //    _notCanAddContentHeaderDics.Add("Content-Type", (r, v) => r.ContentType = v);
-
-        //    _notCanAddContentHeaderDics.Add("Date", (r, v) =>
-        //    {
-        //        DateTime parsed;
-        //        if (DateTime.TryParse(v, out parsed))
-        //        {
-        //            r.Date = parsed;
-        //        }
-        //    });
-        //    _notCanAddContentHeaderDics.Add("Host", (r, v) => r.Host = v);
-        //    _notCanAddContentHeaderDics.Add("Connection", (r, v) => r.Connection = v);
-        //    _notCanAddContentHeaderDics.Add("Content-Length", (r, v) => r.ContentLength = Convert.ToInt64(v));
-        //    _notCanAddContentHeaderDics.Add("Expect", (r, v) => r.Expect = v);
-        //    _notCanAddContentHeaderDics.Add("If-Modified-Since", (r, v) => r. = Convert.ToDateTime(v));
-        //    _notCanAddContentHeaderDics.Add("Referer", (r, v) => r.Referer = v);
-        //    _notCanAddContentHeaderDics.Add("Transfer-Encoding", (r, v) => { r.TransferEncoding = v; r.SendChunked = true; });
-        //    _notCanAddContentHeaderDics.Add("User-Agent", (r, v) => r.UserAgent = v);
-        //}
-
+        
         /// <summary>
         /// 创建 请求 分割界限
         /// </summary>
