@@ -29,7 +29,7 @@ namespace OSS.Http.Test
             var con = result.Content.ReadAsStringAsync().WaitResult();
             Console.Write(con);
 
-            Console.Read();
+            Console.ReadLine();
         }
 
 
@@ -44,9 +44,11 @@ namespace OSS.Http.Test
             var req = new OsHttpRequest();
             req.AddressUrl = "http://localhost:59489/";
             req.HttpMothed = HttpMothed.POST;
-            var imageFile = new FileStream("E:\\111.png", FileMode.Open, FileAccess.Read);
-            req.FileParameters.Add(new FileParameter("media", imageFile, "111.png", "image/jpeg")); //video/mpeg4
-            //req.FormParameters.Add(new FormParameter("description", "{\"title\":\"title\", \"introduction\":\"introduction\"}"));
+            //  文件上传测试
+            //var imageFile = new FileStream("E:\\111.png", FileMode.Open, FileAccess.Read);
+            //req.FileParameters.Add(new FileParameter("media", imageFile, "111.png", "image/jpeg")); 
+            // 表单参数测试
+            //req.FormParameters.Add(new FormParameter("description", "测试"));
             return await req.RestSend();
         }
     }
