@@ -24,61 +24,71 @@ namespace OSS.Http
     /// <summary>
     ///  请求基类
     /// </summary>
-    public class OsRest:HttpClient
+    public static class OsRest
     {
         private const string _lineBreak = "\r\n";
-        public  Encoding Encoding { get; set; } = Encoding.UTF8;
+        public static Encoding Encoding { get; set; } = Encoding.UTF8;
         //private static readonly Dictionary<string,Action<HttpContentHeaders,string>> _notCanAddContentHeaderDics
         //    =new Dictionary<string, Action<HttpContentHeaders, string>>();
-        /// <summary>
-        ///  构造函数
-        /// </summary>
-        public OsRest():this(new HttpClientHandler(),true) 
-        {
-        }
-        /// <summary>
-        ///   构造函数
-        /// </summary>
-        /// <param name="handler"></param>
-        public OsRest(HttpMessageHandler handler) 
-            : this(handler,true)
-        {
-        }
-        /// <summary>
-        ///   构造函数
-        /// </summary>
-        /// <param name="handler"></param>
-        /// <param name="disposeHandler"></param>
-        public OsRest(HttpMessageHandler handler,bool disposeHandler) : base(handler, disposeHandler)
-        {
-        }
+
+        #region   扩展方法
 
         /// <summary>
         ///  执行请求方法
         /// </summary>
+        /// <param name="client"></param>
+        /// <param name="request"></param>
+        /// <returns></returns>
+        public static Task<HttpResponseMessage> RestSend(this HttpClient client, OsHttpRequest request)
+        {
+            return RestSend(client, request, HttpCompletionOption.ResponseContentRead, CancellationToken.None);
+        }
+
+
+        /// <summary>
+        ///  执行请求方法
+        /// </summary>
+        /// <param name="client"></param>
+        /// <param name="request"></param>
+        /// <param name="completionOption"></param>
+        /// <returns></returns>
+        public static Task<HttpResponseMessage> RestSend(this HttpClient client, OsHttpRequest request,
+            HttpCompletionOption completionOption)
+        {
+           return  RestSend(client, request, completionOption, CancellationToken.None);
+        }
+
+
+        /// <summary>
+        ///  执行请求方法
+        /// </summary>
+        /// <param name="client"></param>
         /// <param name="request"></param>
         /// <param name="completionOption"></param>
         /// <param name="cancellationToken"></param>
         /// <returns></returns>
-        public Task<HttpResponseMessage> RestSend(OsHttpRequest request,
-            HttpCompletionOption completionOption = HttpCompletionOption.ResponseContentRead,
-            CancellationToken cancellationToken = new CancellationToken())
+        public static Task<HttpResponseMessage> RestSend(this HttpClient client, OsHttpRequest request,
+            HttpCompletionOption completionOption ,
+            CancellationToken cancellationToken)
         {
             var reqMsg = ConfigureReqMsg(request);
-
-            if (request.TimeOutMilSeconds > 0)
-                this.Timeout = TimeSpan.FromMilliseconds(request.TimeOutMilSeconds);
             
-            return SendAsync(reqMsg, completionOption, cancellationToken);
+            if (request.TimeOutMilSeconds > 0)
+                client.Timeout = TimeSpan.FromMilliseconds(request.TimeOutMilSeconds);
+            
+            return client.SendAsync(reqMsg, completionOption, cancellationToken);
         }
-        
+
+
+        #endregion
+
         #region  配置 ReqMsg信息
 
         /// <summary>
         /// 配置请求
         /// </summary>
         /// <returns></returns>
-        public HttpRequestMessage ConfigureReqMsg(OsHttpRequest request)
+        public static HttpRequestMessage ConfigureReqMsg(OsHttpRequest request)
         {
             var reqMsg = new HttpRequestMessage();
 
@@ -96,7 +106,7 @@ namespace OSS.Http
         /// <param name="reqMsg"></param>
         /// <param name="req"></param>
         /// <returns></returns>
-        private void ConfigReqContent(HttpRequestMessage reqMsg, OsHttpRequest req)
+        private static void ConfigReqContent(HttpRequestMessage reqMsg, OsHttpRequest req)
         {
             if (req.HttpMothed == HttpMothed.GET) return;
             string boundary =null;
@@ -139,7 +149,7 @@ namespace OSS.Http
         /// <param name="memory"></param>
         /// <param name="request"></param>
         /// <param name="boundary"></param>
-        private void WriteMultipartFormData(Stream memory, OsHttpRequest request, string boundary)
+        private static void WriteMultipartFormData(Stream memory, OsHttpRequest request, string boundary)
         {
             foreach (var param in request.FormParameters)
             {
@@ -228,7 +238,7 @@ namespace OSS.Http
         /// <param name="stream"></param>
         /// <param name="toWrite"></param>
         /// <returns>写入的字节数量</returns>
-        private  void WriteStringTo(Stream stream, string toWrite)
+        private static void WriteStringTo(Stream stream, string toWrite)
         {
             var bytes = Encoding.GetBytes(toWrite);
             stream.Write(bytes, 0, bytes.Length);

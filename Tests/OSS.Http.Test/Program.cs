@@ -44,6 +44,7 @@ namespace OSS.Http.Test
             var req = new OsHttpRequest();
             req.AddressUrl = "http://localhost:59489/";
             req.HttpMothed = HttpMothed.POST;
+          
             //  文件上传测试
             //var imageFile = new FileStream("E:\\111.png", FileMode.Open, FileAccess.Read);
             //req.FileParameters.Add(new FileParameter("media", imageFile, "111.png", "image/jpeg")); 
