@@ -25,14 +25,26 @@ namespace OSS.Http.Test
             //var content = result.Result.Content.ReadAsStringAsync();
             //content.Wait();
 
-            var result= Test().WaitResult();
-            var con = result.Content.ReadAsStringAsync().WaitResult();
-            Console.Write(con);
+            //var result= Test().WaitResult();
+            //var con = result.Content.ReadAsStringAsync().WaitResult();
+            //Console.Write(con);
+
+            var result = GetTest().WaitResult();
+            var resp = result.Content.ReadAsStringAsync().WaitResult();
+            Console.Write(resp);
 
             Console.ReadLine();
         }
 
 
+        private static async Task<HttpResponseMessage> GetTest()
+        {
+            var req = new OsHttpRequest();
+            req.AddressUrl = "https://api.weixin.qq.com/sns/oauth2/access_token?appid=wxaa9e6cb3f03afa97&secret=0fc0c6f735a90fda1df5fc840e010144&code=ssss&grant_type=authorization_code";
+            req.HttpMothed = HttpMothed.GET;
+            
+            return await req.RestSend();
+        }
         private static async Task<HttpResponseMessage> Test()
         {
             //OsHttpRequest req = new OsHttpRequest();
