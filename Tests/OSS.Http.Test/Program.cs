@@ -3,6 +3,7 @@ using System;
 using System.IO;
 using System.Net.Http;
 using System.Threading.Tasks;
+using OSS.Http.Extention;
 using OSS.Http.Mos;
 
 namespace OSS.Http.Test

@@ -19,12 +19,12 @@ using System.Threading;
 using System.Threading.Tasks;
 using OSS.Http.Mos;
 
-namespace OSS.Http
+namespace OSS.Http.Extention
 {
     /// <summary>
     ///  请求基类
     /// </summary>
-    public static class OsRest
+    public static class HttpClientExtention
     {
         private const string _lineBreak = "\r\n";
         public static Encoding Encoding { get; set; } = Encoding.UTF8;

@@ -18,16 +18,16 @@ using System.Threading;
 using System.Threading.Tasks;
 using OSS.Http.Mos;
 
-namespace OSS.Http
+namespace OSS.Http.Extention
 {
     /// <summary>
     /// http请求辅助类
     /// </summary>
-    public static class RestUtil
+    public static class RestExtention
     {
         private static readonly HttpClient m_Client;
 
-        static RestUtil()
+        static RestExtention()
         {
             m_Client = new HttpClient(GetClientHandler());
         }
@@ -83,11 +83,13 @@ namespace OSS.Http
         /// <returns></returns>
         private static HttpClientHandler GetClientHandler()
         {
-            var reqHandler = new HttpClientHandler();
+            var reqHandler = new HttpClientHandler
+            {
+                AllowAutoRedirect = true,
+                MaxAutomaticRedirections = 5,
+                UseCookies = true
+            };
 
-            reqHandler.AllowAutoRedirect = true;
-            reqHandler.MaxAutomaticRedirections = 5;
-            reqHandler.UseCookies = true;
 
             return reqHandler;
         }
