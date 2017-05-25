@@ -1,0 +1,23 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard1.3</TargetFramework>
+    <Authors>Kevin</Authors>
+    <Company>OSSCoder</Company>
+    <Product>OSS系列</Product>
+    <Description>对OSS.Http 的高级封装</Description>
+    <Copyright>OSSCoder</Copyright>
+    <PackageProjectUrl>https://github.com/KevinWG/OSS.Http</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/KevinWG/OSS.Http</RepositoryUrl>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Newtonsoft.Json" Version="10.0.2" />
+    <PackageReference Include="OSS.Common" Version="1.1.3.26" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\OSS.Http\OSS.Http.csproj" />
+  </ItemGroup>
+
+</Project>
