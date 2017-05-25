@@ -1,4 +1,16 @@
-﻿using System;
+﻿#region Copyright (C) 2016 Kevin (OSS开源系列) 公众号：osscoder
+
+/***************************************************************************
+*　　	文件功能描述：OSS.Http.Extention - 通用请求结果扩展
+*
+*　　	创建人： Kevin
+*       创建人Email：1985088337@qq.com
+*       创建时间： 2017-5-25
+*       
+*****************************************************************************/
+
+#endregion
+using System;
 using System.Net.Http;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
@@ -10,6 +22,9 @@ using OSS.Http.Mos;
 
 namespace OSS.Http.Extention
 {
+    /// <summary>
+    /// 通用请求结果扩展
+    /// </summary>
     public static class OsRestExtention
     {
         /// <summary>
