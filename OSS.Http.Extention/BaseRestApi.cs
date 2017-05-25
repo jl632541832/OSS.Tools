@@ -60,8 +60,7 @@ namespace OSS.Http.Extention
         }
 
         #endregion
-
-
+        
         #region  单例实体
 
         private static object _lockObj=new object();
@@ -88,8 +87,7 @@ namespace OSS.Http.Extention
         }
         
         #endregion
-
-
+        
         /// <summary>
         ///   当前模块名称
         ///     方便日志追踪
@@ -103,10 +101,12 @@ namespace OSS.Http.Extention
         /// <param name="request">远程请求组件的request基本信息</param>
         /// <param name="funcFormat">获取实体格式化方法</param>
         /// <returns>实体类型</returns>
-        public static async Task<T> RestCommon<T>(OsHttpRequest request,
+        public virtual async Task<T> RestCommon<T>(OsHttpRequest request,
             Func<HttpResponseMessage, Task<T>> funcFormat = null)
-            where T : ResultMo, new() => await request.RestCommon(funcFormat, ModuleName);
-
-
+            where T : ResultMo, new()
+        {
+            return await request.RestCommon(funcFormat, ModuleName);
+        }
+        
     }
 }

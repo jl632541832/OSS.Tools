@@ -9,6 +9,8 @@
     <Copyright>OSSCoder</Copyright>
     <PackageProjectUrl>https://github.com/KevinWG/OSS.Http</PackageProjectUrl>
     <RepositoryUrl>https://github.com/KevinWG/OSS.Http</RepositoryUrl>
+    <Version>1.0.1</Version>
+    <PackageReleaseNotes>BaseRestApi执行方法可重写</PackageReleaseNotes>
   </PropertyGroup>
 
   <ItemGroup>
