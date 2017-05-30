@@ -20,9 +20,21 @@ using OSS.Http.Mos;
 
 namespace OSS.Http.Extention
 {
+    /// <summary>
+    ///   请求基类
+    /// </summary>
+    /// <typeparam name="RestType"></typeparam>
     public class BaseRestApi<RestType>: BaseRestApi<RestType, AppConfig>
         where RestType : class, new()
     {
+        /// <summary>
+        ///  构造函数
+        /// </summary>
+        /// <param name="config"></param>
+        public BaseRestApi(AppConfig config = null) : base(config)
+        {
+
+        }
     }
 
     /// <summary>
