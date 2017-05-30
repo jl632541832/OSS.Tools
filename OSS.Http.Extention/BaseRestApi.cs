@@ -15,7 +15,7 @@ using System;
 using System.Net.Http;
 using System.Threading.Tasks;
 using OSS.Common.ComModels;
-using OSS.Common.Modules;
+using OSS.Common.Plugs;
 using OSS.Http.Mos;
 
 namespace OSS.Http.Extention

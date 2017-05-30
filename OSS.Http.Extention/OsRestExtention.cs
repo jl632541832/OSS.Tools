@@ -16,7 +16,7 @@ using System.Threading.Tasks;
 using Newtonsoft.Json;
 using OSS.Common.ComModels;
 using OSS.Common.ComModels.Enums;
-using OSS.Common.Modules;
+using OSS.Common.Plugs;
 using OSS.Common.Plugs.LogPlug;
 using OSS.Http.Mos;
 
@@ -56,10 +56,10 @@ namespace OSS.Http.Extention
             }
             catch (Exception ex)
             {
-                t = new T() { Ret = (int)ResultTypes.InnerError, Message = ex.Message };
+                t = new T() { ret = (int)ResultTypes.InnerError, message = ex.Message };
                 LogUtil.Error(string.Concat("基类请求出错，错误信息：", ex.Message), "RestCommon",moduleName);
             }
-            return t ?? new T() { Ret = 0 };
+            return t ?? new T() { ret = 0 };
         }
 
     }
