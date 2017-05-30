@@ -20,12 +20,19 @@ using OSS.Http.Mos;
 
 namespace OSS.Http.Extention
 {
+    public class BaseRestApi<RestType>: BaseRestApi<RestType, AppConfig>
+        where RestType : class, new()
+    {
+    }
+
     /// <summary>
     /// 通用App接口请求基类
     /// </summary>
     /// <typeparam name="RestType"></typeparam>
-    public class BaseRestApi<RestType>
-        where RestType:class, new()
+    /// <typeparam name="TConfigType"></typeparam>
+    public class BaseRestApi<RestType, TConfigType>
+        where RestType : class, new()
+        where TConfigType : class, new()
     {
 
         #region  接口配置信息
@@ -33,25 +40,20 @@ namespace OSS.Http.Extention
         /// <summary>
         ///   默认配置信息，如果实例中的配置为空会使用当前配置信息
         /// </summary>
-        public static AppConfig DefaultConfig { get; set; }
+        public static TConfigType DefaultConfig { get; set; }
 
-        private readonly AppConfig _config;
+        private readonly TConfigType _config;
 
         /// <summary>
         /// 微信接口配置
         /// </summary>
-        public AppConfig ApiConfig => _config ?? DefaultConfig;
-
-        /// <summary>
-        /// 微信api接口地址
-        /// </summary>
-        protected const string m_ApiUrl = "https://api.weixin.qq.com";
+        public TConfigType ApiConfig => _config ?? DefaultConfig;
 
         /// <summary>
         /// 构造函数
         /// </summary>
         /// <param name="config"></param>
-        public BaseRestApi(AppConfig config=null)
+        public BaseRestApi(TConfigType config = null)
         {
             if (config == null && DefaultConfig == null)
                 throw new ArgumentNullException(nameof(config),
@@ -60,12 +62,13 @@ namespace OSS.Http.Extention
         }
 
         #endregion
-        
+
         #region  单例实体
 
-        private static object _lockObj=new object();
+        private static object _lockObj = new object();
 
         private static RestType _instance;
+
         /// <summary>
         ///   接口请求实例  
         ///  当 DefaultConfig 设值之后，可以直接通过当前对象调用
@@ -85,9 +88,9 @@ namespace OSS.Http.Extention
             }
 
         }
-        
+
         #endregion
-        
+
         /// <summary>
         ///   当前模块名称
         ///     方便日志追踪
@@ -104,9 +107,11 @@ namespace OSS.Http.Extention
         public virtual async Task<T> RestCommon<T>(OsHttpRequest request,
             Func<HttpResponseMessage, Task<T>> funcFormat = null)
             where T : ResultMo, new()
-        {
-            return await request.RestCommon(funcFormat, ModuleName);
-        }
-        
+            => await request.RestCommon(funcFormat, ModuleName);
+
+
     }
+
+
+
 }

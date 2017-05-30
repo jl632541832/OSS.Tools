@@ -9,8 +9,16 @@
     <Copyright>OSSCoder</Copyright>
     <PackageProjectUrl>https://github.com/KevinWG/OSS.Http</PackageProjectUrl>
     <RepositoryUrl>https://github.com/KevinWG/OSS.Http</RepositoryUrl>
-    <Version>1.0.1</Version>
-    <PackageReleaseNotes>BaseRestApi执行方法可重写</PackageReleaseNotes>
+    <Version>1.0.2.1</Version>
+    <PackageReleaseNotes>添加基类</PackageReleaseNotes>
+    <AssemblyVersion>1.0.2.1</AssemblyVersion>
+    <FileVersion>1.0.2.1</FileVersion>
+    <PackageIconUrl>http://img1.static.osscoder.com/logo.jpg</PackageIconUrl>
+    <PackageLicenseUrl>https://github.com/KevinWG/OSS.Http/blob/master/LICENSE</PackageLicenseUrl>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <DocumentationFile>bin\Release\netstandard1.3\OSS.Http.Extention.xml</DocumentationFile>
   </PropertyGroup>
 
   <ItemGroup>
