@@ -87,7 +87,8 @@ namespace OSS.Http.Extention
             {
                 AllowAutoRedirect = true,
                 MaxAutomaticRedirections = 5,
-                UseCookies = true
+                UseCookies = false,
+                UseProxy = false
             };
 
 
