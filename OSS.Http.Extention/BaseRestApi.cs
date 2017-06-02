@@ -12,11 +12,8 @@
 #endregion
 
 using System;
-using System.Net.Http;
-using System.Threading.Tasks;
 using OSS.Common.ComModels;
 using OSS.Common.Plugs;
-using OSS.Http.Mos;
 
 namespace OSS.Http.Extention
 {
@@ -108,18 +105,6 @@ namespace OSS.Http.Extention
         ///     方便日志追踪
         /// </summary>
         protected static string ModuleName { get; set; } = ModuleNames.Default;
-
-        /// <summary>
-        /// 处理远程请求方法，并返回需要的实体
-        /// </summary>
-        /// <typeparam name="T">需要返回的实体类型</typeparam>
-        /// <param name="request">远程请求组件的request基本信息</param>
-        /// <param name="client">自定义HttpClient</param>
-        /// <returns>实体类型</returns>
-        public virtual async Task<T> RestCommonJson<T>(OsHttpRequest request, HttpClient client = null)
-            where T : ResultMo, new()
-            => await request.RestCommonJson<T>(client, ModuleName);
-        
     }
 
 
