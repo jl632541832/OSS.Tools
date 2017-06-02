@@ -27,6 +27,9 @@ namespace OSS.Http.Extention
     public static class HttpClientExtention
     {
         private const string _lineBreak = "\r\n";
+        /// <summary>
+        ///   编码格式
+        /// </summary>
         public static Encoding Encoding { get; set; } = Encoding.UTF8;
         //private static readonly Dictionary<string,Action<HttpContentHeaders,string>> _notCanAddContentHeaderDics
         //    =new Dictionary<string, Action<HttpContentHeaders, string>>();

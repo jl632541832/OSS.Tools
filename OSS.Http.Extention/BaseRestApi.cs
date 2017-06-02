@@ -24,7 +24,7 @@ namespace OSS.Http.Extention
     ///   请求基类
     /// </summary>
     /// <typeparam name="RestType"></typeparam>
-    public class BaseRestApi<RestType>: BaseRestApi<RestType, AppConfig>
+    public class BaseRestApi<RestType> : BaseRestApi<RestType, AppConfig>
         where RestType : class, new()
     {
         /// <summary>
@@ -114,14 +114,12 @@ namespace OSS.Http.Extention
         /// </summary>
         /// <typeparam name="T">需要返回的实体类型</typeparam>
         /// <param name="request">远程请求组件的request基本信息</param>
-        /// <param name="funcFormat">获取实体格式化方法</param>
+        /// <param name="client">自定义HttpClient</param>
         /// <returns>实体类型</returns>
-        public virtual async Task<T> RestCommon<T>(OsHttpRequest request,
-            Func<HttpResponseMessage, Task<T>> funcFormat = null)
+        public virtual async Task<T> RestCommonJson<T>(OsHttpRequest request, HttpClient client = null)
             where T : ResultMo, new()
-            => await request.RestCommon(funcFormat, ModuleName);
-
-
+            => await request.RestCommonJson<T>(client, ModuleName);
+        
     }
 
 
