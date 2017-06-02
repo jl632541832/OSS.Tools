@@ -2,17 +2,19 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard1.1</TargetFramework>
-    <Version>2.2.0.1</Version>
+    <Version>2.2.0.3</Version>
     <Authors>Kevin</Authors>
     <Company>OSSCoder</Company>
     <Product>OSS系列</Product>
     <Description>通用Http请求</Description>
     <PackageProjectUrl>https://github.com/KevinWG/OSS.Http</PackageProjectUrl>
     <RepositoryUrl>https://github.com/KevinWG/OSS.Http</RepositoryUrl>
-    <PackageIconUrl>http://7xil4i.com1.z0.glb.clouddn.com/osscoder_icon.jpg</PackageIconUrl>
-    <AssemblyVersion>2.2.0.1</AssemblyVersion>
-    <FileVersion>2.2.0.1</FileVersion>
-    <PackageReleaseNotes>修改命名空间</PackageReleaseNotes>
+    <PackageIconUrl>http://img1.static.osscoder.com/logo.jpg</PackageIconUrl>
+    <AssemblyVersion>2.2.0.3</AssemblyVersion>
+    <FileVersion>2.2.0.3</FileVersion>
+    <PackageReleaseNotes>关闭默认代理，完善注释</PackageReleaseNotes>
+    <PackageLicenseUrl>https://github.com/KevinWG/OSS.Http/blob/master/LICENSE</PackageLicenseUrl>
+    <Copyright>OSSCoder</Copyright>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
