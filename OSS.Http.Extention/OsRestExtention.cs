@@ -49,10 +49,10 @@ namespace OSS.Http.Extention
             }
             catch (Exception ex)
             {
-                t = new T() {ret = (int) ResultTypes.InnerError, message = ex.Message};
+                t = new T() {ret = (int) ResultTypes.InnerError, msg = ex.Message};
                 LogUtil.Error(string.Concat("基类请求出错，错误信息：", ex.Message), "RestCommon", moduleName);
             }
-            return t ?? new T() {ret = -1,message = "未发现结果"};
+            return t ?? new T() {ret = -1,msg = "未发现结果"};
         }
 
 
@@ -69,7 +69,7 @@ namespace OSS.Http.Extention
                 return new TResp()
                 {
                     ret = -(int) resp.StatusCode,
-                    message = resp.ReasonPhrase
+                    msg = resp.ReasonPhrase
                 };
 
             var contentStr = await resp.Content.ReadAsStringAsync();
