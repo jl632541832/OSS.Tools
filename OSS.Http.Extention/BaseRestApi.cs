@@ -12,6 +12,7 @@
 #endregion
 
 using System;
+using System.Threading;
 using OSS.Common.ComModels;
 using OSS.Common.Plugs;
 
@@ -51,22 +52,49 @@ namespace OSS.Http.Extention
         /// </summary>
         public static TConfigType DefaultConfig { get; set; }
 
-        private readonly TConfigType _config;
+        private static readonly AsyncLocal<TConfigType> _contextConfig=new AsyncLocal<TConfigType>();
+            private readonly TConfigType _config;
+
+        /// <summary>
+        ///  设置上下文配置信息，当前配置在当前上下文中有效
+        /// </summary>
+        /// <param name="config"></param>
+        public static void SetContextConfig(TConfigType config)
+        {
+            _contextConfig.Value = config;
+        }
 
         /// <summary>
         /// 微信接口配置
         /// </summary>
-        public TConfigType ApiConfig => _config ?? DefaultConfig;
+        public TConfigType ApiConfig
+        {
+            get
+            {
+                if (_config!=null)
+                {
+                    return _config;
+                }
 
+                if (_contextConfig.Value!=null)
+                {
+                    return _contextConfig.Value;
+                }
+
+                if (DefaultConfig!=null)
+                {
+                    return DefaultConfig;
+                }
+                throw new ArgumentNullException("当前配置信息为空，请通过SetContextConfig方法设置,或者构造函数中赋值，或者也可以程序入口处给 DefaultConfig 赋值");
+            }
+        }
+       
         /// <summary>
         /// 构造函数
         /// </summary>
         /// <param name="config"></param>
         public BaseRestApi(TConfigType config = null)
         {
-            if (config == null && DefaultConfig == null)
-                throw new ArgumentNullException(nameof(config),
-                    "构造函数中的config 和 全局DefaultConfig 配置信息同时为空，请通过构造函数赋值，或者在程序入口处给 DefaultConfig 赋值！");
             _config = config;
         }
 
@@ -106,7 +134,4 @@ namespace OSS.Http.Extention
         /// </summary>
         protected static string ModuleName { get; set; } = ModuleNames.Default;
     }
-
-
-
 }

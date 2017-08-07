@@ -9,11 +9,27 @@ namespace OSS.Http.Tests
 {
     public class UnitTest1
     {
+
+        public class StaticTest
+        {
+            public static int Count { get; set; }
+        }
+
+
+
+        public class SubStaticTest :StaticTest
+        {
+            
+        }
+
+
         [Fact]
         public void Test1()
         {
 
+            StaticTest.Count = 2;
 
+            var testCount = SubStaticTest.Count;
         }
 
         private static async Task<HttpResponseMessage> GetTest()
