@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netstandard1.3</TargetFramework>
+    <TargetFramework>netstandard2.0</TargetFramework>
     <Authors>Kevin</Authors>
     <Company>OSSCoder</Company>
     <Product>OSS系列</Product>
@@ -9,21 +9,21 @@
     <Copyright>OSSCoder</Copyright>
     <PackageProjectUrl>https://github.com/KevinWG/OSS.Http</PackageProjectUrl>
     <RepositoryUrl>https://github.com/KevinWG/OSS.Http</RepositoryUrl>
-    <Version>1.0.3.6</Version>
-    <PackageReleaseNotes>优化属性</PackageReleaseNotes>
-    <AssemblyVersion>1.0.3.6</AssemblyVersion>
-    <FileVersion>1.0.3.6</FileVersion>
+    <Version>1.2.0</Version>
+    <PackageReleaseNotes>升级.Net Standard 2.0</PackageReleaseNotes>
+    <AssemblyVersion>1.2.0.0</AssemblyVersion>
+    <FileVersion>1.2.0.0</FileVersion>
     <PackageIconUrl>http://img1.static.osscoder.com/logo.jpg</PackageIconUrl>
     <PackageLicenseUrl>https://github.com/KevinWG/OSS.Http/blob/master/LICENSE</PackageLicenseUrl>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-    <DocumentationFile>bin\Release\netstandard1.3\OSS.Http.Extention.xml</DocumentationFile>
+    <DocumentationFile>bin\Release\netstandard2.0\OSS.Http.Extention.xml</DocumentationFile>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Newtonsoft.Json" Version="10.0.2" />
-    <PackageReference Include="OSS.Common" Version="1.1.5.53" />
+    <PackageReference Include="Newtonsoft.Json" Version="10.0.3" />
+    <PackageReference Include="OSS.Common" Version="1.2.0" />
   </ItemGroup>
 
   <ItemGroup>
