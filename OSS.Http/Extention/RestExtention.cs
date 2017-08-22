@@ -25,13 +25,7 @@ namespace OSS.Http.Extention
     /// </summary>
     public static class RestExtention
     {
-        private static readonly HttpClient m_Client;
-
-        static RestExtention()
-        {
-            m_Client = new HttpClient(GetClientHandler());
-        }
-
+     
         #region   扩展方法
 
         /// <summary>
@@ -71,28 +65,21 @@ namespace OSS.Http.Extention
             CancellationToken token,
             HttpClient client = null)
         {
-            return (client ?? m_Client).RestSend(request, completionOption, token);
+            return (client ?? GetDefaultClient()).RestSend(request, completionOption, token);
         }
 
         #endregion
 
-
+        private static HttpClient _Client=null;
         /// <summary>
         /// 配置请求处理类
         /// </summary>
         /// <returns></returns>
-        private static HttpClientHandler GetClientHandler()
+        private static HttpClient GetDefaultClient()
         {
-            var reqHandler = new HttpClientHandler
-            {
-                AllowAutoRedirect = true,
-                MaxAutomaticRedirections = 5,
-                UseCookies = false,
-                UseProxy = false
-            };
+            if (_Client != null) return _Client;
 
-
-            return reqHandler;
+            return _Client = new HttpClient();
         }
     }
 }
