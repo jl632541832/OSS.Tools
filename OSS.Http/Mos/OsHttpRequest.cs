@@ -41,7 +41,7 @@ namespace OSS.Http.Mos
         /// <summary>
         /// 请求方式
         /// </summary>
-        public HttpMothed HttpMothed { get; set; }
+        public HttpMothed HttpMothed { get; set; } = HttpMothed.GET;
 
         ///// <summary>
         /////  是否允许自动重定向
@@ -57,7 +57,12 @@ namespace OSS.Http.Mos
         ///// <summary>
         /////   是否使用cookie 
         ///// </summary>
-        //public bool UseCookies { get; set; }
+        //public bool UseCookies { get; set; } = false;
+
+        ///// <summary>
+        /////  是否使用代理
+        ///// </summary>
+        //public bool UseProxy { get; set; } = true;
 
         /// <summary>
         ///   reqMessage 设置方法
@@ -95,5 +100,6 @@ namespace OSS.Http.Mos
         ///    超时时间（毫秒）
         /// </summary>
         public int TimeOutMilSeconds { get; set; }
+
     }
 }

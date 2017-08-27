@@ -46,8 +46,7 @@ namespace OSS.Http.Extention
         {
             return RestSend(client, request, HttpCompletionOption.ResponseContentRead, CancellationToken.None);
         }
-
-
+        
         /// <summary>
         ///  执行请求方法
         /// </summary>
@@ -60,8 +59,7 @@ namespace OSS.Http.Extention
         {
            return  RestSend(client, request, completionOption, CancellationToken.None);
         }
-
-
+        
         /// <summary>
         ///  执行请求方法
         /// </summary>
@@ -75,7 +73,7 @@ namespace OSS.Http.Extention
             CancellationToken cancellationToken)
         {
             var reqMsg = ConfigureReqMsg(request);
-            
+
             if (request.TimeOutMilSeconds > 0)
                 client.Timeout = TimeSpan.FromMilliseconds(request.TimeOutMilSeconds);
             

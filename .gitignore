@@ -58,6 +58,7 @@ ipch/
 *.psess
 *.vsp
 *.vspx
+.vs/
 
 # Guidance Automation Toolkit
 *.gpState
@@ -149,4 +150,4 @@ $RECYCLE.BIN/
 
 # Mac crap
 .DS_Store
-/packages
+packages
