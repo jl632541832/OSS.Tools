@@ -6,6 +6,11 @@
 *.user
 *.sln.docstates
 
+OSS.Http.Extention.csproj
+OSS.Http.sln
+OSS.Http.csproj
+
+
 # Build results
 
 [Dd]ebug/
