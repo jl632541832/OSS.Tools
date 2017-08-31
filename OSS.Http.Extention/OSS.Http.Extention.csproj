@@ -10,9 +10,9 @@
     <PackageProjectUrl>https://github.com/KevinWG/OSS.Http</PackageProjectUrl>
     <RepositoryUrl>https://github.com/KevinWG/OSS.Http</RepositoryUrl>
     <Version>1.2.0</Version>
-    <PackageReleaseNotes>升级.Net Standard 2.0</PackageReleaseNotes>
-    <AssemblyVersion>1.2.0.0</AssemblyVersion>
-    <FileVersion>1.2.0.0</FileVersion>
+    <PackageReleaseNotes>修改对.net framework 的特殊配置</PackageReleaseNotes>
+    <AssemblyVersion>1.2.6.0</AssemblyVersion>
+    <FileVersion>1.2.6.0</FileVersion>
     <PackageIconUrl>http://img1.static.osscoder.com/logo.jpg</PackageIconUrl>
     <PackageLicenseUrl>https://github.com/KevinWG/OSS.Http/blob/master/LICENSE</PackageLicenseUrl>
   </PropertyGroup>
