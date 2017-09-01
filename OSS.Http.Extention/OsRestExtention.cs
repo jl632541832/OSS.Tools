@@ -44,11 +44,8 @@ namespace OSS.Http.Extention
             T t;
             try
             {
-#if NETFW
-                var resp = request.RestSend(client).Result;
-#else
+
                 var resp = await request.RestSend(client);
-#endif
                 t = await formatFunc(resp);
             }
             catch (Exception ex)
