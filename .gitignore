@@ -6,6 +6,11 @@
 *.user
 *.sln.docstates
 
+OSS.Http.Extention.csproj
+OSS.Http.sln
+OSS.Http.csproj
+
+
 # Build results
 
 [Dd]ebug/
@@ -151,3 +156,10 @@ $RECYCLE.BIN/
 # Mac crap
 .DS_Store
 packages
+/OSS.Http.NET46.sln
+/OSS.Http/OSS.Http.NET46.csproj
+/OSS.Http/Properties
+/OSS.Http.Extention/OSS.Http.Extention.All.nupkg
+/OSS.Http.Extention/OSS.Http.Extention.NET46.csproj
+/OSS.Http.Extention/packages.config
+/OSS.Http.Extention/Properties
