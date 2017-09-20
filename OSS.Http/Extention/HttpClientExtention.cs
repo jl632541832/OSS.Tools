@@ -109,7 +109,12 @@ namespace OSS.Http.Extention
         /// <returns></returns>
         private static void ConfigReqContent(HttpRequestMessage reqMsg, OsHttpRequest req)
         {
-            if (req.HttpMothed == HttpMothed.GET) return;
+            if (req.HttpMothed == HttpMothed.GET)
+            {
+                req.RequestSet?.Invoke(reqMsg);
+                return;
+            }
+
             string boundary =null;
             if (req.HasFile)
             {
@@ -123,17 +128,17 @@ namespace OSS.Http.Extention
             }
             else
             {
-                string data = GetNormalFormData(req);
+                var data = GetNormalFormData(req);
                
                 reqMsg.Content = new StringContent(data);
                 reqMsg.Content.Headers.ContentType = new MediaTypeHeaderValue("application/x-www-form-urlencoded");
             }
+
             req.RequestSet?.Invoke(reqMsg);   //  位置不能变，防止外部修改 Content-Type
-            if (req.HasFile)
-            {
-                reqMsg.Content.Headers.Remove("Content-Type");
-                reqMsg.Content.Headers.TryAddWithoutValidation("Content-Type", $"multipart/form-data;boundary={boundary}");
-            }
+            if (!req.HasFile) return;
+
+            reqMsg.Content.Headers.Remove("Content-Type");
+            reqMsg.Content.Headers.TryAddWithoutValidation("Content-Type", $"multipart/form-data;boundary={boundary}");
         }
 
         #endregion
