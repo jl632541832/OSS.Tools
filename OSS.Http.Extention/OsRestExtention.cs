@@ -53,16 +53,16 @@ namespace OSS.Http.Extention
                 t = new T() {ret = (int) ResultTypes.InnerError, msg = ex.Message};
                 LogUtil.Error(string.Concat("基类请求出错，错误信息：", ex.Message), "RestCommon", moduleName);
             }
-            return t ?? new T() {ret = -1,msg = "未发现结果"};
+            return t ?? new T() {ret = -1, msg = "未发现结果"};
         }
 
 
-       /// <summary>
-       ///  使用json格式化内容方法
-       /// </summary>
-       /// <typeparam name="TResp"></typeparam>
-       /// <param name="resp"></param>
-       /// <returns></returns>
+        /// <summary>
+        ///  使用json格式化内容方法
+        /// </summary>
+        /// <typeparam name="TResp"></typeparam>
+        /// <param name="resp"></param>
+        /// <returns></returns>
         private static async Task<TResp> JsonFormat<TResp>(HttpResponseMessage resp)
             where TResp : ResultMo, new()
         {
@@ -87,6 +87,10 @@ namespace OSS.Http.Extention
         /// <returns></returns>
         public static async Task<TResp> RestCommonJson<TResp>(this OsHttpRequest request, HttpClient client = null,
             string moduleName = ModuleNames.Default)
-            where TResp : ResultMo, new() => await RestCommon(request, JsonFormat<TResp>, client, moduleName);
+            where TResp : ResultMo, new()
+        {
+            return await RestCommon(request, JsonFormat<TResp>, client, moduleName);
+        }
+
     }
 }
