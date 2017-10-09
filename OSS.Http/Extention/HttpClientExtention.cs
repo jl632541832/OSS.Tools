@@ -91,11 +91,11 @@ namespace OSS.Http.Extention
         /// <returns></returns>
         public static HttpRequestMessage ConfigureReqMsg(OsHttpRequest request)
         {
-            var reqMsg = new HttpRequestMessage();
-
-            reqMsg.RequestUri = string.IsNullOrEmpty(request.AddressUrl) ? request.Uri : new Uri(request.AddressUrl);
-            reqMsg.Method = new HttpMethod(request.HttpMothed.ToString());
-
+            var reqMsg = new HttpRequestMessage
+            {
+                RequestUri = string.IsNullOrEmpty(request.AddressUrl) ? request.Uri : new Uri(request.AddressUrl),
+                Method = new HttpMethod(request.HttpMothed.ToString())
+            };
             ConfigReqContent(reqMsg, request); //  配置内容
             return reqMsg;
         }
@@ -224,12 +224,11 @@ namespace OSS.Http.Extention
                     formstring.Append("&");
                 formstring.AppendFormat(p.ToString());
             }
-            if (!string.IsNullOrEmpty(request.CustomBody))
-            {
-                if (formstring.Length > 1)
-                    formstring.Append("&");
-                formstring.Append(request.CustomBody);
-            }
+            if (string.IsNullOrEmpty(request.CustomBody)) return formstring.ToString();
+
+            if (formstring.Length > 1)
+                formstring.Append("&");
+            formstring.Append(request.CustomBody);
             return formstring.ToString();
         }
         #endregion
@@ -256,9 +255,9 @@ namespace OSS.Http.Extention
         /// <returns></returns>
         private static string GetBoundary()
         {
-            string pattern = "abcdefghijklmnopqrstuvwxyz0123456789";
-            StringBuilder boundaryBuilder = new StringBuilder();
-            Random rnd = new Random();
+            const string pattern = "abcdefghijklmnopqrstuvwxyz0123456789";
+            var boundaryBuilder = new StringBuilder();
+            var rnd = new Random();
             for (int i = 0; i < 10; i++)
             {
                 var index = rnd.Next(pattern.Length);

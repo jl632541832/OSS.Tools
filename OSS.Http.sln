@@ -1,13 +1,13 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.26430.6
+VisualStudioVersion = 15.0.26730.16
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OSS.Http", "OSS.Http\OSS.Http.csproj", "{D7222211-6517-4316-9EE5-51A459418A5D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OSS.Http.Extention", "OSS.Http.Extention\OSS.Http.Extention.csproj", "{2CA1F706-2E29-485C-BD89-3ADE55272D8C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OSS.Http.Extention", "OSS.Http.Extention\OSS.Http.Extention.csproj", "{2CA1F706-2E29-485C-BD89-3ADE55272D8C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OSS.Http.Tests", "OSS.Http.Tests\OSS.Http.Tests.csproj", "{45185D08-39DC-4A79-A251-54ED22E8A862}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OSS.Http.Tests", "OSS.Http.Tests\OSS.Http.Tests.csproj", "{45185D08-39DC-4A79-A251-54ED22E8A862}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -58,5 +58,8 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {134DE297-4739-4C5B-A264-6C1E741D4385}
 	EndGlobalSection
 EndGlobal
