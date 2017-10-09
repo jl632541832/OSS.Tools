@@ -115,30 +115,34 @@ namespace OSS.Http.Extention
                 return;
             }
 
-            string boundary =null;
             if (req.HasFile)
             {
-                boundary = GetBoundary();
+                var boundary =GetBoundary();
 
                 var memory=new MemoryStream();
                 WriteMultipartFormData(memory, req, boundary);
                 memory.Seek(0, SeekOrigin.Begin);//设置指针到起点
                 
                 reqMsg.Content = new StreamContent(memory);
+                req.RequestSet?.Invoke(reqMsg);  
+
+                reqMsg.Content.Headers.Remove("Content-Type");
+                reqMsg.Content.Headers.TryAddWithoutValidation("Content-Type", $"multipart/form-data;boundary={boundary}");
             }
             else
             {
                 var data = GetNormalFormData(req);
                
                 reqMsg.Content = new StringContent(data);
-                reqMsg.Content.Headers.ContentType = new MediaTypeHeaderValue("application/x-www-form-urlencoded");
+                req.RequestSet?.Invoke(reqMsg);
+
+                if (reqMsg.Content.Headers.ContentType==null)
+                {
+                    reqMsg.Content.Headers.ContentType = new MediaTypeHeaderValue("application/x-www-form-urlencoded");
+                }
             }
 
-            req.RequestSet?.Invoke(reqMsg);   //  位置不能变，防止外部修改 Content-Type
-            if (!req.HasFile) return;
-
-            reqMsg.Content.Headers.Remove("Content-Type");
-            reqMsg.Content.Headers.TryAddWithoutValidation("Content-Type", $"multipart/form-data;boundary={boundary}");
+          
         }
 
         #endregion
@@ -258,7 +262,7 @@ namespace OSS.Http.Extention
             const string pattern = "abcdefghijklmnopqrstuvwxyz0123456789";
             var boundaryBuilder = new StringBuilder();
             var rnd = new Random();
-            for (int i = 0; i < 10; i++)
+            for (var i = 0; i < 10; i++)
             {
                 var index = rnd.Next(pattern.Length);
                 boundaryBuilder.Append(pattern[index]);
