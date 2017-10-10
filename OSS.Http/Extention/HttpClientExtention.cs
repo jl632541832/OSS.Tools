@@ -91,11 +91,11 @@ namespace OSS.Http.Extention
         /// <returns></returns>
         public static HttpRequestMessage ConfigureReqMsg(OsHttpRequest request)
         {
-            var reqMsg = new HttpRequestMessage();
-
-            reqMsg.RequestUri = string.IsNullOrEmpty(request.AddressUrl) ? request.Uri : new Uri(request.AddressUrl);
-            reqMsg.Method = new HttpMethod(request.HttpMothed.ToString());
-
+            var reqMsg = new HttpRequestMessage
+            {
+                RequestUri = string.IsNullOrEmpty(request.AddressUrl) ? request.Uri : new Uri(request.AddressUrl),
+                Method = new HttpMethod(request.HttpMothed.ToString())
+            };
             ConfigReqContent(reqMsg, request); //  配置内容
             return reqMsg;
         }
@@ -115,30 +115,34 @@ namespace OSS.Http.Extention
                 return;
             }
 
-            string boundary =null;
             if (req.HasFile)
             {
-                boundary = GetBoundary();
+                var boundary =GetBoundary();
 
                 var memory=new MemoryStream();
                 WriteMultipartFormData(memory, req, boundary);
                 memory.Seek(0, SeekOrigin.Begin);//设置指针到起点
                 
                 reqMsg.Content = new StreamContent(memory);
+                req.RequestSet?.Invoke(reqMsg);  
+
+                reqMsg.Content.Headers.Remove("Content-Type");
+                reqMsg.Content.Headers.TryAddWithoutValidation("Content-Type", $"multipart/form-data;boundary={boundary}");
             }
             else
             {
                 var data = GetNormalFormData(req);
                
                 reqMsg.Content = new StringContent(data);
-                reqMsg.Content.Headers.ContentType = new MediaTypeHeaderValue("application/x-www-form-urlencoded");
+                req.RequestSet?.Invoke(reqMsg);
+
+                if (reqMsg.Content.Headers.ContentType==null)
+                {
+                    reqMsg.Content.Headers.ContentType = new MediaTypeHeaderValue("application/x-www-form-urlencoded");
+                }
             }
 
-            req.RequestSet?.Invoke(reqMsg);   //  位置不能变，防止外部修改 Content-Type
-            if (!req.HasFile) return;
-
-            reqMsg.Content.Headers.Remove("Content-Type");
-            reqMsg.Content.Headers.TryAddWithoutValidation("Content-Type", $"multipart/form-data;boundary={boundary}");
+          
         }
 
         #endregion
@@ -224,12 +228,11 @@ namespace OSS.Http.Extention
                     formstring.Append("&");
                 formstring.AppendFormat(p.ToString());
             }
-            if (!string.IsNullOrEmpty(request.CustomBody))
-            {
-                if (formstring.Length > 1)
-                    formstring.Append("&");
-                formstring.Append(request.CustomBody);
-            }
+            if (string.IsNullOrEmpty(request.CustomBody)) return formstring.ToString();
+
+            if (formstring.Length > 1)
+                formstring.Append("&");
+            formstring.Append(request.CustomBody);
             return formstring.ToString();
         }
         #endregion
@@ -256,10 +259,10 @@ namespace OSS.Http.Extention
         /// <returns></returns>
         private static string GetBoundary()
         {
-            string pattern = "abcdefghijklmnopqrstuvwxyz0123456789";
-            StringBuilder boundaryBuilder = new StringBuilder();
-            Random rnd = new Random();
-            for (int i = 0; i < 10; i++)
+            const string pattern = "abcdefghijklmnopqrstuvwxyz0123456789";
+            var boundaryBuilder = new StringBuilder();
+            var rnd = new Random();
+            for (var i = 0; i < 10; i++)
             {
                 var index = rnd.Next(pattern.Length);
                 boundaryBuilder.Append(pattern[index]);

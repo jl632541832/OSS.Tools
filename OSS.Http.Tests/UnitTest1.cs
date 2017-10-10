@@ -10,33 +10,38 @@ namespace OSS.Http.Tests
     public class UnitTest1
     {
 
-        public class StaticTest
-        {
-            public static int Count { get; set; }
-        }
-
-
-
-        public class SubStaticTest :StaticTest
-        {
-            
-        }
 
 
         [Fact]
         public void Test1()
         {
+            GetTest1();
+        }
 
-            StaticTest.Count = 2;
-
-            var testCount = SubStaticTest.Count;
+        private static async Task<HttpResponseMessage> GetTest1()
+        {
+            var req = new OsHttpRequest
+            {
+                AddressUrl =
+                    "http://www.1.com",
+                HttpMothed = HttpMothed.GET
+            };
+            req.RequestSet=r =>
+            {
+                r.Headers.TryAddWithoutValidation("sample", "application/json");
+                r.Headers.Add("Accept", "application/json");
+            };
+            return await req.RestSend();
         }
 
         private static async Task<HttpResponseMessage> GetTest()
         {
-            var req = new OsHttpRequest();
-            req.AddressUrl = "https://api.weixin.qq.com/sns/oauth2/access_token?appid=wxaa9e6cb3f03afa97&secret=0fc0c6f735a90fda1df5fc840e010144&code=ssss&grant_type=authorization_code";
-            req.HttpMothed = HttpMothed.GET;
+            var req = new OsHttpRequest
+            {
+                AddressUrl =
+                    "https://api.weixin.qq.com/sns/oauth2/access_token?appid=wxaa9e6cb3f03afa97&secret=0fc0c6f735a90fda1df5fc840e010144&code=ssss&grant_type=authorization_code",
+                HttpMothed = HttpMothed.GET
+            };
 
             return await req.RestSend();
         }
