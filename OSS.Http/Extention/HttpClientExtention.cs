@@ -135,11 +135,6 @@ namespace OSS.Http.Extention
                
                 reqMsg.Content = new StringContent(data);
                 req.RequestSet?.Invoke(reqMsg);
-
-                if (reqMsg.Content.Headers.ContentType==null)
-                {
-                    reqMsg.Content.Headers.ContentType = new MediaTypeHeaderValue("application/x-www-form-urlencoded");
-                }
             }
 
           
