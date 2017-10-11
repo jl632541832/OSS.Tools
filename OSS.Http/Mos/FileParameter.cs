@@ -31,7 +31,7 @@ namespace OSS.Http.Mos
                 var buffer = new byte[1024];
                 using (fileStream)
                 {
-                    int readCount = 0;
+                    int readCount;
                     while ((readCount = fileStream.Read(buffer, 0, buffer.Length)) != 0)
                     {
                         s.Write(buffer, 0, readCount);
