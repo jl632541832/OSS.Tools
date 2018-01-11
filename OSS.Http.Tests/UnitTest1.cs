@@ -1,6 +1,8 @@
 using System;
 using System.Net.Http;
 using System.Threading.Tasks;
+using OSS.Common.Authrization;
+using OSS.Common.ComModels;
 using OSS.Http.Extention;
 using OSS.Http.Mos;
 using Xunit;
@@ -10,6 +12,19 @@ namespace OSS.Http.Tests
     public class UnitTest1
     {
 
+
+        [Fact]
+        public async void TestRestCommonJson()
+        {
+            var req = new OsHttpRequest
+            {
+                AddressUrl = "http://localhost:62936",
+                HttpMothed = HttpMothed.GET
+            };
+            MemberShiper.SetAppAuthrizeInfo(new AppAuthorizeInfo());
+            var res = await req.RestCommonJson<ResultMo>();
+            Assert.True(res.IsSuccess());
+        }
 
 
         [Fact]
@@ -22,14 +37,8 @@ namespace OSS.Http.Tests
         {
             var req = new OsHttpRequest
             {
-                AddressUrl =
-                    "http://www.1.com",
+                AddressUrl =  "http://www.1.com",
                 HttpMothed = HttpMothed.GET
-            };
-            req.RequestSet=r =>
-            {
-                r.Headers.TryAddWithoutValidation("sample", "application/json");
-                r.Headers.Add("Accept", "application/json");
             };
             return await req.RestSend();
         }

@@ -11,13 +11,13 @@
 
 #endregion
 using System;
+using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
+using OSS.Common.Authrization;
 using OSS.Common.ComModels;
-using OSS.Common.ComModels.Enums;
 using OSS.Common.Plugs;
-using OSS.Common.Plugs.LogPlug;
 using OSS.Http.Mos;
 
 namespace OSS.Http.Extention
@@ -41,18 +41,9 @@ namespace OSS.Http.Extention
             string moduleName = ModuleNames.Default)
             where T : ResultMo, new()
         {
-            T t;
-            try
-            {
+            var resp = await request.RestSend(client);
+            var t = await formatFunc(resp);
 
-                var resp = await request.RestSend(client);
-                t = await formatFunc(resp);
-            }
-            catch (Exception ex)
-            {
-                t = new T() {ret = (int) ResultTypes.InnerError, msg = ex.Message};
-                LogUtil.Error(string.Concat("基类请求出错，错误信息：", ex.Message), "RestCommon", moduleName);
-            }
             return t ?? new T() {ret = -1, msg = "未发现结果"};
         }
 
@@ -72,7 +63,6 @@ namespace OSS.Http.Extention
                     ret = -(int) resp.StatusCode,
                     msg = resp.ReasonPhrase
                 };
-
             var contentStr = await resp.Content.ReadAsStringAsync();
             return JsonConvert.DeserializeObject<TResp>(contentStr);
         }

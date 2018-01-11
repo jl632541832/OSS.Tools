@@ -13,7 +13,6 @@
 using System;
 using System.IO;
 using System.Net.Http;
-using System.Net.Http.Headers;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -135,11 +134,6 @@ namespace OSS.Http.Extention
                
                 reqMsg.Content = new StringContent(data);
                 req.RequestSet?.Invoke(reqMsg);
-
-                if (reqMsg.Content.Headers.ContentType==null)
-                {
-                    reqMsg.Content.Headers.ContentType = new MediaTypeHeaderValue("application/x-www-form-urlencoded");
-                }
             }
 
           
