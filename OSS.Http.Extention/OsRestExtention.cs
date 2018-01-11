@@ -11,9 +11,11 @@
 
 #endregion
 using System;
+using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
+using OSS.Common.Authrization;
 using OSS.Common.ComModels;
 using OSS.Common.Plugs;
 using OSS.Http.Mos;
@@ -61,7 +63,6 @@ namespace OSS.Http.Extention
                     ret = -(int) resp.StatusCode,
                     msg = resp.ReasonPhrase
                 };
-
             var contentStr = await resp.Content.ReadAsStringAsync();
             return JsonConvert.DeserializeObject<TResp>(contentStr);
         }
