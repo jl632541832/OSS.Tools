@@ -93,7 +93,7 @@ namespace OSS.Http.Extention
             var reqMsg = new HttpRequestMessage
             {
                 RequestUri = string.IsNullOrEmpty(request.AddressUrl) ? request.Uri : new Uri(request.AddressUrl),
-                Method = new System.Net.Http.HttpMethod(request.HttpMethod.ToString())
+                Method = request.HttpMethod
             };
             ConfigReqContent(reqMsg, request); //  配置内容
             return reqMsg;
@@ -108,7 +108,7 @@ namespace OSS.Http.Extention
         /// <returns></returns>
         private static void ConfigReqContent(HttpRequestMessage reqMsg, OsHttpRequest req)
         {
-            if (req.HttpMethod == Mos.HttpMethod.GET)
+            if (req.HttpMethod == HttpMethod.Get)
             {
                 req.RequestSet?.Invoke(reqMsg);
                 return;
