@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
-    <Version>2.3.3</Version>
+    <Version>2.3.8.2</Version>
     <Authors>Kevin</Authors>
     <Company>OSSCoder</Company>
     <Product>OSS系列</Product>
@@ -10,8 +10,8 @@
     <PackageProjectUrl>https://github.com/KevinWG/OSS.Http</PackageProjectUrl>
     <RepositoryUrl>https://github.com/KevinWG/OSS.Http</RepositoryUrl>
     <PackageIconUrl>http://img1.static.osscoder.com/logo.jpg</PackageIconUrl>
-    <AssemblyVersion>2.3.3.0</AssemblyVersion>
-    <FileVersion>2.3.3.0</FileVersion>
+    <AssemblyVersion>2.3.8.2</AssemblyVersion>
+    <FileVersion>2.3.8.2</FileVersion>
     <PackageReleaseNotes></PackageReleaseNotes>
     <PackageLicenseUrl>https://github.com/KevinWG/OSS.Http/blob/master/LICENSE</PackageLicenseUrl>
     <Copyright>OSSCoder</Copyright>
