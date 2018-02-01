@@ -41,7 +41,7 @@ namespace OSS.Http.Mos
         /// <summary>
         /// 请求方式
         /// </summary>
-        public HttpMothed HttpMothed { get; set; } = HttpMothed.GET;
+        public HttpMethod HttpMothed { get; set; } = HttpMethod.GET;
 
         ///// <summary>
         /////  是否允许自动重定向

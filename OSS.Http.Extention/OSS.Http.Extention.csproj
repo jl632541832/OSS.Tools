@@ -9,10 +9,10 @@
     <Copyright>OSSCoder</Copyright>
     <PackageProjectUrl>https://github.com/KevinWG/OSS.Http</PackageProjectUrl>
     <RepositoryUrl>https://github.com/KevinWG/OSS.Http</RepositoryUrl>
-    <Version>1.2.0</Version>
+    <Version>1.2.7</Version>
     <PackageReleaseNotes>修改对.net framework 的特殊配置</PackageReleaseNotes>
-    <AssemblyVersion>1.2.6.0</AssemblyVersion>
-    <FileVersion>1.2.6.0</FileVersion>
+    <AssemblyVersion>1.2.7.0</AssemblyVersion>
+    <FileVersion>1.2.7.0</FileVersion>
     <PackageIconUrl>http://img1.static.osscoder.com/logo.jpg</PackageIconUrl>
     <PackageLicenseUrl>https://github.com/KevinWG/OSS.Http/blob/master/LICENSE</PackageLicenseUrl>
   </PropertyGroup>
@@ -27,7 +27,7 @@
 
   <ItemGroup>
     <PackageReference Include="Newtonsoft.Json" Version="10.0.3" />
-    <PackageReference Include="OSS.Common" Version="1.2.7.5" />
+    <PackageReference Include="OSS.Common" Version="1.2.7.10" />
   </ItemGroup>
 
   <ItemGroup>
