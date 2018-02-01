@@ -1,4 +1,3 @@
-using System;
 using System.Net.Http;
 using System.Threading.Tasks;
 using OSS.Common.Authrization;
@@ -11,15 +10,13 @@ namespace OSS.Http.Tests
 {
     public class UnitTest1
     {
-
-
         [Fact]
         public async void TestRestCommonJson()
         {
             var req = new OsHttpRequest
             {
                 AddressUrl = "http://localhost:62936",
-                HttpMethod = Mos.HttpMethod.GET
+                HttpMethod = HttpMethod.Get
             };
             MemberShiper.SetAppAuthrizeInfo(new AppAuthorizeInfo());
             var res = await req.RestCommonJson<ResultMo>();
@@ -28,17 +25,18 @@ namespace OSS.Http.Tests
 
 
         [Fact]
-        public void Test1()
+        public async void Test1()
         {
-            GetTest1();
+            var res = await GetTest1();
+            Assert.True(res.IsSuccessStatusCode);
         }
 
         private static async Task<HttpResponseMessage> GetTest1()
         {
             var req = new OsHttpRequest
             {
-                AddressUrl =  "http://www.1.com",
-                HttpMethod = Mos.HttpMethod.GET
+                AddressUrl =  "http://www.baidu.com",
+                HttpMethod = HttpMethod.Get
             };
             return await req.RestSend();
         }
@@ -49,7 +47,7 @@ namespace OSS.Http.Tests
             {
                 AddressUrl =
                     "https://api.weixin.qq.com/sns/oauth2/access_token?appid=wxaa9e6cb3f03afa97&secret=0fc0c6f735a90fda1df5fc840e010144&code=ssss&grant_type=authorization_code",
-                HttpMethod = Mos.HttpMethod.GET
+                HttpMethod = HttpMethod.Get
             };
 
             return await req.RestSend();
@@ -64,7 +62,7 @@ namespace OSS.Http.Tests
 
             var req = new OsHttpRequest();
             req.AddressUrl = "http://localhost:59489/";
-            req.HttpMethod = Mos.HttpMethod.POST;
+            req.HttpMethod = HttpMethod.Post;
 
             //  文件上传测试
             //var imageFile = new FileStream("E:\\111.png", FileMode.Open, FileAccess.Read);

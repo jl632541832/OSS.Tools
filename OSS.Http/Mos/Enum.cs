@@ -13,36 +13,6 @@
 namespace OSS.Http.Mos
 {
     /// <summary>
-    /// 
-    /// </summary>
-    public enum HttpMethod
-    {
-        /// <summary>
-        /// Get
-        /// </summary>
-        GET = 0,
-
-        /// <summary>
-        /// post
-        /// </summary>
-        POST = 10,
-
-        /// <summary>
-        /// PUT
-        /// </summary>
-        PUT = 20,
-
-        /// <summary>
-        /// DELETE
-        /// </summary>
-        DELETE = 30,
-        HEAD=40,
-        OPTIONS=50,
-        TRACE=60
-
-    }
-
-    /// <summary>
     /// 返回的状态
     /// </summary>
     public enum ResponseStatus
