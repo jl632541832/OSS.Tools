@@ -15,7 +15,7 @@ namespace OSS.Http.Mos
     /// <summary>
     /// 
     /// </summary>
-    public enum HttpMothed
+    public enum HttpMethod
     {
         /// <summary>
         /// Get
