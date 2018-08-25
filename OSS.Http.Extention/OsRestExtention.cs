@@ -10,13 +10,13 @@
 *****************************************************************************/
 
 #endregion
+
 using System;
-using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
-using OSS.Common.Authrization;
 using OSS.Common.ComModels;
+using OSS.Common.ComModels.Enums;
 using OSS.Common.Plugs;
 using OSS.Http.Mos;
 
@@ -44,7 +44,7 @@ namespace OSS.Http.Extention
             var resp = await request.RestSend(client);
             var t = await formatFunc(resp);
 
-            return t ?? new T() {ret = -1, msg = "未发现结果"};
+            return t ?? new T() {ret = (int)ResultTypes.ObjectNull, msg = "未发现网络结果"};
         }
 
 
