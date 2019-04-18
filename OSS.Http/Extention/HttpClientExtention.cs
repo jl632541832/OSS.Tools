@@ -155,10 +155,14 @@ namespace OSS.Http.Extention
         /// <param name="boundary"></param>
         private static void WriteMultipartFormData(Stream memory, OsHttpRequest request, string boundary)
         {
-            foreach (var param in request.FormParameters)
+            if (request.FormParameters!=null)
             {
-                WriteStringTo(memory, GetMultipartFormData(param, boundary));
+                foreach (var param in request.FormParameters)
+                {
+                    WriteStringTo(memory, GetMultipartFormData(param, boundary));
+                }
             }
+            
             foreach (var file in request.FileParameters)
             {
                 //文件头
@@ -216,12 +220,17 @@ namespace OSS.Http.Extention
         private static string GetNormalFormData(OsHttpRequest request)
         {
             var formstring = new StringBuilder();
-            foreach (var p in request.FormParameters)
+
+            if (request.FormParameters!=null)
             {
-                if (formstring.Length > 1)
-                    formstring.Append("&");
-                formstring.AppendFormat(p.ToString());
+                foreach (var p in request.FormParameters)
+                {
+                    if (formstring.Length > 1)
+                        formstring.Append("&");
+                    formstring.AppendFormat(p.ToString());
+                }
             }
+         
             if (string.IsNullOrEmpty(request.CustomBody)) return formstring.ToString();
 
             if (formstring.Length > 1)
