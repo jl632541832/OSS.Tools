@@ -79,7 +79,9 @@ namespace OSS.Http.Extention
         {
             if (_Client != null) return _Client;
 
-            return _Client = new HttpClient();
+            var handler = new HttpClientHandler {UseProxy = false};
+
+            return  _Client = new HttpClient(handler);
         }
     }
 }

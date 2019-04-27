@@ -12,7 +12,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Net.Http;
 
 namespace OSS.Http.Mos
@@ -22,11 +21,7 @@ namespace OSS.Http.Mos
     /// </summary>
     public class OsHttpRequest
     {
-        public OsHttpRequest()
-        {
-            FormParameters = new List<FormParameter>();
-            FileParameters = new List<FileParameter>();
-        }
+       
 
         /// <summary>
         /// 请求地址信息
@@ -73,20 +68,42 @@ namespace OSS.Http.Mos
         #region   请求的内容参数
 
         /// <summary>
-        /// 文件参数列表
-        /// </summary>
-        public List<FileParameter> FileParameters { get; set; }
-
-        /// <summary>
         /// 是否存在文件
         /// </summary>
-        public bool HasFile => FileParameters.Any();
+        public bool HasFile => _fileParameters != null && _fileParameters.Count > 0;
 
 
+        private List<FileParameter> _fileParameters;
+        /// <summary>
+        /// 文件参数列表
+        /// </summary>
+        public List<FileParameter> FileParameters => _fileParameters ?? (_fileParameters = new List<FileParameter>());// 兼容老版本，取值时默认赋值
+
+
+        /// <summary>
+        ///  添加文件
+        /// </summary>
+        /// <param name="file"></param>
+        public void AddFile(FileParameter file)
+        {
+            FileParameters.Add(file);
+        }
+        
+        private List<FormParameter> _formParameters;
         /// <summary>
         /// 非文件参数列表
         /// </summary>
-        public List<FormParameter> FormParameters { get; set; }
+        public List<FormParameter> FormParameters => _formParameters ?? (_formParameters = new List<FormParameter>());// 兼容老版本，取值时默认赋值
+
+
+        /// <summary>
+        ///  添加文件
+        /// </summary>
+        /// <param name="formPara"></param>
+        public void Add(FormParameter formPara)
+        {
+            FormParameters.Add(formPara);
+        }
 
         #endregion
 
