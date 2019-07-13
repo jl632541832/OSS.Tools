@@ -30,10 +30,41 @@ namespace OSS.Http.Extention
         ///   编码格式
         /// </summary>
         public static Encoding Encoding { get; set; } = Encoding.UTF8;
+
         //private static readonly Dictionary<string,Action<HttpContentHeaders,string>> _notCanAddContentHeaderDics
         //    =new Dictionary<string, Action<HttpContentHeaders, string>>();
 
         #region   扩展方法
+
+
+        /// <summary>
+        /// 发送Post请求
+        /// </summary>
+        /// <param name="request">请求的参数</param>
+        /// <param name="client"></param>
+        /// <returns>自定义的Response结果</returns>
+        public static Task<HttpResponseMessage> PostAsync(this HttpClient client, OsHttpRequest request)
+        {
+            request.HttpMethod = HttpMethod.Post;
+
+            return RestSend(client, request);
+        }
+
+        /// <summary>
+        /// 发送Get请求
+        /// </summary>
+        /// <param name="request">请求的参数</param>
+        /// <param name="client"></param>
+        /// <returns>自定义的Response结果</returns>
+        public static Task<HttpResponseMessage> GetAsync(this HttpClient client, OsHttpRequest request)
+        {
+            request.HttpMethod = HttpMethod.Get;
+
+            return RestSend(client,request);
+        }
+
+
+
 
         /// <summary>
         ///  执行请求方法
@@ -73,8 +104,9 @@ namespace OSS.Http.Extention
         {
             var reqMsg = ConfigureReqMsg(request);
 
-            if (request.TimeOutMilSeconds > 0)
-                client.Timeout = TimeSpan.FromMilliseconds(request.TimeOutMilSeconds);
+           
+            //if (request.TimeOutMilSeconds > 0)
+            //    client.Timeout = TimeSpan.FromMilliseconds(request.TimeOutMilSeconds);
             
             return client.SendAsync(reqMsg, completionOption, cancellationToken);
         }

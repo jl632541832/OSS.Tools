@@ -21,7 +21,13 @@ namespace OSS.Http.Mos
     /// </summary>
     public class OsHttpRequest
     {
-       
+        public OsHttpRequest()
+        {
+        }
+
+        public OsHttpRequest(string reqUrl)
+        {
+        }
 
         /// <summary>
         /// 请求地址信息
@@ -113,10 +119,10 @@ namespace OSS.Http.Mos
         /// </summary>
         public string CustomBody { get; set; }
 
-        /// <summary>
-        ///    超时时间（毫秒）
-        /// </summary>
-        public int TimeOutMilSeconds { get; set; }
+        ///// <summary>
+        /////    超时时间（毫秒）
+        ///// </summary>
+        //public int TimeOutMilSeconds { get; set; }
 
     }
 }

@@ -25,11 +25,37 @@ namespace OSS.Http.Extention
     /// </summary>
     public static class RestExtention
     {
-     
+
         #region   扩展方法
 
         /// <summary>
-        /// 同步的请求方式
+        /// 发送Post请求
+        /// </summary>
+        /// <param name="request">请求的参数</param>
+        /// <param name="client"></param>
+        /// <returns>自定义的Response结果</returns>
+        public static Task<HttpResponseMessage> PostAsync(this OsHttpRequest request, HttpClient client = null)
+        {
+            request.HttpMethod = HttpMethod.Post;
+
+            return RestSend(request, HttpCompletionOption.ResponseContentRead, CancellationToken.None, client);
+        }
+
+        /// <summary>
+        /// 发送Get请求
+        /// </summary>
+        /// <param name="request">请求的参数</param>
+        /// <param name="client"></param>
+        /// <returns>自定义的Response结果</returns>
+        public static Task<HttpResponseMessage> GetAsync(this OsHttpRequest request, HttpClient client = null)
+        {
+            request.HttpMethod=HttpMethod.Get;
+
+            return RestSend(request, HttpCompletionOption.ResponseContentRead, CancellationToken.None, client);
+        }
+        
+        /// <summary>
+        /// 发送请求
         /// </summary>
         /// <param name="request">请求的参数</param>
         /// <param name="client"></param>
@@ -40,7 +66,7 @@ namespace OSS.Http.Extention
         }
 
         /// <summary>
-        /// 同步的请求方式
+        /// 发送请求
         /// </summary>
         /// <param name="request">请求的参数</param>
         /// <param name="completionOption"></param>
@@ -53,7 +79,7 @@ namespace OSS.Http.Extention
         }
 
         /// <summary>
-        /// 同步的请求方式
+        /// 发送请求
         /// </summary>
         /// <param name="request">请求的参数</param>
         /// <param name="completionOption"></param>
