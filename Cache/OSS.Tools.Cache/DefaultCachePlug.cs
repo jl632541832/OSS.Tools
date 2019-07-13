@@ -12,9 +12,7 @@
 #endregion
 
 using System;
-using System.Threading.Tasks;
 using Microsoft.Extensions.Caching.Memory;
-using OSS.Common.ComModels;
 
 namespace OSS.Tools.Cache
 {

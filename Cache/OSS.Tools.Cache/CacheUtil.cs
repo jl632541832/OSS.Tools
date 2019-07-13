@@ -13,6 +13,7 @@
 
 using System;
 using System.Threading.Tasks;
+using OSS.Common.ComModels;
 using OSS.Common.Plugs;
 
 namespace OSS.Tools.Cache
@@ -104,31 +105,99 @@ namespace OSS.Tools.Cache
         {
             return GetCache(moduleName).Get<T>(key);
         }
-       
-        public static Task<RType> Get<RType>(string cacheKey, Func<Task<RType>> createFunc, DateTime absoluteExpiration, string moduleName = ModuleNames.Default)
+
+        /// <summary>
+        /// 获取缓存数据，如果没有则添加
+        /// </summary>
+        /// <typeparam name="RType"></typeparam>
+        /// <param name="cacheKey">key</param>
+        /// <param name="getFunc">没有数据时，通过此方法获取原始数据</param>
+        /// <param name="absoluteExpiration">绝对过期时间</param>
+        /// <param name="moduleName">模块名称</param>
+        /// <returns></returns>
+        public static Task<ResultMo<RType>> Get<RType>(string cacheKey, Func<Task<ResultMo<RType>>> getFunc, DateTime absoluteExpiration, string moduleName = ModuleNames.Default)
         {
-            return Get(cacheKey, createFunc, TimeSpan.Zero, absoluteExpiration, moduleName);
-        }
-        public static Task<RType> Get<RType>(string cacheKey, Func<Task<RType>> createFunc, TimeSpan slidingExpiration, string moduleName = ModuleNames.Default)
-        {
-            return Get(cacheKey, createFunc, slidingExpiration, null, moduleName);
+            return Get(cacheKey, getFunc, TimeSpan.Zero, absoluteExpiration,null,  moduleName);
         }
 
-        private static async Task<RType> Get<RType>(string cacheKey, Func<Task<RType>> createFunc
-            , TimeSpan slidingExpiration, DateTime? absoluteExpiration, string moduleName )
+        /// <summary>
+        /// 获取缓存数据，如果没有则添加
+        /// </summary>
+        /// <typeparam name="RType"></typeparam>
+        /// <param name="cacheKey">key</param>
+        /// <param name="getFunc">没有数据时，通过此方法获取原始数据</param>
+        /// <param name="slidingExpiration">过期时长，访问后自动延长</param>
+        /// <param name="moduleName">模块名称</param>
+        /// <returns></returns>
+        public static Task<ResultMo<RType>> Get<RType>(string cacheKey, Func<Task<ResultMo<RType>>> getFunc, TimeSpan slidingExpiration, string moduleName = ModuleNames.Default)
         {
-            var obj = GetCache(moduleName).Get<RType>(cacheKey);
-            if (obj != null) return obj;
+            return Get(cacheKey, getFunc,  slidingExpiration,null, null, moduleName);
+        }
+
+        /// <summary>
+        /// 获取缓存数据【同时添加缓存击穿保护】，如果没有则添加
+        /// </summary>
+        /// <typeparam name="RType"></typeparam>
+        /// <param name="cacheKey">key</param>
+        /// <param name="getFunc">没有数据时，通过此方法获取原始数据</param>
+        /// <param name="absoluteExpiration">绝对过期时间</param>
+        /// <param name="hitProtectExpiration">保护到期时间</param>
+        /// <param name="moduleName">模块名称</param>
+        /// <returns></returns>
+        public static Task<ResultMo<RType>> ProtectedGet<RType>(string cacheKey, Func<Task<ResultMo<RType>>> getFunc,
+          
+            DateTime absoluteExpiration, DateTime hitProtectExpiration, string moduleName = ModuleNames.Default)
+        {
+            return Get(cacheKey, getFunc,TimeSpan.Zero, absoluteExpiration,hitProtectExpiration, moduleName);
+        }
+
+        /// <summary>
+        /// 获取缓存数据【同时添加缓存击穿保护】，如果没有则添加
+        /// </summary>
+        /// <typeparam name="RType"></typeparam>
+        /// <param name="cacheKey">key</param>
+        /// <param name="getFunc">没有数据时，通过此方法获取原始数据</param>
+        /// <param name="slidingExpiration">过期时长，访问后自动延长</param>
+        /// <param name="hitProtectExpiration">保护到期时间</param>
+        /// <param name="moduleName">模块名称</param>
+        /// <returns></returns>
+        public static Task<ResultMo<RType>> ProtectedGet<RType>(string cacheKey, Func<Task<ResultMo<RType>>> getFunc,
+           TimeSpan slidingExpiration, DateTime hitProtectExpiration, string moduleName = ModuleNames.Default)
+        {
+            return Get(cacheKey, getFunc, slidingExpiration, null, hitProtectExpiration, moduleName);
+        }
+
+        private static async Task<ResultMo<RType>> Get<RType>(string cacheKey, Func<Task<ResultMo<RType>>> createFunc
+            , TimeSpan slidingExpiration, DateTime? absoluteExpiration,
+            DateTime? hitProtectExpiration, string moduleName)
+        {
+            var obj = GetCache(moduleName).Get<HitProtectCahce<RType>>(cacheKey);
+            if (!obj.Equals(null))
+            {
+                if (obj.IsNull)
+                    return new ResultMo<RType>(ResultTypes.ObjectNull, "未发现对应数据！");
+
+                return new ResultMo<RType>(obj.Data);
+            }
 
             var metaRes = await createFunc.Invoke();
-            if (metaRes == null)
-                return metaRes;
-
-            if (absoluteExpiration == null)
-                Set(cacheKey, metaRes, slidingExpiration);
+            if (!metaRes.IsSuccess()||metaRes.data==null)
+            {
+                if (hitProtectExpiration.HasValue)
+                {
+                    var safeData = new HitProtectCahce<RType>();
+                    Set(cacheKey, safeData, hitProtectExpiration.Value);
+                }
+            }
             else
-                Set(cacheKey, metaRes, absoluteExpiration.Value);
-            
+            {
+                var safeData = new HitProtectCahce<RType>(metaRes.data);
+
+                if (absoluteExpiration.HasValue)
+                    Set(cacheKey, safeData, absoluteExpiration.Value);
+                else
+                    Set(cacheKey, safeData, slidingExpiration);
+            }
             return metaRes;
         }
 
@@ -143,5 +212,23 @@ namespace OSS.Tools.Cache
             return GetCache(moduleName).Remove(key);
         }
 
+    }
+
+
+    internal struct HitProtectCahce<TT>
+    {
+        public HitProtectCahce(TT data)
+        {
+            IsNull = false;
+            Data = data;
+        }
+        public HitProtectCahce(bool isNull=true)
+        {
+            IsNull = isNull;
+            Data = default(TT);
+        }
+
+        public TT Data { get; set; }
+        public bool IsNull { get; set; }
     }
 }

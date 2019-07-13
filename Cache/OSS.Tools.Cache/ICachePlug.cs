@@ -12,7 +12,6 @@
 #endregion
 
 using System;
-using System.Threading.Tasks;
 
 namespace OSS.Tools.Cache
 {
