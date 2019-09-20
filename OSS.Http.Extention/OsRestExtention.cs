@@ -33,11 +33,9 @@ namespace OSS.Http.Extention
         /// <param name="request">远程请求组件的request基本信息</param>
         /// <param name="formatFunc">处理内容委托</param>
         /// <param name="client">自定义httpclient</param>
-        /// <param name="moduleName">模块名称</param>
         /// <returns>实体类型</returns>
         public static async Task<T> RestCommon<T>(this OsHttpRequest request,
-            Func<HttpResponseMessage, Task<T>> formatFunc, HttpClient client = null,
-            string moduleName = ModuleNames.Default)
+            Func<HttpResponseMessage, Task<T>> formatFunc, HttpClient client = null)
             where T : Resp, new()
         {
             var resp = await request.RestSend(client);
@@ -78,7 +76,7 @@ namespace OSS.Http.Extention
             string moduleName = ModuleNames.Default)
             where TResp : Resp, new()
         {
-            return await RestCommon(request, JsonFormat<TResp>, client, moduleName);
+            return await RestCommon(request, JsonFormat<TResp>, client);
         }
 
     }
