@@ -15,8 +15,8 @@ using System;
 using System.Net.Http;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
-using OSS.Common.ComModels;
 using OSS.Common.Plugs;
+using OSS.Common.Resp;
 using OSS.Http.Mos;
 
 namespace OSS.Http.Extention
@@ -38,12 +38,12 @@ namespace OSS.Http.Extention
         public static async Task<T> RestCommon<T>(this OsHttpRequest request,
             Func<HttpResponseMessage, Task<T>> formatFunc, HttpClient client = null,
             string moduleName = ModuleNames.Default)
-            where T : ResultMo, new()
+            where T : Resp, new()
         {
             var resp = await request.RestSend(client);
             var t = await formatFunc(resp);
 
-            return t ?? new T() {ret = (int)ResultTypes.ObjectNull, msg = "未发现网络结果"};
+            return t ?? new T() {ret = (int)RespTypes.ObjectNull, msg = "未发现网络结果"};
         }
 
 
@@ -54,7 +54,7 @@ namespace OSS.Http.Extention
         /// <param name="resp"></param>
         /// <returns></returns>
         private static async Task<TResp> JsonFormat<TResp>(HttpResponseMessage resp)
-            where TResp : ResultMo, new()
+            where TResp : Resp, new()
         {
             if (!resp.IsSuccessStatusCode)
                 return new TResp()
@@ -76,7 +76,7 @@ namespace OSS.Http.Extention
         /// <returns></returns>
         public static async Task<TResp> RestCommonJson<TResp>(this OsHttpRequest request, HttpClient client = null,
             string moduleName = ModuleNames.Default)
-            where TResp : ResultMo, new()
+            where TResp : Resp, new()
         {
             return await RestCommon(request, JsonFormat<TResp>, client, moduleName);
         }
