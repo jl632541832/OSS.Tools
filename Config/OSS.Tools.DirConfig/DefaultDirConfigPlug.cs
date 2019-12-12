@@ -15,6 +15,7 @@ using System;
 using System.IO;
 using System.Xml.Serialization;
 using OSS.Common.ComModels;
+using OSS.Common.Resp;
 
 namespace OSS.Tools.DirConfig
 {
@@ -28,11 +29,10 @@ namespace OSS.Tools.DirConfig
 
         static DefaultDirConfigPlug()
         {
-#if NETFW
-            _defaultPath = AppDomain.CurrentDomain.BaseDirectory;
-#else
-            _defaultPath = AppContext.BaseDirectory;  // totest
-#endif
+            var basePat  = Directory.GetCurrentDirectory();
+            var sepChar  = Path.DirectorySeparatorChar;
+            var binIndex = basePat.IndexOf(string.Concat(sepChar, "bin", sepChar), StringComparison.OrdinalIgnoreCase);
+            _defaultPath = binIndex > 0 ? basePat.Substring(0, binIndex) : basePat;
         }
 
 
@@ -43,7 +43,7 @@ namespace OSS.Tools.DirConfig
         /// <param name="key"></param>
         /// <param name="dirConfig"></param>
         /// <returns></returns>
-        public ResultMo SetDirConfig<TConfig>(string key, TConfig dirConfig) where TConfig : class, new()
+        public Resp SetDirConfig<TConfig>(string key, TConfig dirConfig) where TConfig : class, new()
         {
             if (string.IsNullOrEmpty(key))
                 throw new ArgumentNullException("key", "配置键值不能为空！");
@@ -51,9 +51,8 @@ namespace OSS.Tools.DirConfig
             if (dirConfig == null)
                 throw new ArgumentNullException("dirConfig", "配置信息不能为空！");
 
-            string path = string.Concat(_defaultPath, "\\", "Config");
+            var path = string.Concat(_defaultPath, Path.DirectorySeparatorChar, "Configs");
 
-            ResultMo result;
             FileStream fs = null;
             try
             {
@@ -61,20 +60,21 @@ namespace OSS.Tools.DirConfig
                 {
                     Directory.CreateDirectory(path);
                 }
-                fs = new FileStream(string.Concat(path, "\\", key, ".config"), FileMode.Create, FileAccess.Write);
+
+                fs = new FileStream(string.Concat(path, Path.DirectorySeparatorChar, key, ".config"), FileMode.Create,
+                    FileAccess.Write);
 
                 var type = typeof(TConfig);
 
                 var xmlSer = new XmlSerializer(type);
                 xmlSer.Serialize(fs, dirConfig);
 
-                result = new ResultMo();
+                return new Resp();
             }
             finally
             {
                 fs?.Dispose();
             }
-            return result;
         }
 
 
@@ -90,29 +90,27 @@ namespace OSS.Tools.DirConfig
             if (string.IsNullOrEmpty(key))
                 throw new ArgumentNullException("key", "配置键值不能为空！");
 
-            var path = string.Concat(_defaultPath, "\\", "Config");
-
-            var t = default(TConfig);
             FileStream fs = null;
+            var path = string.Concat(_defaultPath, Path.DirectorySeparatorChar, "Config");
+
             try
             {
-                var fileFullName = string.Concat(path, "\\", key, ".config");
+                var fileFullName = string.Concat(path, Path.DirectorySeparatorChar, key, ".config");
 
                 if (!File.Exists(fileFullName))
-                    return t;
+                    return null;
 
                 fs = new FileStream(fileFullName, FileMode.Open, FileAccess.Read, FileShare.Read);
 
                 var type = typeof(TConfig);
 
                 var xmlSer = new XmlSerializer(type);
-                t = (TConfig)xmlSer.Deserialize(fs);
+                return (TConfig)xmlSer.Deserialize(fs);
             }
             finally
             {
                 fs?.Dispose();
             }
-            return t;
         }
 
         /// <summary>
@@ -120,16 +118,16 @@ namespace OSS.Tools.DirConfig
         /// </summary>
         /// <param name="key"></param>
         /// <returns></returns>
-        public ResultMo RemoveDirConfig(string key)
+        public Resp RemoveDirConfig(string key)
         {
-            var path = string.Concat(_defaultPath, "\\", "Config");
-            var fileName = string.Concat(path, "\\", key, ".config");
+            var path = string.Concat(_defaultPath, Path.DirectorySeparatorChar, "Config");
+            var fileName = string.Concat(path, Path.DirectorySeparatorChar, key, ".config");
             
             if (!File.Exists(fileName))
-                return new ResultMo(ResultTypes.InnerError, "移除字典配置时出错");
+                return new Resp(RespTypes.InnerError, "移除字典配置时出错");
 
             File.Delete(fileName);
-            return new ResultMo();
+            return new Resp();
         }
     }
 }
