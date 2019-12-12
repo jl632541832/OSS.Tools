@@ -20,7 +20,6 @@ namespace OSS.Tools.DirConfig
     /// <summary>
     /// 字典配置接口
     /// </summary>
-    [Obsolete("请使用 OSS.Tools.DirConfig 命名空间下 IDirConfigPlug ")]
     public interface IDirConfigPlug
     {
         /// <summary>

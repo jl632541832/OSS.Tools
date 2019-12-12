@@ -22,9 +22,7 @@ namespace OSS.Tools.DirConfig
     /// <summary>
     /// 默认配置处理
     /// </summary>
-
-    [Obsolete("请使用 OSS.Tools.DirConfig 命名空间下 DefaultDirConfigPlug ")]
-    public class DefaultDirConfigPlug : Tools.DirConfig.IDirConfigPlug
+    public class DefaultDirConfigPlug : IDirConfigPlug
     {
         private static readonly string _defaultPath;
 

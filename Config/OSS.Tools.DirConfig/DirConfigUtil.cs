@@ -20,7 +20,6 @@ namespace OSS.Tools.DirConfig
     /// <summary>
     /// 字典配置通用存储获取信息
     /// </summary>
-    [Obsolete("请使用 OSS.Tools.DirConfig 命名空间下 DirConfigUtil ")]
     public static class DirConfigUtil
     {
         private static readonly DefaultDirConfigPlug defaultCache = new DefaultDirConfigPlug();
