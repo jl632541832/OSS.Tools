@@ -2,6 +2,7 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using OSS.Common.Authrization;
 using OSS.Common.ComModels;
+using OSS.Common.Resp;
 using OSS.Http.Extention;
 using OSS.Http.Mos;
 using Xunit;
@@ -19,7 +20,7 @@ namespace OSS.Http.Tests
                 HttpMethod = HttpMethod.Get
             };
             MemberShiper.SetAppAuthrizeInfo(new AppAuthorizeInfo());
-            var res = await req.RestCommonJson<ResultMo>();
+            var res = await req.RestCommonJson<Resp>();
             Assert.True(res.IsSuccess());
         }
 
