@@ -14,7 +14,6 @@
 using System;
 using System.IO;
 using System.Xml.Serialization;
-using OSS.Common.ComModels;
 using OSS.Common.Resp;
 
 namespace OSS.Tools.DirConfig
@@ -25,17 +24,31 @@ namespace OSS.Tools.DirConfig
     /// </summary>
     public class DefaultDirConfigPlug : IDirConfigPlug
     {
-        private static readonly string _defaultPath;
+        private static string _defaultPath;
 
         static DefaultDirConfigPlug()
         {
-            var basePat  = Directory.GetCurrentDirectory();
-            var sepChar  = Path.DirectorySeparatorChar;
-            var binIndex = basePat.IndexOf(string.Concat(sepChar, "bin", sepChar), StringComparison.OrdinalIgnoreCase);
-            _defaultPath = binIndex > 0 ? basePat.Substring(0, binIndex) : basePat;
+            InitialPath();
         }
 
+        private static void InitialPath()
+        {
+            var basePat = Directory.GetCurrentDirectory();
+            var sepChar = Path.DirectorySeparatorChar;
+            var binIndex = basePat.IndexOf(string.Concat(sepChar, "bin", sepChar), StringComparison.OrdinalIgnoreCase);
+            if (binIndex > 0)
+            {
+                basePat = basePat.Substring(0, binIndex);
+            }
 
+            _defaultPath = Path.Combine(basePat, _folderName);
+            if (!Directory.Exists(_defaultPath))
+            {
+                Directory.CreateDirectory(_defaultPath);
+            }
+        }
+
+        private const string _folderName = "Configs";
         /// <summary>
         /// 设置字典配置信息
         /// </summary>
@@ -50,19 +63,12 @@ namespace OSS.Tools.DirConfig
 
             if (dirConfig == null)
                 throw new ArgumentNullException("dirConfig", "配置信息不能为空！");
-
-            var path = string.Concat(_defaultPath, Path.DirectorySeparatorChar, "Configs");
-
+            
             FileStream fs = null;
             try
             {
-                if (!Directory.Exists(path))
-                {
-                    Directory.CreateDirectory(path);
-                }
-
-                fs = new FileStream(string.Concat(path, Path.DirectorySeparatorChar, key, ".config"), FileMode.Create,
-                    FileAccess.Write);
+                var filePath = string.Concat(_defaultPath, Path.DirectorySeparatorChar, key, ".config");
+                fs = new FileStream(filePath, FileMode.Create,FileAccess.Write);
 
                 var type = typeof(TConfig);
 
@@ -91,11 +97,9 @@ namespace OSS.Tools.DirConfig
                 throw new ArgumentNullException("key", "配置键值不能为空！");
 
             FileStream fs = null;
-            var path = string.Concat(_defaultPath, Path.DirectorySeparatorChar, "Config");
-
             try
             {
-                var fileFullName = string.Concat(path, Path.DirectorySeparatorChar, key, ".config");
+                var fileFullName = string.Concat(_defaultPath, Path.DirectorySeparatorChar, key, ".config");
 
                 if (!File.Exists(fileFullName))
                     return null;
@@ -120,8 +124,7 @@ namespace OSS.Tools.DirConfig
         /// <returns></returns>
         public Resp RemoveDirConfig(string key)
         {
-            var path = string.Concat(_defaultPath, Path.DirectorySeparatorChar, "Config");
-            var fileName = string.Concat(path, Path.DirectorySeparatorChar, key, ".config");
+            var fileName = string.Concat(_defaultPath, Path.DirectorySeparatorChar, key, ".config");
             
             if (!File.Exists(fileName))
                 return new Resp(RespTypes.InnerError, "移除字典配置时出错");
