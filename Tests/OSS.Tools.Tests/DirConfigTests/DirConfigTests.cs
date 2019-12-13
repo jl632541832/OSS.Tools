@@ -15,12 +15,12 @@ namespace Tests
         public void DirConfigTest()
         {
             var config = new ConfigTest() {Name = "ConfigTest"};
-            DirConfigUtil.SetDirConfig("Test_Config", config);
+            DirConfigHelper.SetDirConfig("Test_Config", config);
 
-            var rConfig = DirConfigUtil.GetDirConfig<ConfigTest>("Test_Config");
+            var rConfig = DirConfigHelper.GetDirConfig<ConfigTest>("Test_Config");
 
             Assert.True(rConfig?.Name== "ConfigTest");
-            Assert.True(DirConfigUtil.RemoveDirConfig("Test_Config").IsSuccess());
+            Assert.True(DirConfigHelper.RemoveDirConfig("Test_Config").IsSuccess());
         }
     }
 

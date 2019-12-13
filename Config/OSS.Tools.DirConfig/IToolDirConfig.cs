@@ -12,8 +12,6 @@
 #endregion
 
 
-using System;
-using OSS.Common.ComModels;
 using OSS.Common.Resp;
 
 namespace OSS.Tools.DirConfig
@@ -21,7 +19,7 @@ namespace OSS.Tools.DirConfig
     /// <summary>
     /// 字典配置接口
     /// </summary>
-    public interface IDirConfigPlug
+    public interface IToolDirConfig
     {
         /// <summary>
         /// 添加字典配置

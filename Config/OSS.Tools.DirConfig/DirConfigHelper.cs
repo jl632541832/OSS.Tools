@@ -20,21 +20,21 @@ namespace OSS.Tools.DirConfig
     /// <summary>
     /// 字典配置通用存储获取信息
     /// </summary>
-    public static class DirConfigUtil
+    public static class DirConfigHelper
     {
-        private static readonly DefaultDirConfigPlug defaultCache = new DefaultDirConfigPlug();
+        private static readonly DefaultToolDirConfig defaultCache = new DefaultToolDirConfig();
 
         /// <summary>
         ///   配置信息模块提供者
         /// </summary>
-        public static Func<string, IDirConfigPlug> DirConfigProvider { get; set; }
+        public static Func<string, IToolDirConfig> DirConfigProvider { get; set; }
 
         /// <summary>
         /// 通过模块名称获取
         /// </summary>
         /// <param name="dirConfigModule"></param>
         /// <returns></returns>
-        private static IDirConfigPlug GetDirConfig(string dirConfigModule)
+        private static IToolDirConfig GetDirConfig(string dirConfigModule)
         {
             if (string.IsNullOrEmpty(dirConfigModule))
                 dirConfigModule = ModuleNames.Default;

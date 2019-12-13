@@ -22,11 +22,11 @@ namespace OSS.Tools.DirConfig
     /// <summary>
     /// 默认配置处理
     /// </summary>
-    public class DefaultDirConfigPlug : IDirConfigPlug
+    public class DefaultToolDirConfig : IToolDirConfig
     {
         private static string _defaultPath;
 
-        static DefaultDirConfigPlug()
+        static DefaultToolDirConfig()
         {
             InitialPath();
         }
