@@ -1,0 +1,11 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <PackageProjectUrl>https://github.com/KevinWG/OSS.Tools</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/KevinWG/OSS.Tools</RepositoryUrl>
+    <PackageIconUrl>http://img1.osscore.cn/static/oss_net.png</PackageIconUrl>
+    <PackageReleaseNotes>Http请求扩展工具类</PackageReleaseNotes>
+  </PropertyGroup>
+
+</Project>
