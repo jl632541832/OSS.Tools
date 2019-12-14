@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.28307.572
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29509.3
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Cache", "Cache", "{AA2F5FE1-0AE4-4455-BFF7-172D2741240F}"
 EndProject
@@ -25,7 +25,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OSS.Tools.AliOSS", "File\OS
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{3F7591FA-9F56-4724-8222-144C923744D9}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OSS.Tools.Tests", "Tests\OSS.Tools.Tests\OSS.Tools.Tests.csproj", "{91BB536E-3183-4159-A969-FFF6219D48FD}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OSS.Tools.Tests", "Tests\OSS.Tools.Tests\OSS.Tools.Tests.csproj", "{91BB536E-3183-4159-A969-FFF6219D48FD}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Http", "Http", "{61B40C9B-71C4-4F33-8F1E-6AE9AE3522BD}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OSS.Tools.Http", "Http\OSS.Tools.Http\OSS.Tools.Http.csproj", "{761044C8-D854-4D5F-98E4-9063CC9ABFFF}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -61,6 +65,10 @@ Global
 		{91BB536E-3183-4159-A969-FFF6219D48FD}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{91BB536E-3183-4159-A969-FFF6219D48FD}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{91BB536E-3183-4159-A969-FFF6219D48FD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{761044C8-D854-4D5F-98E4-9063CC9ABFFF}.Debug|Any CPU.ActiveCfg = Release|Any CPU
+		{761044C8-D854-4D5F-98E4-9063CC9ABFFF}.Debug|Any CPU.Build.0 = Release|Any CPU
+		{761044C8-D854-4D5F-98E4-9063CC9ABFFF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{761044C8-D854-4D5F-98E4-9063CC9ABFFF}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -73,6 +81,7 @@ Global
 		{F55C17BF-F87F-460C-B730-403F3EC49929} = {AA2F5FE1-0AE4-4455-BFF7-172D2741240F}
 		{5F6312C7-3D72-4D48-80CE-7D2DB2F13827} = {DC3D9A3B-D4D1-40A1-BD16-66FDDDE9EC69}
 		{91BB536E-3183-4159-A969-FFF6219D48FD} = {3F7591FA-9F56-4724-8222-144C923744D9}
+		{761044C8-D854-4D5F-98E4-9063CC9ABFFF} = {61B40C9B-71C4-4F33-8F1E-6AE9AE3522BD}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {C8EBEE97-F443-4BCA-8A47-5C67E3B3B72C}

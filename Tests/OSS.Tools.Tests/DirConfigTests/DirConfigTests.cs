@@ -1,8 +1,7 @@
 using NUnit.Framework;
-using OSS.Common.Resp;
 using OSS.Tools.DirConfig;
 
-namespace Tests
+namespace OSS.Tools.Tests.DirConfigTests
 {
     public class DirConfigTests
     {
@@ -20,7 +19,7 @@ namespace Tests
             var rConfig = DirConfigHelper.GetDirConfig<ConfigTest>("Test_Config");
 
             Assert.True(rConfig?.Name== "ConfigTest");
-            Assert.True(DirConfigHelper.RemoveDirConfig("Test_Config").IsSuccess());
+            DirConfigHelper.RemoveDirConfig("Test_Config");
         }
     }
 

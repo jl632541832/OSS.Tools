@@ -14,7 +14,6 @@
 using System;
 using System.IO;
 using System.Xml.Serialization;
-using OSS.Common.Resp;
 
 namespace OSS.Tools.DirConfig
 {
@@ -56,7 +55,7 @@ namespace OSS.Tools.DirConfig
         /// <param name="key"></param>
         /// <param name="dirConfig"></param>
         /// <returns></returns>
-        public Resp SetDirConfig<TConfig>(string key, TConfig dirConfig) where TConfig : class, new()
+        public bool SetDirConfig<TConfig>(string key, TConfig dirConfig) where TConfig : class, new()
         {
             if (string.IsNullOrEmpty(key))
                 throw new ArgumentNullException("key", "配置键值不能为空！");
@@ -75,7 +74,7 @@ namespace OSS.Tools.DirConfig
                 var xmlSer = new XmlSerializer(type);
                 xmlSer.Serialize(fs, dirConfig);
 
-                return new Resp();
+                return true;
             }
             finally
             {
@@ -122,15 +121,14 @@ namespace OSS.Tools.DirConfig
         /// </summary>
         /// <param name="key"></param>
         /// <returns></returns>
-        public Resp RemoveDirConfig(string key)
+        public void RemoveDirConfig(string key)
         {
             var fileName = string.Concat(_defaultPath, Path.DirectorySeparatorChar, key, ".config");
             
             if (!File.Exists(fileName))
-                return new Resp(RespTypes.InnerError, "移除字典配置时出错");
+                return ;
 
             File.Delete(fileName);
-            return new Resp();
         }
     }
 }

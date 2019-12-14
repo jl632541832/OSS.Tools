@@ -12,8 +12,6 @@
 #endregion
 
 
-using OSS.Common.Resp;
-
 namespace OSS.Tools.DirConfig
 {
     /// <summary>
@@ -28,7 +26,7 @@ namespace OSS.Tools.DirConfig
         /// <param name="dirConfig">配置具体信息</param>
         /// <typeparam name="TConfig">配置信息类型</typeparam>
         /// <returns></returns>
-        Resp SetDirConfig<TConfig>(string key, TConfig dirConfig) where TConfig : class ,new();
+        bool SetDirConfig<TConfig>(string key, TConfig dirConfig) where TConfig : class ,new();
 
 
         /// <summary>
@@ -44,6 +42,6 @@ namespace OSS.Tools.DirConfig
         /// </summary>
         /// <param name="key"></param>
         /// <returns></returns>
-        Resp RemoveDirConfig(string key);
+        void RemoveDirConfig(string key);
     }
 }

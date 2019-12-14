@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Configuration.Json;
@@ -14,8 +15,10 @@ namespace OSS.Tools.Config
             get
             {
                 if (config != null) return config;
+
+                var basePat = GetBasePath();
                 config = new ConfigurationBuilder()
-                    .SetBasePath(Directory.GetCurrentDirectory())
+                    .SetBasePath(basePat)
                     .Add(new JsonConfigurationSource
                     {
                         Path = "appsettings.json",
@@ -24,6 +27,19 @@ namespace OSS.Tools.Config
                 return config;
             }
             set => config = value;
+        }
+
+        private static string GetBasePath()
+        {
+            var basePat  = Directory.GetCurrentDirectory();
+            var sepChar  = Path.DirectorySeparatorChar;
+            var binIndex = basePat.IndexOf(string.Concat(sepChar, "bin", sepChar), StringComparison.OrdinalIgnoreCase);
+            if (binIndex > 0)
+            {
+                basePat = basePat.Substring(0, binIndex);
+            }
+
+            return basePat;
         }
 
         /// <summary>

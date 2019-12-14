@@ -11,8 +11,6 @@
 
 #endregion
 
-using OSS.Common.Plugs;
-
 namespace OSS.Tools.Log
 {
 
@@ -45,7 +43,7 @@ namespace OSS.Tools.Log
     /// <summary>
     /// 日志实体
     /// </summary>
-    public sealed class LogInfo
+    public class LogInfo
     {
         /// <summary>
         /// 空构造函数
@@ -61,39 +59,39 @@ namespace OSS.Tools.Log
         /// <param name="logMsg"></param>
         /// <param name="msgKey"></param>
         /// <param name="moduleName"></param>
-        internal LogInfo(LogLevelEnum loglevel, object logMsg, string msgKey = null, string moduleName = ModuleNames.Default)
+        internal LogInfo(LogLevelEnum loglevel, object logMsg, string msgKey = null, string moduleName = "default")
         {
-            Level = loglevel;
-            ModuleName = moduleName;
-            this.Msg = logMsg;
-            MsgKey = msgKey;
+            level = loglevel;
+            module_name = moduleName;
+            this.msg_body = logMsg;
+            msg_key = msgKey;
         }
 
         /// <summary>
         /// 日志等级
         /// </summary>
-        public LogLevelEnum Level { get; set; }
+        public LogLevelEnum level { get; set; }
 
         /// <summary>
         /// 日志类型
         /// </summary>
-        public string ModuleName { get; set; }
+        public string module_name { get; set; }
 
         /// <summary>
         ///   key值  可以是自定义的标识  
         ///   根据此字段可以处理当前module下不同复杂日志信息
         /// </summary>
-        public string MsgKey { get; set; }
+        public string msg_key { get; set; }
 
         /// <summary>
         /// 日志信息  可以是复杂类型  如 具体实体类
         /// </summary>
-        public object Msg { get; set; }
+        public object msg_body { get; set; }
 
         /// <summary>
         /// 编号（全局唯一）
         /// </summary>
-        public string LogCode { get; set; }
+        public string log_id { get; set; }
     }
 
 }
