@@ -7,6 +7,8 @@
     <PackageProjectUrl>https://github.com/KevinWG/OSS.Tools</PackageProjectUrl>
     <RepositoryUrl>https://github.com/KevinWG/OSS.Tools</RepositoryUrl>
     <PackageIconUrl>http://img1.osscore.cn/static/oss_net.png</PackageIconUrl>
+    <Authors>OSSCore</Authors>
+    <Description>日志操作管理类库</Description>
   </PropertyGroup>
 
 </Project>

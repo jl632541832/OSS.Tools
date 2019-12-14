@@ -19,13 +19,13 @@ namespace OSS.Tools.Http.Mos
     /// <summary>
     /// 请求实体
     /// </summary>
-    public class OsHttpRequest
+    public class OssHttpRequest
     {
-        public OsHttpRequest()
+        public OssHttpRequest()
         {
         }
 
-        public OsHttpRequest(string reqUrl)
+        public OssHttpRequest(string reqUrl)
         {
             AddressUrl = reqUrl;
         }

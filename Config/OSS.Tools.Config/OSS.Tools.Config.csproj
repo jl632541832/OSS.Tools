@@ -1,14 +1,17 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
-    <AssemblyVersion>1.1.0.0</AssemblyVersion>
-    <FileVersion>1.1.0.0</FileVersion>
-    <Version>1.1</Version>
-    <PackageReleaseNotes>修改完善结构</PackageReleaseNotes>
+    <AssemblyVersion>1.1.1.0</AssemblyVersion>
+    <FileVersion>1.1.1.0</FileVersion>
+    <Version>1.1.1</Version>
+    <PackageReleaseNotes>修改辅助类名称</PackageReleaseNotes>
     <PackageProjectUrl>https://github.com/KevinWG/OSS.Tools</PackageProjectUrl>
     <RepositoryUrl>https://github.com/KevinWG/OSS.Tools</RepositoryUrl>
     <PackageIconUrl>http://img1.osscore.cn/static/oss_net.png</PackageIconUrl>
+    <Authors>OSSCore</Authors>
+    <Company>OSSCore</Company>
+    <Description>解决方案默认配置管理类库</Description>
   </PropertyGroup>
 
   <ItemGroup>

@@ -43,7 +43,7 @@ namespace OSS.Tools.Http.Extention
         /// <param name="request">请求的参数</param>
         /// <param name="client"></param>
         /// <returns>自定义的Response结果</returns>
-        public static Task<HttpResponseMessage> PostAsync(this HttpClient client, OsHttpRequest request)
+        public static Task<HttpResponseMessage> PostAsync(this HttpClient client, OssHttpRequest request)
         {
             request.HttpMethod = HttpMethod.Post;
 
@@ -56,7 +56,7 @@ namespace OSS.Tools.Http.Extention
         /// <param name="request">请求的参数</param>
         /// <param name="client"></param>
         /// <returns>自定义的Response结果</returns>
-        public static Task<HttpResponseMessage> GetAsync(this HttpClient client, OsHttpRequest request)
+        public static Task<HttpResponseMessage> GetAsync(this HttpClient client, OssHttpRequest request)
         {
             request.HttpMethod = HttpMethod.Get;
 
@@ -72,7 +72,7 @@ namespace OSS.Tools.Http.Extention
         /// <param name="client"></param>
         /// <param name="request"></param>
         /// <returns></returns>
-        public static Task<HttpResponseMessage> RestSend(this HttpClient client, OsHttpRequest request)
+        public static Task<HttpResponseMessage> RestSend(this HttpClient client, OssHttpRequest request)
         {
             return RestSend(client, request, HttpCompletionOption.ResponseContentRead, CancellationToken.None);
         }
@@ -84,7 +84,7 @@ namespace OSS.Tools.Http.Extention
         /// <param name="request"></param>
         /// <param name="completionOption"></param>
         /// <returns></returns>
-        public static Task<HttpResponseMessage> RestSend(this HttpClient client, OsHttpRequest request,
+        public static Task<HttpResponseMessage> RestSend(this HttpClient client, OssHttpRequest request,
             HttpCompletionOption completionOption)
         {
            return  RestSend(client, request, completionOption, CancellationToken.None);
@@ -98,7 +98,7 @@ namespace OSS.Tools.Http.Extention
         /// <param name="completionOption"></param>
         /// <param name="cancellationToken"></param>
         /// <returns></returns>
-        public static Task<HttpResponseMessage> RestSend(this HttpClient client, OsHttpRequest request,
+        public static Task<HttpResponseMessage> RestSend(this HttpClient client, OssHttpRequest request,
             HttpCompletionOption completionOption ,
             CancellationToken cancellationToken)
         {
@@ -120,7 +120,7 @@ namespace OSS.Tools.Http.Extention
         /// 配置请求
         /// </summary>
         /// <returns></returns>
-        public static HttpRequestMessage ConfigureReqMsg(OsHttpRequest request)
+        public static HttpRequestMessage ConfigureReqMsg(OssHttpRequest request)
         {
             var reqMsg = new HttpRequestMessage
             {
@@ -138,7 +138,7 @@ namespace OSS.Tools.Http.Extention
         /// <param name="reqMsg"></param>
         /// <param name="req"></param>
         /// <returns></returns>
-        private static void ConfigReqContent(HttpRequestMessage reqMsg, OsHttpRequest req)
+        private static void ConfigReqContent(HttpRequestMessage reqMsg, OssHttpRequest req)
         {
             if (req.HttpMethod == HttpMethod.Get)
             {
@@ -184,7 +184,7 @@ namespace OSS.Tools.Http.Extention
         /// <param name="memory"></param>
         /// <param name="request"></param>
         /// <param name="boundary"></param>
-        private static void WriteMultipartFormData(Stream memory, OsHttpRequest request, string boundary)
+        private static void WriteMultipartFormData(Stream memory, OssHttpRequest request, string boundary)
         {
             if (request.FormParameters!=null)
             {
@@ -248,7 +248,7 @@ namespace OSS.Tools.Http.Extention
         /// </summary>
         /// <param name="request"></param>
         /// <returns></returns>
-        private static string GetNormalFormData(OsHttpRequest request)
+        private static string GetNormalFormData(OssHttpRequest request)
         {
             var formstring = new StringBuilder();
 

@@ -33,7 +33,7 @@ namespace OSS.Tools.Http.Extention
         /// <param name="request">请求的参数</param>
         /// <param name="client"></param>
         /// <returns>自定义的Response结果</returns>
-        public static Task<HttpResponseMessage> RestSend(this OsHttpRequest request, HttpClient client = null)
+        public static Task<HttpResponseMessage> RestSend(this OssHttpRequest request, HttpClient client = null)
         {
             return RestSend(request, HttpCompletionOption.ResponseContentRead, CancellationToken.None, client);
         }
@@ -45,7 +45,7 @@ namespace OSS.Tools.Http.Extention
         /// <param name="completionOption"></param>
         /// <param name="client"></param>
         /// <returns>自定义的Response结果</returns>
-        public static Task<HttpResponseMessage> RestSend(this OsHttpRequest request,
+        public static Task<HttpResponseMessage> RestSend(this OssHttpRequest request,
             HttpCompletionOption completionOption, HttpClient client = null)
         {
             return RestSend(request, completionOption, CancellationToken.None, client);
@@ -59,7 +59,7 @@ namespace OSS.Tools.Http.Extention
         /// <param name="token"></param>
         /// <param name="client"></param>
         /// <returns>自定义的Response结果</returns>
-        public static Task<HttpResponseMessage> RestSend(this OsHttpRequest request,
+        public static Task<HttpResponseMessage> RestSend(this OssHttpRequest request,
             HttpCompletionOption completionOption,
             CancellationToken token,
             HttpClient client = null)

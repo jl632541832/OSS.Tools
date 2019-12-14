@@ -8,7 +8,7 @@ namespace OSS.Tools.RedisCache
     /// <summary>
     /// redis缓存实现类
     /// </summary>
-    public class ToolStackRedis : IToolCache
+    public class StackRedisTool : IToolCache
     {
         //redis数据库连接字符串
         private readonly string ConnectionStr = null;
@@ -24,7 +24,7 @@ namespace OSS.Tools.RedisCache
         /// </summary>
         /// <param name="db"></param>
         /// <param name="connectStr"></param>
-        public ToolStackRedis(int db, string connectStr)
+        public StackRedisTool(int db, string connectStr)
         {
             ConnectionStr = connectStr;
             this._db = db;

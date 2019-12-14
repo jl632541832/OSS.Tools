@@ -6,7 +6,7 @@ using Microsoft.Extensions.Configuration.Json;
 
 namespace OSS.Tools.Config
 {
-    public static class ConfigUtil
+    public static class ConfigHelper
     {
         private static IConfiguration config;
 

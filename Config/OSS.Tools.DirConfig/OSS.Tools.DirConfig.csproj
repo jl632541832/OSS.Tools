@@ -7,6 +7,9 @@
     <PackageIconUrl>http://img1.osscore.cn/static/oss_net.png</PackageIconUrl>
     <PackageProjectUrl>https://github.com/KevinWG/OSS.Tools</PackageProjectUrl>
     <RepositoryUrl>https://github.com/KevinWG/OSS.Tools</RepositoryUrl>
+    <Authors>OSSCore</Authors>
+    <Company>OSSCore</Company>
+    <Description>字典配置管理</Description>
   </PropertyGroup>
 
 </Project>
