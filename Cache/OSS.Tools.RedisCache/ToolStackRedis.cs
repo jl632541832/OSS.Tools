@@ -113,12 +113,5 @@ namespace OSS.Tools.RedisCache
         {
             return Add(key, obj, TimeSpan.Zero, absoluteExpiration);
         }
-
-
-        [Obsolete]
-        public bool AddOrUpdate<T>(string key, T obj, TimeSpan slidingExpiration, DateTime? absoluteExpiration = null)
-        {
-            return Add(key, obj, slidingExpiration, absoluteExpiration);
-        }
     }
 }
