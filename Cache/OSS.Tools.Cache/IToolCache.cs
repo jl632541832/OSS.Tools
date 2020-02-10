@@ -39,6 +39,9 @@ namespace OSS.Tools.Cache
         /// <param name="obj">值</param>
         /// <param name="absoluteExpiration"> 绝对过期时间,不为空则按照绝对过期时间计算 </param>
         /// <returns>是否添加成功</returns>
+        bool SetAbsolute<T>(string key, T obj, TimeSpan absoluteExpiration);
+
+        [Obsolete("请使用SetAbsolute")]
         bool Set<T>(string key, T obj, DateTime absoluteExpiration);
 
         /// <summary>

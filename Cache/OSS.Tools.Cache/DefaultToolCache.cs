@@ -23,25 +23,8 @@ namespace OSS.Tools.Cache
     {
         private static readonly MemoryCache _cache=new MemoryCache(new MemoryCacheOptions());
 
-        /// <summary>
-        /// 添加缓存
-        /// 如果存在则更新
-        /// </summary>
-        /// <typeparam name="T">添加缓存对象类型</typeparam>
-        /// <param name="key">添加对象的key</param>
-        /// <param name="obj">值</param>
-        /// <param name="slidingExpiration">相对过期的TimeSpan  如果使用固定时间  =TimeSpan.Zero</param>
-        /// <param name="absoluteExpiration"> 绝对过期时间,不为空则按照绝对过期时间计算 </param>
-        /// <returns>是否添加成功</returns>
-        [Obsolete]
-        public bool AddOrUpdate<T>(string key, T obj, TimeSpan slidingExpiration, DateTime? absoluteExpiration = null)
-        {
-            return Add(key, obj, slidingExpiration, absoluteExpiration, true);
-        }
-
         /// <summary> 
-        /// 添加时间段过期缓存
-        /// 如果存在则更新
+        /// 添加相对过期时间缓存，如果存在则更新
         /// </summary>
         /// <typeparam name="T">添加缓存对象类型</typeparam>
         /// <param name="key">添加对象的key</param>
@@ -50,7 +33,20 @@ namespace OSS.Tools.Cache
         /// <returns>是否添加成功</returns>
         public bool Set<T>(string key, T obj, TimeSpan slidingExpiration)
         {
-            return Add(key, obj, slidingExpiration, null, true);
+            return Set(key, obj, slidingExpiration, null);
+        }
+
+        /// <summary>
+        /// 添加固定过期时间缓存，如果存在则更新
+        /// </summary>
+        /// <typeparam name="T">添加缓存对象类型</typeparam>
+        /// <param name="key">添加对象的key</param>
+        /// <param name="obj">值</param>
+        /// <param name="absoluteExpiration"> 绝对过期时间 </param>
+        /// <returns>是否添加成功</returns>
+        public bool SetAbsolute<T>(string key, T obj, TimeSpan absoluteExpiration)
+        {
+            return Set(key, obj, TimeSpan.Zero, DateTime.Now.AddSeconds(absoluteExpiration.TotalSeconds));
         }
 
         /// <summary>
@@ -59,11 +55,12 @@ namespace OSS.Tools.Cache
         /// <typeparam name="T">添加缓存对象类型</typeparam>
         /// <param name="key">添加对象的key</param>
         /// <param name="obj">值</param>
-        /// <param name="absoluteExpiration"> 绝对过期时间,不为空则按照绝对过期时间计算 </param>
+        /// <param name="absoluteExpiration"> 绝对过期时间 </param>
         /// <returns>是否添加成功</returns>
+        [Obsolete("使用SetAbsolute")]
         public bool Set<T>(string key, T obj, DateTime absoluteExpiration)
         {
-            return Add(key, obj, TimeSpan.Zero, absoluteExpiration, true);
+            return Set(key, obj, TimeSpan.Zero, absoluteExpiration);
         }
 
         /// <summary>
@@ -74,10 +71,8 @@ namespace OSS.Tools.Cache
         /// <param name="obj"></param>
         /// <param name="slidingExpiration"></param>
         /// <param name="absoluteExpiration"></param>
-        /// <param name="isUpdate"></param>
         /// <returns></returns>
-        private static bool Add<T>(string key, T obj, TimeSpan slidingExpiration, DateTime? absoluteExpiration,
-            bool isUpdate)
+        private static bool Set<T>(string key, T obj, TimeSpan slidingExpiration, DateTime? absoluteExpiration)
         {
             if (slidingExpiration == TimeSpan.Zero && absoluteExpiration == null)
                 throw new ArgumentNullException("slidingExpiration", "缓存过期时间不正确,需要设置固定过期时间或者相对过期时间");
@@ -103,8 +98,6 @@ namespace OSS.Tools.Cache
             return _cache.Get<T>(key);
         }
         
-
-
         /// <summary>
         /// 移除缓存对象
         /// </summary>
