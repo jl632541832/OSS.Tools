@@ -102,12 +102,13 @@ namespace OSS.Tools.Http.Extention
             HttpCompletionOption completionOption ,
             CancellationToken cancellationToken)
         {
-            var reqMsg = ConfigureReqMsg(request);
+            var reqMsg = new HttpRequestMessage
+            {
+                RequestUri = string.IsNullOrEmpty(request.AddressUrl) ? request.Uri : new Uri(request.AddressUrl),
+                Method     = request.HttpMethod
+            };
 
-           
-            //if (request.TimeOutMilSeconds > 0)
-            //    client.Timeout = TimeSpan.FromMilliseconds(request.TimeOutMilSeconds);
-            
+            ConfigReqContent(reqMsg, request); //  配置内容
             return client.SendAsync(reqMsg, completionOption, cancellationToken);
         }
 
@@ -116,24 +117,11 @@ namespace OSS.Tools.Http.Extention
 
         #region  配置 ReqMsg信息
 
-        /// <summary>
-        /// 配置请求
-        /// </summary>
-        /// <returns></returns>
-        public static HttpRequestMessage ConfigureReqMsg(OssHttpRequest request)
-        {
-            var reqMsg = new HttpRequestMessage
-            {
-                RequestUri = string.IsNullOrEmpty(request.AddressUrl) ? request.Uri : new Uri(request.AddressUrl),
-                Method = request.HttpMethod
-            };
-            ConfigReqContent(reqMsg, request); //  配置内容
-            return reqMsg;
-        }
+    
         
 
         /// <summary>
-        ///  配置使用的cotent
+        ///  配置使用的content
         /// </summary>
         /// <param name="reqMsg"></param>
         /// <param name="req"></param>

@@ -50,7 +50,7 @@ namespace OSS.Tools.Http.Mos
         /// 读写操作流
         ///  返回的是写入的字节流长度
         /// </summary>
-        public Action<Stream> Writer;
+        internal Action<Stream> Writer;
         /// <summary>
         /// 文件名称
         /// </summary>

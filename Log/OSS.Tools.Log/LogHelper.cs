@@ -37,7 +37,7 @@ namespace OSS.Tools.Log
         /// </summary>
         /// <param name="logModule"></param>
         /// <returns></returns>
-        public static Tools.Log.IToolLog GetLogWrite(string logModule)
+        public static IToolLog GetLogWrite(string logModule)
         {
             if (string.IsNullOrEmpty(logModule))
                 logModule = "default";
@@ -99,10 +99,8 @@ namespace OSS.Tools.Log
             if (string.IsNullOrEmpty(info.module_name))
                 info.module_name = "default";
 
-            var logWrite = GetLogWrite(info.module_name);
-
             LogFormat?.Invoke(info);
-            logWrite.WriteLog(info);
+            GetLogWrite(info.module_name)?.WriteLog(info);
 
             return info.log_id;
         }

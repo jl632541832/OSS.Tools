@@ -50,31 +50,6 @@ namespace OSS.Tools.RedisCache
         /// </summary>
         public IDatabase CacheRedis => CacheConnection.GetDatabase(_db);
 
-        /// <summary>
-        /// 添加缓存，已存在不更新
-        /// </summary>
-        /// <typeparam name="T">添加缓存对象类型</typeparam>
-        /// <param name="key">添加对象的key</param>
-        /// <param name="obj">值</param>
-        /// <param name="slidingExpiration">缓存时间 （redis目前都用绝对的）</param>
-        /// <param name="absoluteExpiration"> 绝对过期时间（此字段无用 redis目前都用绝对的） </param>
-        /// <returns>是否添加成功</returns>
-        public bool Add<T>(string key, T obj, TimeSpan slidingExpiration, DateTime? absoluteExpiration)
-        {
-            if (slidingExpiration == TimeSpan.Zero && absoluteExpiration == null)
-                throw new ArgumentNullException(nameof(slidingExpiration), "缓存过期时间不正确,需要设置固定过期时间或者相对过期时间");
-
-            if (obj == null)
-                return false;
-            
-            var jsonStr = JsonConvert.SerializeObject(obj);
-
-            if (slidingExpiration == TimeSpan.Zero)
-            {
-                slidingExpiration = new TimeSpan(Convert.ToDateTime(absoluteExpiration).Ticks) - new TimeSpan(DateTime.Now.Ticks);
-            }
-            return CacheRedis.StringSet(key, jsonStr, slidingExpiration);
-        }
 
    
 
@@ -106,12 +81,44 @@ namespace OSS.Tools.RedisCache
 
         public bool Set<T>(string key, T obj, TimeSpan slidingExpiration)
         {
-          return  Add(key, obj, slidingExpiration, null);
+          return  Add(key, obj, slidingExpiration, TimeSpan.Zero);
         }
 
-        public bool Set<T>(string key, T obj, DateTime absoluteExpiration)
+        public bool SetAbsolute<T>(string key, T obj, TimeSpan absoluteExpiration)
         {
             return Add(key, obj, TimeSpan.Zero, absoluteExpiration);
         }
+       [Obsolete("请使用SetAbsolute")] 
+       public bool Set<T>(string key, T obj, DateTime absoluteExpiration)
+        {
+            var timeS =TimeSpan.FromTicks( absoluteExpiration.Ticks - DateTime.Now.Ticks);
+            return Add(key, obj, TimeSpan.Zero, timeS);
+        }
+        /// <summary>
+        /// 添加缓存，已存在不更新
+        /// </summary>
+        /// <typeparam name="T">添加缓存对象类型</typeparam>
+        /// <param name="key">添加对象的key</param>
+        /// <param name="obj">值</param>
+        /// <param name="slidingExpiration">缓存时间 （redis目前都用绝对的）</param>
+        /// <param name="absoluteExpiration"> 绝对过期时间（此字段无用 redis目前都用绝对的） </param>
+        /// <returns>是否添加成功</returns>
+        private bool Add<T>(string key, T obj, TimeSpan slidingExpiration, TimeSpan absoluteExpiration)
+        {
+            if (slidingExpiration == TimeSpan.Zero && absoluteExpiration == null)
+                throw new ArgumentNullException(nameof(slidingExpiration), "缓存过期时间不正确,需要设置固定过期时间或者相对过期时间");
+
+            if (obj == null)
+                return false;
+
+            var jsonStr = JsonConvert.SerializeObject(obj);
+
+            if (slidingExpiration == TimeSpan.Zero)
+                slidingExpiration = absoluteExpiration;
+
+            return CacheRedis.StringSet(key, jsonStr, slidingExpiration);
+        }
+
+     
     }
 }
