@@ -41,12 +41,13 @@ namespace OSS.Tools.Log
         private string getLogFilePath(string module, LogLevelEnum level)
         {
             var date = DateTime.Now;
-            var dirPath = Path.Combine(_logBaseDirPath,string.Concat(module,"_",level) ,DateTime.Now.ToString("yyMM"));//string.Format(@"{0}\{1}\{2}\",_logBaseDirPath, module, level);
+            var dirPath = Path.Combine(_logBaseDirPath,string.Concat(module,"_",level) ,DateTime.Now.ToString("yyyyMM"));//string.Format(@"{0}\{1}\{2}\",_logBaseDirPath, module, level);
 
             if (!Directory.Exists(dirPath))
                 Directory.CreateDirectory(dirPath);
 
-            return Path.Combine(dirPath, date.ToString("MMddHH")+( date.Minute>30?"00":"30")+ ".txt");
+            var fileName = string.Concat(date.ToString("yyyy-MM-dd HH-"), Math.Floor(DateTime.Now.Minute / 10M), "0.txt");
+            return Path.Combine(dirPath, fileName);
         }
 
         private static readonly object obj = new object();
@@ -55,17 +56,17 @@ namespace OSS.Tools.Log
         /// 写日志
         /// </summary>
         /// <param name="info"></param>
-        public void WriteLog(LogInfo info)
+        public Task WriteLogAsync(LogInfo info)
         {
-            Task.Run(() =>
+            return Task.Run(() =>
             {
                 lock (obj)
                 {
                     var filePath = getLogFilePath(info.module_name, info.level);
 
-                    using (StreamWriter sw =
+                    using (var sw =
                         new StreamWriter(new FileStream(filePath, FileMode.Append, FileAccess.Write), Encoding.UTF8))
-                    {
+                    { 
                         sw.WriteLine(_logFormat,DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"),
                             info.log_id,info.msg_key,info.msg_body);
                     }

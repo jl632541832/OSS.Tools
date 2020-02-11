@@ -12,6 +12,7 @@
 #endregion
 
 using System;
+using System.Threading.Tasks;
 using Microsoft.Extensions.Caching.Memory;
 
 namespace OSS.Tools.Cache
@@ -23,68 +24,27 @@ namespace OSS.Tools.Cache
     {
         private static readonly MemoryCache _cache=new MemoryCache(new MemoryCacheOptions());
 
-        /// <summary> 
-        /// 添加相对过期时间缓存，如果存在则更新
+        /// <summary>
+        ///  添加缓存,如果存在则更新为新值
         /// </summary>
         /// <typeparam name="T">添加缓存对象类型</typeparam>
         /// <param name="key">添加对象的key</param>
         /// <param name="obj">值</param>
-        /// <param name="slidingExpiration">相对过期的TimeSpan</param>
+        /// <param name="cacheOpt"></param>
         /// <returns>是否添加成功</returns>
-        public bool Set<T>(string key, T obj, TimeSpan slidingExpiration)
+        public Task<bool> SetAsync<T>(string key, T obj, CacheTimeOptions cacheOpt)
         {
-            return Set(key, obj, slidingExpiration, null);
-        }
+            if (!cacheOpt.AbsoluteExpirationRelativeToNow.HasValue && !cacheOpt.SlidingExpiration.HasValue)
+                throw new ArgumentNullException("cacheOpt", "缓存过期时间不正确,需要设置固定过期时间或者相对过期时间");
 
-        /// <summary>
-        /// 添加固定过期时间缓存，如果存在则更新
-        /// </summary>
-        /// <typeparam name="T">添加缓存对象类型</typeparam>
-        /// <param name="key">添加对象的key</param>
-        /// <param name="obj">值</param>
-        /// <param name="absoluteExpiration"> 绝对过期时间 </param>
-        /// <returns>是否添加成功</returns>
-        public bool SetAbsolute<T>(string key, T obj, TimeSpan absoluteExpiration)
-        {
-            return Set(key, obj, TimeSpan.Zero, DateTime.Now.AddSeconds(absoluteExpiration.TotalSeconds));
-        }
-
-        /// <summary>
-        /// 添加固定过期时间缓存,如果存在则更新
-        /// </summary>
-        /// <typeparam name="T">添加缓存对象类型</typeparam>
-        /// <param name="key">添加对象的key</param>
-        /// <param name="obj">值</param>
-        /// <param name="absoluteExpiration"> 绝对过期时间 </param>
-        /// <returns>是否添加成功</returns>
-        [Obsolete("使用SetAbsolute")]
-        public bool Set<T>(string key, T obj, DateTime absoluteExpiration)
-        {
-            return Set(key, obj, TimeSpan.Zero, absoluteExpiration);
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="key"></param>
-        /// <param name="obj"></param>
-        /// <param name="slidingExpiration"></param>
-        /// <param name="absoluteExpiration"></param>
-        /// <returns></returns>
-        private static bool Set<T>(string key, T obj, TimeSpan slidingExpiration, DateTime? absoluteExpiration)
-        {
-            if (slidingExpiration == TimeSpan.Zero && absoluteExpiration == null)
-                throw new ArgumentNullException("slidingExpiration", "缓存过期时间不正确,需要设置固定过期时间或者相对过期时间");
-
-            var opt = new MemoryCacheEntryOptions();
-            if (absoluteExpiration != null)
-                opt.AbsoluteExpiration = new DateTimeOffset(absoluteExpiration.Value);
-            else
-                opt.SlidingExpiration = slidingExpiration;
+            var opt = new MemoryCacheEntryOptions
+            {
+                AbsoluteExpirationRelativeToNow = cacheOpt.AbsoluteExpirationRelativeToNow,
+                SlidingExpiration               = cacheOpt.SlidingExpiration
+            };
 
             _cache.Set(key, obj, opt);
-            return true;
+            return Task.FromResult(true);
         }
 
         /// <summary>
@@ -93,9 +53,9 @@ namespace OSS.Tools.Cache
         /// <typeparam name="T">获取缓存对象类型</typeparam>
         /// <param name="key">key</param>
         /// <returns>获取指定key对应的值 </returns>
-        public T Get<T>(string key)
+        public Task<T> GetAsync<T>(string key)
         {
-            return _cache.Get<T>(key);
+            return Task.FromResult(_cache.Get<T>(key));
         }
         
         /// <summary>
@@ -103,10 +63,10 @@ namespace OSS.Tools.Cache
         /// </summary>
         /// <param name="key"></param>
         /// <returns>是否成功</returns>
-        public bool Remove(string key)
+        public Task<bool> RemoveAsync(string key)
         {
             _cache.Remove(key);
-            return true;
+            return Task.FromResult(true);
         }
     }
 }

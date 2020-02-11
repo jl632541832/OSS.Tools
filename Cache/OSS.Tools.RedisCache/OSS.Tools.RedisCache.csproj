@@ -2,8 +2,8 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
-    <Version>1.1</Version>
-    <PackageReleaseNotes>修改完善结构</PackageReleaseNotes>
+    <Version>1.2</Version>
+    <PackageReleaseNotes>修改底层Redis基础类库</PackageReleaseNotes>
     <PackageProjectUrl>https://github.com/KevinWG/OSS.Tools</PackageProjectUrl>
     <PackageIconUrl>http://img1.osscore.cn/static/oss_net.png</PackageIconUrl>
     <RepositoryUrl>https://github.com/KevinWG/OSS.Tools</RepositoryUrl>
@@ -12,9 +12,14 @@
     <Description>Redis Cache 操作工具类库</Description>
   </PropertyGroup>
 
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <DocumentationFile>bin\Release\netstandard2.0\OSS.Tools.RedisCache.xml</DocumentationFile>
+    <OutputPath>bin\Release\netstandard2.0\</OutputPath>
+  </PropertyGroup>
+
   <ItemGroup>
+    <PackageReference Include="Microsoft.Extensions.Caching.StackExchangeRedis" Version="3.1.1" />
     <PackageReference Include="Newtonsoft.Json" Version="12.0.2" />
-    <PackageReference Include="StackExchange.Redis" Version="2.0.601" />
   </ItemGroup>
 
   <ItemGroup>

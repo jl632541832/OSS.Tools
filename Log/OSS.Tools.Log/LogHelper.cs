@@ -26,6 +26,7 @@ namespace OSS.Tools.Log
         ///   日志模块提供者
         /// </summary>
         public static Func<string, IToolLog> LogWriterProvider { get; set; }
+
         /// <summary>
         ///  对日志内容格式化
         ///     例如可以 初始化日志Id，加工日志内容 等
@@ -88,8 +89,7 @@ namespace OSS.Tools.Log
         {
             return Log(new LogInfo(LogLevelEnum.Trace, msg, msgKey, moduleName));
         }
-
-
+        
         /// <summary>
         ///   记录日志
         /// </summary>
@@ -100,7 +100,7 @@ namespace OSS.Tools.Log
                 info.module_name = "default";
 
             LogFormat?.Invoke(info);
-            GetLogWrite(info.module_name)?.WriteLog(info);
+            GetLogWrite(info.module_name)?.WriteLogAsync(info);
 
             return info.log_id;
         }

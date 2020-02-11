@@ -11,6 +11,8 @@
 
 #endregion
 
+using System.Threading.Tasks;
+
 namespace OSS.Tools.Log
 {
     /// <summary>
@@ -22,6 +24,6 @@ namespace OSS.Tools.Log
         ///   日志写功能
         /// </summary>
         ///<param name="info">日志实体</param>
-        void WriteLog(LogInfo info);
+        Task WriteLogAsync(LogInfo info);
     }
 }

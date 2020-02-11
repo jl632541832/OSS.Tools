@@ -15,12 +15,12 @@ namespace OSS.Tools.Tests.CacheTests
         }
 
         [Test]
-        public async Task DirConfigTest()
+        public async Task FailProtectTest()
         {
-            var testRes = await CacheHelper.GetWithSet("TesttttttKey", 
-                () => Task.FromResult(new Resp()),TimeSpan.FromSeconds(10),res=>!res.IsSuccess());
+            var testRes = await CacheHelper.GetOrSetAsync("TesttttttKey", 
+                () => Task.FromResult(new Resp()),TimeSpan.FromSeconds(100),res=>!res.IsSuccess());
            
-            var secRes = await CacheHelper.GetWithSet("TesttttttKey",
+            var secRes = await CacheHelper.GetOrSetAsync("TesttttttKey",
                 () => Task.FromResult(new Resp()),TimeSpan.FromSeconds(10),res=>!res.IsSuccess());
 
             Assert.IsTrue(testRes.IsSuccess());
