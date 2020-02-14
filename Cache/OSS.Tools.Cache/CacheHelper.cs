@@ -114,9 +114,9 @@ namespace OSS.Tools.Cache
         /// <param name="moduleName">模块名称</param>
         /// <returns>获取指定key对应的值 </returns>
         [Obsolete("请使用 GetAsync")]
-        public static Task<T> Get<T>(string key, string moduleName = "default")
+        public static T Get<T>(string key, string moduleName = "default")
         {
-            return GetAsync<T>(key);
+            return GetAsync<T>(key).Result;
         }
 
         /// <summary>
