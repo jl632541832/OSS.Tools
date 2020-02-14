@@ -89,7 +89,7 @@ namespace OSS.Tools.Log
         public object msg_body { get; set; }
 
         /// <summary>
-        /// 编号（全局唯一）
+        /// 编号
         /// </summary>
         public string log_id { get; set; }
     }
