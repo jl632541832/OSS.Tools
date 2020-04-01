@@ -44,12 +44,12 @@ namespace OSS.Tools.Cache
         #region 缓存添加
 
         /// <summary> 
-        /// 添加相对过期时间缓存，如果存在则更新
+        /// 添加滚动过期缓存，如果存在则更新
         /// </summary>
         /// <typeparam name="T">添加缓存对象类型</typeparam>
         /// <param name="key">添加对象的key</param>
         /// <param name="obj">值</param>
-        /// <param name="slidingExpiration">相对过期的TimeSpan</param>
+        /// <param name="slidingExpiration">滚动过期时长，访问后自动延长</param>
         /// <param name="moduleName">模块名称</param>
         /// <returns>是否添加成功</returns>
         [Obsolete("请使用 SetAsync")]
@@ -64,7 +64,7 @@ namespace OSS.Tools.Cache
         /// <typeparam name="T">添加缓存对象类型</typeparam>
         /// <param name="key">添加对象的key</param>
         /// <param name="obj">值</param>
-        /// <param name="absoluteExpiration"> 绝对过期时间 </param>
+        /// <param name="absoluteExpiration"> 固定过期时长，设置后到时过期 </param>
         /// <param name="moduleName">模块名称</param>
         /// <returns>是否添加成功</returns>
         [Obsolete("请使用 SetAbsoluteAsync")]
@@ -74,12 +74,12 @@ namespace OSS.Tools.Cache
         }
 
         /// <summary> 
-        /// 添加相对过期时间缓存，如果存在则更新
+        /// 添加滚动过期缓存，如果存在则更新
         /// </summary>
         /// <typeparam name="T">添加缓存对象类型</typeparam>
         /// <param name="key">添加对象的key</param>
         /// <param name="obj">值</param>
-        /// <param name="slidingExpiration">相对过期的TimeSpan</param>
+        /// <param name="slidingExpiration">滚动过期时长，访问后自动延长</param>
         /// <param name="moduleName">模块名称</param>
         /// <returns>是否添加成功</returns>
         public static Task<bool> SetAsync<T>(string key, T obj, TimeSpan slidingExpiration,
@@ -94,7 +94,7 @@ namespace OSS.Tools.Cache
         /// <typeparam name="T">添加缓存对象类型</typeparam>
         /// <param name="key">添加对象的key</param>
         /// <param name="obj">值</param>
-        /// <param name="absoluteExpiration"> 绝对过期时间 </param>
+        /// <param name="absoluteExpiration"> 固定过期时长，设置后到时过期 </param>
         /// <param name="moduleName">模块名称</param>
         /// <returns>是否添加成功</returns>
         public static Task<bool> SetAbsoluteAsync<T>(string key, T obj, TimeSpan absoluteExpiration,string moduleName = "default")
@@ -102,6 +102,26 @@ namespace OSS.Tools.Cache
             return SetAsync(key, obj, null, absoluteExpiration, moduleName);
         }
 
+        /// <summary>
+        /// 设置缓存
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="key">添加对象的key</param>
+        /// <param name="obj">值</param>
+        /// <param name="slidingExpiration">滚动过期时长，访问后自动延长，如果同时设置固定过期，则只能在固定时长范围内延长</param>
+        /// <param name="absoluteExpiration">固定过期时长，设置后到时过期</param>
+        /// <param name="moduleName"></param>
+        /// <returns></returns>
+        public static Task<bool> SetAsync<T>(string key, T obj,
+            TimeSpan? slidingExpiration, TimeSpan? absoluteExpiration, string moduleName = "default")
+        {
+            return GetCache(moduleName).SetAsync(key, obj, new CacheTimeOptions()
+            {
+                AbsoluteExpirationRelativeToNow = absoluteExpiration,
+                SlidingExpiration               = slidingExpiration,
+                ModuleName                      = moduleName
+            });
+        }
         #endregion
 
         #region 缓存获取
@@ -137,13 +157,13 @@ namespace OSS.Tools.Cache
         /// <typeparam name="RType"></typeparam>
         /// <param name="cacheKey">key</param>
         /// <param name="getFunc">如果不存在，通过此方法获取原始数据添加缓存</param>
-        /// <param name="slidingExpiration">过期时长，访问后自动延长</param>
+        /// <param name="slidingExpiration">滚动过期时长，访问后自动延长</param>
         /// <param name="moduleName">模块名称</param>
         /// <returns></returns>
         public static Task<RType> GetOrSetAsync<RType>(string cacheKey, Func<Task<RType>> getFunc,
             TimeSpan slidingExpiration, string moduleName = "default")
         {
-            return Get(cacheKey, getFunc, slidingExpiration, null,  moduleName);
+            return GetOrSetAsync(cacheKey, getFunc, slidingExpiration, null,  moduleName);
         }
 
         /// <summary>
@@ -152,15 +172,42 @@ namespace OSS.Tools.Cache
         /// <typeparam name="RType"></typeparam>
         /// <param name="cacheKey">key</param>
         /// <param name="getFunc">没有数据时，通过此方法获取原始数据</param>
-        /// <param name="absoluteExpiration">绝对过期时间</param>
+        /// <param name="absoluteExpiration">固定过期时长，设置后到时过期</param>
         /// <param name="moduleName">模块名称</param>
         /// <returns></returns>
         public static Task<RType> GetOrSetAbsoluteAsync<RType>(string cacheKey, Func<Task<RType>> getFunc,
             TimeSpan absoluteExpiration, string moduleName = "default")
         {
-            return Get(cacheKey, getFunc, null, absoluteExpiration,  moduleName);
+            return GetOrSetAsync(cacheKey, getFunc, null, absoluteExpiration,  moduleName);
         }
 
+        /// <summary>
+        /// 获取缓存数据，如果没有则添加
+        /// </summary>
+        /// <typeparam name="RType"></typeparam>
+        /// <param name="cacheKey"></param>
+        /// <param name="createFunc">没有数据时，通过此方法获取原始数据</param>
+        /// <param name="slidingExpiration">滚动过期时长，访问后自动延长，如果同时设置固定过期，则只能在固定时长范围内延长</param>
+        /// <param name="absoluteExpiration">固定过期时长，设置后到时过期</param>
+        /// <param name="moduleName">模块名称</param>
+        /// <returns></returns>
+        public static async Task<RType> GetOrSetAsync<RType>(string cacheKey, Func<Task<RType>> createFunc
+            , TimeSpan? slidingExpiration, TimeSpan? absoluteExpiration, string moduleName)
+        {
+            var obj =await GetAsync<RType>(cacheKey);
+            if (obj != null)
+                return obj;
+
+            if (createFunc == null)
+                return default;
+
+            var data = await createFunc.Invoke();
+            if (data == null)
+                return default;
+
+            await SetAsync(cacheKey, data, absoluteExpiration, slidingExpiration, moduleName);
+            return data;
+        }
         #endregion
 
         #region 缓存获取（击穿保护）
@@ -171,7 +218,7 @@ namespace OSS.Tools.Cache
         /// <typeparam name="RType"></typeparam>
         /// <param name="cacheKey">key</param>
         /// <param name="getFunc">没有数据时，通过此方法获取原始数据</param>
-        /// <param name="slidingExpiration">过期时长（相对滚动时间），访问后自动延长</param>
+        /// <param name="slidingExpiration">滚动过期时长，访问后自动延长</param>
         /// <param name="failProtectCondition">缓存击穿保护触发条件</param>
         /// <param name="protectSeconds">缓存击穿保护秒数</param>
         /// <param name="moduleName">模块名称</param>
@@ -180,7 +227,7 @@ namespace OSS.Tools.Cache
             Func<RType, bool> failProtectCondition, int protectSeconds = 10, 
             string moduleName = "default")
         {
-            return ProtectedGet(cacheKey, getFunc, slidingExpiration, null, failProtectCondition, protectSeconds, moduleName);
+            return GetOrSetAsync(cacheKey, getFunc, slidingExpiration, null, failProtectCondition, protectSeconds, moduleName);
         }
 
         /// <summary>
@@ -189,7 +236,7 @@ namespace OSS.Tools.Cache
         /// <typeparam name="RType"></typeparam>
         /// <param name="cacheKey">key</param>
         /// <param name="getFunc">如果不存在，通过此方法获取原始数据添加缓存</param>
-        /// <param name="absoluteExpiration">绝对过期时间</param>
+        /// <param name="absoluteExpiration">固定过期时长，设置后到时过期</param>
         /// <param name="failProtectCondition">缓存击穿保护触发条件</param>
         /// <param name="protectSeconds">缓存击穿保护秒数</param>
         /// <param name="moduleName">模块名称</param>
@@ -198,9 +245,47 @@ namespace OSS.Tools.Cache
             Func<RType, bool> failProtectCondition, int protectSeconds = 10,
             string moduleName = "default")
         {
-            return ProtectedGet(cacheKey, getFunc, TimeSpan.Zero, absoluteExpiration, failProtectCondition, protectSeconds, moduleName);
+            return GetOrSetAsync(cacheKey, getFunc, TimeSpan.Zero, absoluteExpiration, failProtectCondition, protectSeconds, moduleName);
         }
-        
+
+        /// <summary>
+        /// 获取缓存数据【同时添加缓存击穿保护】，如果没有则添加
+        /// </summary>
+        /// <typeparam name="RType"></typeparam>
+        /// <param name="cacheKey"></param>
+        /// <param name="getFunc">没有数据时，通过此方法获取原始数据</param>
+        /// <param name="slidingExpiration">滚动过期时长，访问后自动延长，如果同时设置固定过期，则只能在固定时长范围内延长</param>
+        /// <param name="absoluteExpiration">固定过期时长，设置后到时过期</param>
+        /// <param name="hitProtectCondition">缓存击穿保护触发条件</param>
+        /// <param name="hitProtectSeconds">缓存击穿保护秒数</param>
+        /// <param name="moduleName">模块名称</param>
+        /// <returns></returns>
+        public static async Task<RType> GetOrSetAsync<RType>(string cacheKey, Func<Task<RType>> getFunc
+            , TimeSpan? slidingExpiration, TimeSpan? absoluteExpiration,
+            Func<RType, bool> hitProtectCondition, int hitProtectSeconds, string moduleName)
+        {
+            if (getFunc == null)
+                throw new ArgumentNullException("获取原始数据方法(getFunc)不能为空!");
+
+            var obj = await GetAsync<ProtectCacheData<RType>>(cacheKey);
+            if (obj != null)
+                return obj.Data;
+
+            var data = await getFunc();
+
+            var hitTrigger = hitProtectCondition?.Invoke(data) ?? data == null;
+            if (hitTrigger)
+            {
+                absoluteExpiration = TimeSpan.FromSeconds(hitProtectSeconds);
+                slidingExpiration  = null;
+            }
+
+            var cacheData = new ProtectCacheData<RType>(data);
+            await SetAsync(cacheKey, cacheData, absoluteExpiration, slidingExpiration, moduleName);
+
+            return data;
+        }
+
         #endregion
 
         /// <summary>
@@ -219,67 +304,12 @@ namespace OSS.Tools.Cache
         {
             return RemoveAsync(key).Result;
         }
-
-        private static async Task<RType> Get<RType>(string cacheKey, Func<Task<RType>> createFunc
-            , TimeSpan? slidingExpiration, TimeSpan? absoluteExpiration, string moduleName)
-        {
-            var obj =await GetAsync<RType>(cacheKey);
-            if (obj != null)
-                return obj;
-
-            if (createFunc == null)
-                return default;
-
-            var data = await createFunc.Invoke();
-            if (data == null)
-                return default;
-            
-            await SetAsync(cacheKey, data, absoluteExpiration, slidingExpiration, moduleName);
-            return data;
-        }
-
-        private static async Task<RType> ProtectedGet<RType>(string cacheKey, Func<Task<RType>> getFunc
-            , TimeSpan? slidingExpiration, TimeSpan? absoluteExpiration,
-            Func<RType, bool> hitProtectCondition, int hitProtectSeconds, string moduleName)
-        {
-            if (getFunc == null)
-                throw new ArgumentNullException("获取原始数据方法(getFunc)不能为空!");
-
-            var obj = await GetAsync<ProtectCahceData<RType>>(cacheKey);
-            if (obj != null)
-                return obj.Data;
-
-            var data = await getFunc();
-
-            var hitTrigger = hitProtectCondition?.Invoke(data) ?? data == null;
-            if (hitTrigger)
-            {
-                absoluteExpiration = TimeSpan.FromSeconds(hitProtectSeconds);
-                slidingExpiration  = null;
-            }
-
-            var cacheData = new ProtectCahceData<RType>(data);
-            await SetAsync(cacheKey, cacheData, absoluteExpiration, slidingExpiration, moduleName);
-
-            return data;
-        }
-
-        private static Task<bool> SetAsync<T>(string key, T obj,
-            TimeSpan? slidingExpiration, TimeSpan? absoluteExpiration, string moduleName = "default")
-        {
-            return GetCache(moduleName).SetAsync(key, obj, new CacheTimeOptions()
-            {
-                AbsoluteExpirationRelativeToNow = absoluteExpiration,
-                SlidingExpiration = slidingExpiration ,
-                ModuleName = moduleName
-            });
-        }
     }
 
 
-    internal class ProtectCahceData<TT>
+    internal class ProtectCacheData<TT>
     {
-        public ProtectCahceData(TT data)
+        public ProtectCacheData(TT data)
         {
             Data = data;
         }

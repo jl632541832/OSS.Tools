@@ -13,7 +13,7 @@ namespace OSS.Tools.Cache
         public string ModuleName { get; set; } = "default";
 
         /// <summary>
-        /// Gets or sets an absolute expiration time, relative to now.
+        /// 固定过期时长，设置后到时过期
         /// </summary>
         public TimeSpan? AbsoluteExpirationRelativeToNow
         {
@@ -30,8 +30,7 @@ namespace OSS.Tools.Cache
         }
 
         /// <summary>
-        /// Gets or sets how long a cache entry can be inactive (e.g. not accessed) before it will be removed.
-        /// This will not extend the entry lifetime beyond the absolute expiration (if set).
+        /// 滚动过期时长，访问后自动延长
         /// </summary>
         public TimeSpan? SlidingExpiration
         {
