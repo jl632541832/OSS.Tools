@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using NUnit.Framework;
 using OSS.Common.BasicMos.Resp;
@@ -25,6 +26,18 @@ namespace OSS.Tools.Tests.CacheTests
 
             Assert.IsTrue(testRes.IsSuccess());
         }
+        [Test]
+        public async Task GetListTest()
+        {
+            var listRes =await CacheHelper.GetOrSetAbsoluteAsync("test_userkey", () 
+                    => Task.FromResult(new ListResp<string>(new[]{ "test"}) ), 
+                TimeSpan.FromHours(2),
+                res => !res.IsSuccess());
+            Assert.IsTrue(listRes.IsSuccess());
+        }
+
+
+
     }
 
 }

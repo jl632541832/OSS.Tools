@@ -245,7 +245,7 @@ namespace OSS.Tools.Cache
             Func<RType, bool> failProtectCondition, int protectSeconds = 10,
             string moduleName = "default")
         {
-            return GetOrSetAsync(cacheKey, getFunc, TimeSpan.Zero, absoluteExpiration, failProtectCondition, protectSeconds, moduleName);
+            return GetOrSetAsync(cacheKey, getFunc, null, absoluteExpiration, failProtectCondition, protectSeconds, moduleName);
         }
 
         /// <summary>
