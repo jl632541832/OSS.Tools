@@ -32,7 +32,7 @@ namespace OSS.Tools.Log
         public DefaultToolLog()
         {
             // todo  测试地址是否ok
-            _logBaseDirPath = Path.Combine(Directory.GetCurrentDirectory(), "log");
+            _logBaseDirPath = Path.Combine(Directory.GetCurrentDirectory(), "logs");
 
             if (!Directory.Exists(_logBaseDirPath))
                 Directory.CreateDirectory(_logBaseDirPath); 
