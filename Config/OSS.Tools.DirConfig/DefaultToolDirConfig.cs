@@ -13,6 +13,7 @@
 
 using System;
 using System.IO;
+using System.Threading.Tasks;
 using System.Xml.Serialization;
 
 namespace OSS.Tools.DirConfig
@@ -55,7 +56,7 @@ namespace OSS.Tools.DirConfig
         /// <param name="key"></param>
         /// <param name="dirConfig"></param>
         /// <returns></returns>
-        public bool SetDirConfig<TConfig>(string key, TConfig dirConfig) where TConfig : class, new()
+        public Task<bool> SetDirConfig<TConfig>(string key, TConfig dirConfig) where TConfig : class, new()
         {
             if (string.IsNullOrEmpty(key))
                 throw new ArgumentNullException("key", "配置键值不能为空！");
@@ -74,12 +75,13 @@ namespace OSS.Tools.DirConfig
                 var xmlSer = new XmlSerializer(type);
                 xmlSer.Serialize(fs, dirConfig);
 
-                return true;
+                return Task.FromResult(true);
             }
             finally
             {
                 fs?.Dispose();
             }
+
         }
 
 
@@ -89,7 +91,7 @@ namespace OSS.Tools.DirConfig
         /// <typeparam name="TConfig"></typeparam>
         /// <param name="key"></param>
         /// <returns></returns>
-        public TConfig GetDirConfig<TConfig>(string key) where TConfig : class, new()
+        public Task<TConfig> GetDirConfig<TConfig>(string key) where TConfig : class, new()
         {
 
             if (string.IsNullOrEmpty(key))
@@ -108,7 +110,7 @@ namespace OSS.Tools.DirConfig
                 var type = typeof(TConfig);
 
                 var xmlSer = new XmlSerializer(type);
-                return (TConfig)xmlSer.Deserialize(fs);
+                return Task.FromResult((TConfig)xmlSer.Deserialize(fs));
             }
             finally
             {
@@ -121,14 +123,15 @@ namespace OSS.Tools.DirConfig
         /// </summary>
         /// <param name="key"></param>
         /// <returns></returns>
-        public void RemoveDirConfig(string key)
+        public Task RemoveDirConfig(string key)
         {
             var fileName = string.Concat(_defaultPath, Path.DirectorySeparatorChar, key, ".config");
             
-            if (!File.Exists(fileName))
-                return ;
-
-            File.Delete(fileName);
+            if (File.Exists(fileName))
+            {
+                File.Delete(fileName); 
+            }
+            return Task.CompletedTask;
         }
     }
 }

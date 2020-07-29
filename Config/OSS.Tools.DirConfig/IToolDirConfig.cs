@@ -12,6 +12,8 @@
 #endregion
 
 
+using System.Threading.Tasks;
+
 namespace OSS.Tools.DirConfig
 {
     /// <summary>
@@ -26,7 +28,7 @@ namespace OSS.Tools.DirConfig
         /// <param name="dirConfig">配置具体信息</param>
         /// <typeparam name="TConfig">配置信息类型</typeparam>
         /// <returns></returns>
-        bool SetDirConfig<TConfig>(string key, TConfig dirConfig) where TConfig : class ,new();
+        Task<bool> SetDirConfig<TConfig>(string key, TConfig dirConfig) where TConfig : class ,new();
 
 
         /// <summary>
@@ -35,13 +37,13 @@ namespace OSS.Tools.DirConfig
         /// <param name="key">配置关键字</param>
         /// <typeparam name="TConfig">配置信息类型</typeparam>
         /// <returns></returns>
-        TConfig GetDirConfig<TConfig>(string key) where TConfig : class ,new();
+        Task<TConfig> GetDirConfig<TConfig>(string key) where TConfig : class ,new();
 
         /// <summary>
         /// 移除配置信息
         /// </summary>
         /// <param name="key"></param>
         /// <returns></returns>
-        void RemoveDirConfig(string key);
+        Task RemoveDirConfig(string key);
     }
 }

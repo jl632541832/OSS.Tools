@@ -12,6 +12,7 @@
 #endregion
 
 using System;
+using System.Threading.Tasks;
 
 namespace OSS.Tools.DirConfig
 {
@@ -57,7 +58,7 @@ namespace OSS.Tools.DirConfig
         /// <param name="sourceName">来源名称</param>
         /// <typeparam name="TConfig"></typeparam>
         /// <returns></returns>
-        public static bool SetDirConfig<TConfig>(string key, TConfig dirConfig,
+        public static Task<bool> SetDirConfig<TConfig>(string key, TConfig dirConfig,
             string sourceName = "default") where TConfig : class, new()
         {
             return GetDirConfig(sourceName).SetDirConfig(key, dirConfig);
@@ -71,7 +72,8 @@ namespace OSS.Tools.DirConfig
         /// <param name="key"></param>
         /// <param name="sourceName">来源名称</param>
         /// <returns></returns>
-        public static TConfig GetDirConfig<TConfig>(string key,  string sourceName = "default") where TConfig : class ,new()
+        public static Task<TConfig> GetDirConfig<TConfig>(string key, string sourceName = "default")
+            where TConfig : class, new()
         {
             return GetDirConfig(sourceName).GetDirConfig<TConfig>(key);
         }
@@ -82,9 +84,11 @@ namespace OSS.Tools.DirConfig
         /// <param name="key"></param>
         /// <param name="sourceName">来源名称</param>
         /// <returns></returns>
-        public static void RemoveDirConfig( string key, string sourceName = "default")
+        public static Task RemoveDirConfig(string key, string sourceName = "default")
         {
-             GetDirConfig(sourceName).RemoveDirConfig(key);
+            return GetDirConfig(sourceName).RemoveDirConfig(key);
         }
+
+
     }
 }
