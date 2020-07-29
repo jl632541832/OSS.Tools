@@ -8,11 +8,6 @@ namespace OSS.Tools.Cache
         private TimeSpan? _slidingExpiration;
 
         /// <summary>
-        ///   模块名称
-        /// </summary>
-        public string ModuleName { get; set; } = "default";
-
-        /// <summary>
         /// 固定过期时长，设置后到时过期
         /// </summary>
         public TimeSpan? AbsoluteExpirationRelativeToNow

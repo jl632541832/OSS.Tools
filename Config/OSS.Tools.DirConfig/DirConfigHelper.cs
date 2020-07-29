@@ -23,21 +23,29 @@ namespace OSS.Tools.DirConfig
         private static readonly DefaultToolDirConfig defaultCache = new DefaultToolDirConfig();
 
         /// <summary>
-        ///   配置信息模块提供者
+        ///   配置信息来源提供者
         /// </summary>
         public static Func<string, IToolDirConfig> DirConfigProvider { get; set; }
 
         /// <summary>
-        /// 通过模块名称获取
+        /// 来源名称格式化
         /// </summary>
-        /// <param name="dirConfigModule"></param>
-        /// <returns></returns>
-        private static IToolDirConfig GetDirConfig(string dirConfigModule)
-        {
-            if (string.IsNullOrEmpty(dirConfigModule))
-                dirConfigModule = "default";
+        public static Func<string, string> SourceFormat { get; set; }
 
-            return DirConfigProvider?.Invoke(dirConfigModule) ?? defaultCache;
+        /// <summary>
+        /// 通过来源名称获取
+        /// </summary>
+        /// <param name="sourceName"></param>
+        /// <returns></returns>
+        private static IToolDirConfig GetDirConfig(string sourceName)
+        {
+            if (string.IsNullOrEmpty(sourceName))
+                sourceName = "default";
+
+            if (SourceFormat != null)
+                sourceName = SourceFormat.Invoke(sourceName);
+
+            return DirConfigProvider?.Invoke(sourceName) ?? defaultCache;
         }
 
 
@@ -46,13 +54,13 @@ namespace OSS.Tools.DirConfig
         /// </summary>
         /// <param name="key"></param>
         /// <param name="dirConfig"></param>
-        /// <param name="moduleName">模块名称</param>
+        /// <param name="sourceName">来源名称</param>
         /// <typeparam name="TConfig"></typeparam>
         /// <returns></returns>
         public static bool SetDirConfig<TConfig>(string key, TConfig dirConfig,
-            string moduleName = "default") where TConfig : class, new()
+            string sourceName = "default") where TConfig : class, new()
         {
-            return GetDirConfig(moduleName).SetDirConfig(key, dirConfig);
+            return GetDirConfig(sourceName).SetDirConfig(key, dirConfig);
         }
 
 
@@ -61,22 +69,22 @@ namespace OSS.Tools.DirConfig
         /// </summary>
         /// <typeparam name="TConfig"></typeparam>
         /// <param name="key"></param>
-        /// <param name="moduleName">模块名称</param>
+        /// <param name="sourceName">来源名称</param>
         /// <returns></returns>
-        public static TConfig GetDirConfig<TConfig>(string key,  string moduleName = "default") where TConfig : class ,new()
+        public static TConfig GetDirConfig<TConfig>(string key,  string sourceName = "default") where TConfig : class ,new()
         {
-            return GetDirConfig(moduleName).GetDirConfig<TConfig>(key);
+            return GetDirConfig(sourceName).GetDirConfig<TConfig>(key);
         }
 
         /// <summary>
         ///  移除配置信息
         /// </summary>
         /// <param name="key"></param>
-        /// <param name="moduleName">模块名称</param>
+        /// <param name="sourceName">来源名称</param>
         /// <returns></returns>
-        public static void RemoveDirConfig( string key, string moduleName = "default")
+        public static void RemoveDirConfig( string key, string sourceName = "default")
         {
-             GetDirConfig(moduleName).RemoveDirConfig(key);
+             GetDirConfig(sourceName).RemoveDirConfig(key);
         }
     }
 }

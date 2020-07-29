@@ -19,7 +19,7 @@ using System.Threading.Tasks;
 namespace OSS.Tools.Log
 {
     /// <summary>
-    /// 系统默认写日志模块
+    /// 系统默认写日志来源
     /// </summary>
     public class DefaultToolLog : IToolLog
     {
@@ -62,7 +62,7 @@ namespace OSS.Tools.Log
             {
                 lock (obj)
                 {
-                    var filePath = getLogFilePath(info.module_name, info.level);
+                    var filePath = getLogFilePath(info.source_name, info.level);
 
                     using (var sw =
                         new StreamWriter(new FileStream(filePath, FileMode.Append, FileAccess.Write), Encoding.UTF8))

@@ -58,11 +58,11 @@ namespace OSS.Tools.Log
         /// <param name="loglevel"></param>
         /// <param name="logMsg"></param>
         /// <param name="msgKey"></param>
-        /// <param name="moduleName"></param>
-        internal LogInfo(LogLevelEnum loglevel, object logMsg, string msgKey = null, string moduleName = "default")
+        /// <param name="sourceName"></param>
+        internal LogInfo(LogLevelEnum loglevel, object logMsg, string msgKey = null, string sourceName = "default")
         {
             level = loglevel;
-            module_name = moduleName;
+            source_name = sourceName;
             this.msg_body = logMsg;
             msg_key = msgKey;
         }
@@ -75,7 +75,7 @@ namespace OSS.Tools.Log
         /// <summary>
         /// 日志类型
         /// </summary>
-        public string module_name { get; set; }
+        public string source_name { get; set; }
 
         /// <summary>
         ///   key值  可以是自定义的标识  

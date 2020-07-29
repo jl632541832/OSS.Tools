@@ -24,22 +24,31 @@ namespace OSS.Tools.Cache
         private static readonly DefaultToolCache defaultCache = new DefaultToolCache();
 
         /// <summary>
-        /// 缓存模块提供者
+        /// 缓存来源提供者
         /// </summary>
         public static Func<string, IToolCache> CacheProvider { get; set; }
 
         /// <summary>
-        /// 通过模块名称获取
+        /// 来源名称格式化
         /// </summary>
-        /// <param name="cacheModule"></param>
-        /// <returns></returns>
-        public static IToolCache GetCache(string cacheModule)
-        {
-            if (string.IsNullOrEmpty(cacheModule))
-                cacheModule = "default";
+        public static Func<string, string> SourceFormat { get; set; }
 
-            return CacheProvider?.Invoke(cacheModule) ?? defaultCache;
+        /// <summary>
+        /// 通过来源名称获取
+        /// </summary>
+        /// <param name="sourceName"></param>
+        /// <returns></returns>
+        public static IToolCache GetCache(string sourceName)
+        {
+            if (string.IsNullOrEmpty(sourceName))
+                sourceName = "default";
+
+            if (SourceFormat != null)
+                sourceName = SourceFormat.Invoke(sourceName);
+
+            return CacheProvider?.Invoke(sourceName) ?? defaultCache;
         }
+
 
         #region 缓存添加
 
@@ -50,10 +59,10 @@ namespace OSS.Tools.Cache
         /// <param name="key">添加对象的key</param>
         /// <param name="obj">值</param>
         /// <param name="slidingExpiration">滚动过期时长，访问后自动延长</param>
-        /// <param name="moduleName">模块名称</param>
+        /// <param name="sourceName">来源名称</param>
         /// <returns>是否添加成功</returns>
         [Obsolete("请使用 SetAsync")]
-        public static bool Set<T>(string key, T obj, TimeSpan slidingExpiration,string moduleName = "default")
+        public static bool Set<T>(string key, T obj, TimeSpan slidingExpiration,string sourceName = "default")
         {
             return SetAsync(key, obj, slidingExpiration).Result;
         }
@@ -65,10 +74,10 @@ namespace OSS.Tools.Cache
         /// <param name="key">添加对象的key</param>
         /// <param name="obj">值</param>
         /// <param name="absoluteExpiration"> 固定过期时长，设置后到时过期 </param>
-        /// <param name="moduleName">模块名称</param>
+        /// <param name="sourceName">来源名称</param>
         /// <returns>是否添加成功</returns>
         [Obsolete("请使用 SetAbsoluteAsync")]
-        public static bool Set<T>(string key, T obj, DateTime absoluteExpiration,string moduleName = "default")
+        public static bool Set<T>(string key, T obj, DateTime absoluteExpiration,string sourceName = "default")
         {
             return SetAbsoluteAsync(key,obj,TimeSpan.FromTicks((absoluteExpiration-DateTime.Now).Ticks)).Result;
         }
@@ -80,12 +89,12 @@ namespace OSS.Tools.Cache
         /// <param name="key">添加对象的key</param>
         /// <param name="obj">值</param>
         /// <param name="slidingExpiration">滚动过期时长，访问后自动延长</param>
-        /// <param name="moduleName">模块名称</param>
+        /// <param name="sourceName">来源名称</param>
         /// <returns>是否添加成功</returns>
         public static Task<bool> SetAsync<T>(string key, T obj, TimeSpan slidingExpiration,
-            string moduleName = "default")
+            string sourceName = "default")
         {
-            return SetAsync(key, obj, slidingExpiration, null, moduleName);
+            return SetAsync(key, obj, slidingExpiration, null, sourceName);
         }
 
         /// <summary>
@@ -95,11 +104,11 @@ namespace OSS.Tools.Cache
         /// <param name="key">添加对象的key</param>
         /// <param name="obj">值</param>
         /// <param name="absoluteExpiration"> 固定过期时长，设置后到时过期 </param>
-        /// <param name="moduleName">模块名称</param>
+        /// <param name="sourceName">来源名称</param>
         /// <returns>是否添加成功</returns>
-        public static Task<bool> SetAbsoluteAsync<T>(string key, T obj, TimeSpan absoluteExpiration,string moduleName = "default")
+        public static Task<bool> SetAbsoluteAsync<T>(string key, T obj, TimeSpan absoluteExpiration,string sourceName = "default")
         {
-            return SetAsync(key, obj, null, absoluteExpiration, moduleName);
+            return SetAsync(key, obj, null, absoluteExpiration, sourceName);
         }
 
         /// <summary>
@@ -110,16 +119,15 @@ namespace OSS.Tools.Cache
         /// <param name="obj">值</param>
         /// <param name="slidingExpiration">滚动过期时长，访问后自动延长，如果同时设置固定过期，则只能在固定时长范围内延长</param>
         /// <param name="absoluteExpiration">固定过期时长，设置后到时过期</param>
-        /// <param name="moduleName"></param>
+        /// <param name="sourceName"></param>
         /// <returns></returns>
         public static Task<bool> SetAsync<T>(string key, T obj,
-            TimeSpan? slidingExpiration, TimeSpan? absoluteExpiration, string moduleName = "default")
+            TimeSpan? slidingExpiration, TimeSpan? absoluteExpiration, string sourceName = "default")
         {
-            return GetCache(moduleName).SetAsync(key, obj, new CacheTimeOptions()
+            return GetCache(sourceName).SetAsync(key, obj, new CacheTimeOptions()
             {
                 AbsoluteExpirationRelativeToNow = absoluteExpiration,
-                SlidingExpiration               = slidingExpiration,
-                ModuleName                      = moduleName
+                SlidingExpiration               = slidingExpiration
             });
         }
         #endregion
@@ -131,10 +139,10 @@ namespace OSS.Tools.Cache
         /// </summary>
         /// <typeparam name="T">获取缓存对象类型</typeparam>
         /// <param name="key">key</param>
-        /// <param name="moduleName">模块名称</param>
+        /// <param name="sourceName">来源名称</param>
         /// <returns>获取指定key对应的值 </returns>
         [Obsolete("请使用 GetAsync")]
-        public static T Get<T>(string key, string moduleName = "default")
+        public static T Get<T>(string key, string sourceName = "default")
         {
             return GetAsync<T>(key).Result;
         }
@@ -144,11 +152,11 @@ namespace OSS.Tools.Cache
         /// </summary>
         /// <typeparam name="T">获取缓存对象类型</typeparam>
         /// <param name="key">key</param>
-        /// <param name="moduleName">模块名称</param>
+        /// <param name="sourceName">来源名称</param>
         /// <returns>获取指定key对应的值 </returns>
-        public static Task<T> GetAsync<T>(string key, string moduleName = "default")
+        public static Task<T> GetAsync<T>(string key, string sourceName = "default")
         {
-            return GetCache(moduleName).GetAsync<T>(key);
+            return GetCache(sourceName).GetAsync<T>(key);
         }
 
         /// <summary>
@@ -158,12 +166,12 @@ namespace OSS.Tools.Cache
         /// <param name="cacheKey">key</param>
         /// <param name="getFunc">如果不存在，通过此方法获取原始数据添加缓存</param>
         /// <param name="slidingExpiration">滚动过期时长，访问后自动延长</param>
-        /// <param name="moduleName">模块名称</param>
+        /// <param name="sourceName">来源名称</param>
         /// <returns></returns>
         public static Task<RType> GetOrSetAsync<RType>(string cacheKey, Func<Task<RType>> getFunc,
-            TimeSpan slidingExpiration, string moduleName = "default")
+            TimeSpan slidingExpiration, string sourceName = "default")
         {
-            return GetOrSetAsync(cacheKey, getFunc, slidingExpiration, null,  moduleName);
+            return GetOrSetAsync(cacheKey, getFunc, slidingExpiration, null,  sourceName);
         }
 
         /// <summary>
@@ -173,12 +181,12 @@ namespace OSS.Tools.Cache
         /// <param name="cacheKey">key</param>
         /// <param name="getFunc">没有数据时，通过此方法获取原始数据</param>
         /// <param name="absoluteExpiration">固定过期时长，设置后到时过期</param>
-        /// <param name="moduleName">模块名称</param>
+        /// <param name="sourceName">来源名称</param>
         /// <returns></returns>
         public static Task<RType> GetOrSetAbsoluteAsync<RType>(string cacheKey, Func<Task<RType>> getFunc,
-            TimeSpan absoluteExpiration, string moduleName = "default")
+            TimeSpan absoluteExpiration, string sourceName = "default")
         {
-            return GetOrSetAsync(cacheKey, getFunc, null, absoluteExpiration,  moduleName);
+            return GetOrSetAsync(cacheKey, getFunc, null, absoluteExpiration,  sourceName);
         }
 
         /// <summary>
@@ -189,10 +197,10 @@ namespace OSS.Tools.Cache
         /// <param name="createFunc">没有数据时，通过此方法获取原始数据</param>
         /// <param name="slidingExpiration">滚动过期时长，访问后自动延长，如果同时设置固定过期，则只能在固定时长范围内延长</param>
         /// <param name="absoluteExpiration">固定过期时长，设置后到时过期</param>
-        /// <param name="moduleName">模块名称</param>
+        /// <param name="sourceName">来源名称</param>
         /// <returns></returns>
         public static async Task<RType> GetOrSetAsync<RType>(string cacheKey, Func<Task<RType>> createFunc
-            , TimeSpan? slidingExpiration, TimeSpan? absoluteExpiration, string moduleName)
+            , TimeSpan? slidingExpiration, TimeSpan? absoluteExpiration, string sourceName)
         {
             var obj =await GetAsync<RType>(cacheKey);
             if (obj != null)
@@ -205,7 +213,7 @@ namespace OSS.Tools.Cache
             if (data == null)
                 return default;
 
-            await SetAsync(cacheKey, data, absoluteExpiration, slidingExpiration, moduleName);
+            await SetAsync(cacheKey, data, absoluteExpiration, slidingExpiration, sourceName);
             return data;
         }
         #endregion
@@ -221,13 +229,13 @@ namespace OSS.Tools.Cache
         /// <param name="slidingExpiration">滚动过期时长，访问后自动延长</param>
         /// <param name="failProtectCondition">缓存击穿保护触发条件</param>
         /// <param name="protectSeconds">缓存击穿保护秒数</param>
-        /// <param name="moduleName">模块名称</param>
+        /// <param name="sourceName">来源名称</param>
         /// <returns></returns>
         public static Task<RType> GetOrSetAsync<RType>(string cacheKey, Func<Task<RType>> getFunc,TimeSpan slidingExpiration,
             Func<RType, bool> failProtectCondition, int protectSeconds = 10, 
-            string moduleName = "default")
+            string sourceName = "default")
         {
-            return GetOrSetAsync(cacheKey, getFunc, slidingExpiration, null, failProtectCondition, protectSeconds, moduleName);
+            return GetOrSetAsync(cacheKey, getFunc, slidingExpiration, null, failProtectCondition, protectSeconds, sourceName);
         }
 
         /// <summary>
@@ -239,13 +247,13 @@ namespace OSS.Tools.Cache
         /// <param name="absoluteExpiration">固定过期时长，设置后到时过期</param>
         /// <param name="failProtectCondition">缓存击穿保护触发条件</param>
         /// <param name="protectSeconds">缓存击穿保护秒数</param>
-        /// <param name="moduleName">模块名称</param>
+        /// <param name="sourceName">来源名称</param>
         /// <returns></returns>
         public static Task<RType> GetOrSetAbsoluteAsync<RType>(string cacheKey, Func<Task<RType>> getFunc,TimeSpan absoluteExpiration,
             Func<RType, bool> failProtectCondition, int protectSeconds = 10,
-            string moduleName = "default")
+            string sourceName = "default")
         {
-            return GetOrSetAsync(cacheKey, getFunc, null, absoluteExpiration, failProtectCondition, protectSeconds, moduleName);
+            return GetOrSetAsync(cacheKey, getFunc, null, absoluteExpiration, failProtectCondition, protectSeconds, sourceName);
         }
 
         /// <summary>
@@ -258,11 +266,11 @@ namespace OSS.Tools.Cache
         /// <param name="absoluteExpiration">固定过期时长，设置后到时过期</param>
         /// <param name="hitProtectCondition">缓存击穿保护触发条件</param>
         /// <param name="hitProtectSeconds">缓存击穿保护秒数</param>
-        /// <param name="moduleName">模块名称</param>
+        /// <param name="sourceName">来源名称</param>
         /// <returns></returns>
         public static async Task<RType> GetOrSetAsync<RType>(string cacheKey, Func<Task<RType>> getFunc
             , TimeSpan? slidingExpiration, TimeSpan? absoluteExpiration,
-            Func<RType, bool> hitProtectCondition, int hitProtectSeconds, string moduleName)
+            Func<RType, bool> hitProtectCondition, int hitProtectSeconds, string sourceName)
         {
             if (getFunc == null)
                 throw new ArgumentNullException("获取原始数据方法(getFunc)不能为空!");
@@ -281,7 +289,7 @@ namespace OSS.Tools.Cache
             }
 
             var cacheData = new ProtectCacheData<RType>(data);
-            await SetAsync(cacheKey, cacheData, absoluteExpiration, slidingExpiration, moduleName);
+            await SetAsync(cacheKey, cacheData, absoluteExpiration, slidingExpiration, sourceName);
 
             return data;
         }
@@ -292,16 +300,19 @@ namespace OSS.Tools.Cache
         /// 移除缓存对象
         /// </summary>
         /// <param name="key"></param>
-        /// <param name="moduleName">模块名称</param>
+        /// <param name="sourceName">来源名称</param>
         /// <returns>是否成功</returns>
-        public static Task<bool> RemoveAsync(string key, string moduleName = "default")
+        public static Task<bool> RemoveAsync(string key, string sourceName = "default")
         {
-            return GetCache(moduleName).RemoveAsync(key);
+            return GetCache(sourceName).RemoveAsync(key);
         }
 
         [Obsolete("请使用 RemoveAsync")]
-        public static bool Remove(string key, string moduleName = "default")
+        public static bool Remove(string key, string sourceName = "default")
         {
+            if (SourceFormat != null)
+                sourceName = SourceFormat.Invoke(sourceName);
+
             return RemoveAsync(key).Result;
         }
     }

@@ -16,14 +16,14 @@ using System;
 namespace OSS.Tools.Log
 {
     /// <summary>
-    /// 日志写模块
+    /// 日志写来源
     /// </summary>
     public static class LogHelper
     {
         private static readonly DefaultToolLog defaultCache = new DefaultToolLog();
 
         /// <summary>
-        ///   日志模块提供者
+        ///   日志来源提供者
         /// </summary>
         public static Func<string, IToolLog> LogWriterProvider { get; set; }
 
@@ -34,7 +34,7 @@ namespace OSS.Tools.Log
         public static Action<LogInfo> LogFormat { get; set; }
 
         /// <summary>
-        /// 通过模块名称获取日志模块实例
+        /// 通过来源名称获取日志来源实例
         /// </summary>
         /// <param name="logModule"></param>
         /// <returns></returns>
@@ -51,10 +51,10 @@ namespace OSS.Tools.Log
         /// </summary>
         /// <param name="msg"> 日志信息  </param>
         /// <param name="msgKey">  关键值  </param>
-        /// <param name="moduleName"> 模块名称 </param>
-        public static string Info(object msg, string msgKey = null, string moduleName = "default")
+        /// <param name="sourceName"> 来源名称 </param>
+        public static string Info(object msg, string msgKey = null, string sourceName = "default")
         {
-            return Log(new LogInfo(LogLevelEnum.Info, msg, msgKey, moduleName));
+            return Log(new LogInfo(LogLevelEnum.Info, msg, msgKey, sourceName));
         }
 
         /// <summary>
@@ -62,10 +62,10 @@ namespace OSS.Tools.Log
         /// </summary>
         /// <param name="msg"> 日志信息  </param>
         /// <param name="msgKey">  关键值  </param>
-        /// <param name="moduleName">模块名称</param>
-        public static string Warning(object msg, string msgKey = null, string moduleName = "default")
+        /// <param name="sourceName">来源名称</param>
+        public static string Warning(object msg, string msgKey = null, string sourceName = "default")
         {
-            return Log(new LogInfo(LogLevelEnum.Warning, msg, msgKey, moduleName));
+            return Log(new LogInfo(LogLevelEnum.Warning, msg, msgKey, sourceName));
         }
 
         /// <summary>
@@ -73,10 +73,10 @@ namespace OSS.Tools.Log
         /// </summary>
         /// <param name="msg"> 日志信息  </param>
         /// <param name="msgKey">  关键值  </param>
-        /// <param name="moduleName">模块名称</param>
-        public static string Error(object msg, string msgKey = null, string moduleName = "default")
+        /// <param name="sourceName">来源名称</param>
+        public static string Error(object msg, string msgKey = null, string sourceName = "default")
         {
-            return Log(new LogInfo(LogLevelEnum.Error, msg, msgKey, moduleName));
+            return Log(new LogInfo(LogLevelEnum.Error, msg, msgKey, sourceName));
         }
 
         /// <summary>
@@ -84,10 +84,10 @@ namespace OSS.Tools.Log
         /// </summary>
         /// <param name="msg"> 日志信息  </param>
         /// <param name="msgKey">  关键值  </param>
-        /// <param name="moduleName">模块名称</param>
-        public static string Trace(object msg, string msgKey = null, string moduleName = "default")
+        /// <param name="sourceName">来源名称</param>
+        public static string Trace(object msg, string msgKey = null, string sourceName = "default")
         {
-            return Log(new LogInfo(LogLevelEnum.Trace, msg, msgKey, moduleName));
+            return Log(new LogInfo(LogLevelEnum.Trace, msg, msgKey, sourceName));
         }
         
         /// <summary>
@@ -96,11 +96,11 @@ namespace OSS.Tools.Log
         /// <param name="info"></param>
         private static string Log(LogInfo info)
         {
-            if (string.IsNullOrEmpty(info.module_name))
-                info.module_name = "default";
+            if (string.IsNullOrEmpty(info.source_name))
+                info.source_name = "default";
 
             LogFormat?.Invoke(info);
-            GetLogWrite(info.module_name)?.WriteLogAsync(info);
+            GetLogWrite(info.source_name)?.WriteLogAsync(info);
 
             return info.log_id;
         }
