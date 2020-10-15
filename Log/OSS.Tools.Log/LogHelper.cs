@@ -20,6 +20,7 @@ namespace OSS.Tools.Log
     /// </summary>
     public static class LogHelper
     {
+
         private static readonly DefaultToolLog defaultCache = new DefaultToolLog();
 
         /// <summary>
@@ -96,12 +97,18 @@ namespace OSS.Tools.Log
         /// <param name="info"></param>
         private static string Log(LogInfo info)
         {
-            if (string.IsNullOrEmpty(info.source_name))
-                info.source_name = "default";
+            try
+            {
+                if (string.IsNullOrEmpty(info.source_name))
+                    info.source_name = "default";
 
-            LogFormat?.Invoke(info);
-            GetLogWrite(info.source_name)?.WriteLogAsync(info);
-
+                LogFormat?.Invoke(info);
+                GetLogWrite(info.source_name)?.WriteLogAsync(info);
+            }
+            catch
+            {
+                // 写日志本身不能再出错误，这里做特殊处理
+            }
             return info.log_id;
         }
 

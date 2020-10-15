@@ -23,8 +23,7 @@ namespace OSS.Tools.Log
     /// </summary>
     public class DefaultToolLog : IToolLog
     {
-        private readonly string _logBaseDirPath = null;
-        private const string _logFormat = "{0:T}    Code:{1}    Key:{2}   Detail:{3}\r\n";
+        private readonly string _logBaseDirPath;
 
         /// <summary>
         /// 构造函数
@@ -35,18 +34,20 @@ namespace OSS.Tools.Log
             _logBaseDirPath = Path.Combine(Directory.GetCurrentDirectory(), "logs");
 
             if (!Directory.Exists(_logBaseDirPath))
-                Directory.CreateDirectory(_logBaseDirPath); 
+                Directory.CreateDirectory(_logBaseDirPath);
         }
 
         private string getLogFilePath(string module, LogLevelEnum level)
         {
             var date = DateTime.Now;
-            var dirPath = Path.Combine(_logBaseDirPath,string.Concat(module,"_",level) ,DateTime.Now.ToString("yyyyMM"));//string.Format(@"{0}\{1}\{2}\",_logBaseDirPath, module, level);
+            var dirPath = Path.Combine(_logBaseDirPath, string.Concat(module, "_", level),
+                DateTime.Now.ToString("yyyyMM")); //string.Format(@"{0}\{1}\{2}\",_logBaseDirPath, module, level);
 
             if (!Directory.Exists(dirPath))
                 Directory.CreateDirectory(dirPath);
 
-            var fileName = string.Concat(date.ToString("yyyy-MM-dd HH-"), Math.Floor(DateTime.Now.Minute / 10M), "0.txt");
+            var fileName = string.Concat(date.ToString("yyyy-MM-dd-HH"), Math.Floor(DateTime.Now.Minute / 10M),
+                "0.txt");
             return Path.Combine(dirPath, fileName);
         }
 
@@ -60,17 +61,26 @@ namespace OSS.Tools.Log
         {
             return Task.Run(() =>
             {
-                lock (obj)
+                try
                 {
-                    var filePath = getLogFilePath(info.source_name, info.level);
+                    lock (obj)
+                    {
+                        var filePath = getLogFilePath(info.source_name, info.level);
 
-                    using (var sw =
-                        new StreamWriter(new FileStream(filePath, FileMode.Append, FileAccess.Write), Encoding.UTF8))
-                    { 
-                        sw.WriteLine(_logFormat,DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"),
-                            info.log_id,info.msg_key,info.msg_body);
+                        using (var sw =
+                            new StreamWriter(new FileStream(filePath, FileMode.Append, FileAccess.Write),
+                                Encoding.UTF8))
+                        {
+                            sw.WriteLine("{0:T}    Code:{1}    Key:{2}   Detail:{3}\r\n", DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"),
+                                info.log_id, info.msg_key, info.msg_body);
+                        }
                     }
                 }
+                catch 
+                {
+                    //  写日志本身不能再报异常，这里特殊处理
+                }
+
             });
         }
     }

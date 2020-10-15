@@ -1,8 +1,5 @@
-using System;
 using System.Threading.Tasks;
 using NUnit.Framework;
-using OSS.Common.BasicMos.Resp;
-using OSS.Tools.Cache;
 using OSS.Tools.Log;
 
 namespace OSS.Tools.Tests.LogTests
@@ -15,9 +12,10 @@ namespace OSS.Tools.Tests.LogTests
         }
 
         [Test]
-        public void LogInfoTest()
+        public Task LogInfoTest()
         {
             LogHelper.Info("test");
+            return Task.CompletedTask;
         }
     }
 
