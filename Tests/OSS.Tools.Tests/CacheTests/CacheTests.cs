@@ -1,10 +1,8 @@
 using System;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 using NUnit.Framework;
 using OSS.Common.BasicMos.Resp;
 using OSS.Tools.Cache;
-using OSS.Tools.DirConfig;
 
 namespace OSS.Tools.Tests.CacheTests
 {
@@ -13,6 +11,7 @@ namespace OSS.Tools.Tests.CacheTests
         [SetUp]
         public void Setup()
         {
+
         }
 
         [Test]
