@@ -7,17 +7,17 @@ namespace OSS.Tools.TimerJob
  
     /// <summary>
     ///  列表循环处理任务执行
-    ///  从 GetExcuteSource() 获取执行数据源，循环并通过 ExcuteItem() 执行个体任务，直到没有数据源返回
+    ///  从 GetExecuteSource() 获取执行数据源，循环并通过 ExecuteItem() 执行个体任务，直到没有数据源返回
     ///       如果执行时间过长，重复触发时 当前任务还在进行中，则不做任何处理
     /// </summary>
-    public abstract class BaseListJobExcutor<IType> : IJobExecutor
+    public abstract class BaseListJobExecutor<IType> : IJobExecutor
     {
-        private bool _isExcuteOnce;
+        private readonly bool _isExecuteOnce;
 
         /// <summary>
         ///  列表任务执行者
         /// </summary>
-        public BaseListJobExcutor():this(false)
+        protected BaseListJobExecutor():this(false)
         {
         }
         
@@ -25,15 +25,15 @@ namespace OSS.Tools.TimerJob
         ///  列表任务执行者
         /// </summary>
         /// <param name="excuteOnce">是否只获取一次数据源</param>
-        public BaseListJobExcutor(bool excuteOnce)
+        protected BaseListJobExecutor(bool excuteOnce)
         {
-            _isExcuteOnce = excuteOnce;
+            _isExecuteOnce = excuteOnce;
         }
 
         /// <summary>
         ///  运行状态
         /// </summary>
-        public bool IsRuning { get; private set; }
+        public bool IsRunning { get; private set; }
 
         /// <summary>
         ///   开始任务
@@ -41,53 +41,52 @@ namespace OSS.Tools.TimerJob
         public async Task StartJob(CancellationToken cancellationToken)
         {
             //  任务依然在执行中，不需要再次唤起
-            if (IsRuning)
+            if (IsRunning)
                 return;
 
-            IsRuning = true;
-            int page=0;
+            IsRunning = true;
+            var page=0;
             IList<IType> list; // 结清实体list
 
             await OnBegin();
-            while (IsRuning && (list =await GetExcuteSource(page++))?.Count > 0)
+            while (IsRunning 
+                   && !cancellationToken.IsCancellationRequested
+                   && (list =await GetExecuteSource(page++))?.Count > 0)
             {
-                for (var i = 0; IsRuning && i < list?.Count; i++)
+                for (var i = 0; IsRunning && i < list?.Count; i++)
                 {
-                    await ExcuteItem(list[i], i);
+                    await ExecuteItem(list[i], i);
                 }
 
-                if (_isExcuteOnce)
+                if (_isExecuteOnce)
                 {
                     break;
                 }
             }
 
             await OnEnd();
-            IsRuning = false;
+            IsRunning = false;
         }
 
         /// <summary>
         ///   获取list数据源, 此方法会被循环调用
         /// </summary>
         /// <returns></returns>
-        protected abstract Task<IList<IType>> GetExcuteSource(int page);
+        protected abstract Task<IList<IType>> GetExecuteSource(int page);
 
         /// <summary>
         ///  个体任务执行
         /// </summary>
         /// <param name="item">单个实体</param>
         /// <param name="index">在数据源中的索引</param>
-        protected abstract Task ExcuteItem(IType item, int index);
-   
-
-
+        protected abstract Task ExecuteItem(IType item, int index);
 
         /// <summary>
         /// 结束任务
         /// </summary>
         public Task StopJob(CancellationToken cancellationToken)
         {
-            IsRuning = false;
+            IsRunning = false;
             return Task.CompletedTask;
         }
 

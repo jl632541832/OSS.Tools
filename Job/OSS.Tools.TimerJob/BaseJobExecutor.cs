@@ -8,12 +8,12 @@ namespace OSS.Tools.TimerJob
     /// 任务基类
     ///       如果执行时间过长，重复触发时 当前任务还在进行中，则不做任何处理
     /// </summary>
-    public abstract class BaseJobExcutor : IJobExecutor
+    public abstract class BaseJobExecutor : IJobExecutor
     {
         /// <summary>
         ///  运行状态
         /// </summary>
-        public bool IsRuning { get; private set; }
+        public bool IsRunning { get; private set; }
         
         /// <summary>
         ///   开始任务
@@ -21,16 +21,15 @@ namespace OSS.Tools.TimerJob
         public async Task StartJob(CancellationToken cancellationToken)
         {
             //  任务依然在执行中，不需要再次唤起
-            if (IsRuning)
+            if (IsRunning)
                 return;
 
-            IsRuning = true;
-            
-            await Excute();
-
-            IsRuning = false;
-
-            return;
+            IsRunning = true;
+            if (!cancellationToken.IsCancellationRequested)
+            {
+                await Execute();
+            }
+            IsRunning = false;
         }
 
 
@@ -38,7 +37,7 @@ namespace OSS.Tools.TimerJob
         /// <summary>
         ///  任务执行
         /// </summary>
-        protected abstract Task Excute();
+        protected abstract Task Execute();
 
 
 
@@ -47,7 +46,7 @@ namespace OSS.Tools.TimerJob
         /// </summary>
         public Task StopJob(CancellationToken cancellationToken)
         {
-            IsRuning = false;
+            IsRunning = false;
             return Task.CompletedTask;
         }
     }
