@@ -95,6 +95,10 @@ namespace OSS.Tools.TimerJob
             return Task.CompletedTask;
         }
 
+        public Task StopJob()
+        {
+            return StopJob(CancellationToken.None);
+        }
 
         /// <summary>
         ///  此轮任务开始
