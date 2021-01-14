@@ -49,11 +49,10 @@ namespace OSS.Tools.TimerJob
             IList<IType> list; // 结清实体list
 
             await OnBegin();
-            while (IsRunning 
-                   && !cancellationToken.IsCancellationRequested
+            while (IsStillRunning(cancellationToken)
                    && (list =await GetExecuteSource(page++))?.Count > 0)
             {
-                for (var i = 0; IsRunning && i < list?.Count; i++)
+                for (var i = 0; IsStillRunning(cancellationToken) && i < list?.Count; i++)
                 {
                     await ExecuteItem(list[i], i);
                 }
@@ -66,6 +65,12 @@ namespace OSS.Tools.TimerJob
 
             await OnEnd();
             IsRunning = false;
+        }
+
+        private bool IsStillRunning(CancellationToken cancellationToken)
+        {
+            return IsRunning
+                   && !cancellationToken.IsCancellationRequested;
         }
 
         /// <summary>
