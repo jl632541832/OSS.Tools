@@ -202,20 +202,21 @@ namespace OSS.Tools.Cache
         public static async Task<RType> GetOrSetAsync<RType>(string cacheKey, Func<Task<RType>> createFunc
             , TimeSpan? slidingExpiration, TimeSpan? absoluteExpiration, string sourceName)
         {
-            var obj = await GetAsync<RType>(cacheKey, sourceName);           
-            if (!obj.Equals(default(RType)))
+            var obj = await GetAsync<RType>(cacheKey, sourceName);
+            if (obj != null && !obj.Equals(default(RType)))
                 return obj;
 
             if (createFunc == null)
                 return default;
 
             var data = await createFunc.Invoke();
-            if (data == null|| data.Equals(default(RType)))
+            if (data == null || data.Equals(default(RType)))
                 return default;
 
             await SetAsync(cacheKey, data, absoluteExpiration, slidingExpiration, sourceName);
             return data;
         }
+
         #endregion
 
         #region 缓存获取（击穿保护）
