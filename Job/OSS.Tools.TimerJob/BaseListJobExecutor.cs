@@ -24,10 +24,10 @@ namespace OSS.Tools.TimerJob
         /// <summary>
         ///  列表任务执行者
         /// </summary>
-        /// <param name="excuteOnce">是否只获取一次数据源</param>
-        protected BaseListJobExecutor(bool excuteOnce)
+        /// <param name="executeOnce">是否只获取一次数据源</param>
+        protected BaseListJobExecutor(bool executeOnce)
         {
-            _isExecuteOnce = excuteOnce;
+            _isExecuteOnce = executeOnce;
         }
 
         /// <summary>
@@ -45,12 +45,12 @@ namespace OSS.Tools.TimerJob
                 return;
 
             IsRunning = true;
-            var page=0;
+            var pageIndex=0;
             IList<IType> list; // 结清实体list
 
             await OnBegin();
             while (IsStillRunning(cancellationToken)
-                   && (list =await GetExecuteSource(page++))?.Count > 0)
+                   && (list =await GetExecuteSource(pageIndex++))?.Count > 0)
             {
                 for (var i = 0; IsStillRunning(cancellationToken) && i < list?.Count; i++)
                 {
@@ -74,10 +74,11 @@ namespace OSS.Tools.TimerJob
         }
 
         /// <summary>
-        ///   获取list数据源, 此方法会被循环调用
+        /// 获取list数据源, 此方法会被循环调用
         /// </summary>
+        /// <param name="pageIndex">获取数据源的页数索引，从0开始</param>
         /// <returns></returns>
-        protected abstract Task<IList<IType>> GetExecuteSource(int page);
+        protected abstract Task<IList<IType>> GetExecuteSource(int pageIndex);
 
         /// <summary>
         ///  个体任务执行

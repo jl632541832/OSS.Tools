@@ -10,4 +10,8 @@
     <Version>1.0.1.2</Version>
   </PropertyGroup>
 
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <DocumentationFile>./bin/OSS.Tools.TimerJob.xml</DocumentationFile>
+  </PropertyGroup>
+
 </Project>

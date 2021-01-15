@@ -15,7 +15,7 @@
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-    <DocumentationFile>OSS.Tools.Cache.xml</DocumentationFile>
+    <DocumentationFile>./bin/OSS.Tools.Cache.xml</DocumentationFile>
   </PropertyGroup>
 
   <ItemGroup>
