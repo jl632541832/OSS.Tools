@@ -17,7 +17,7 @@ namespace OSS.Tools.TimerJob
         /// <summary>
         ///  列表任务执行者
         /// </summary>
-        protected BaseListJobExecutor():this(false)
+        protected BaseListJobExecutor(string jobName):this(jobName,false)
         {
         }
         
@@ -25,8 +25,9 @@ namespace OSS.Tools.TimerJob
         ///  列表任务执行者
         /// </summary>
         /// <param name="executeOnce">是否只获取一次数据源</param>
-        protected BaseListJobExecutor(bool executeOnce)
+        protected BaseListJobExecutor(string jobName,bool executeOnce)
         {
+            JobName = jobName;
             _isExecuteOnce = executeOnce;
         }
 
@@ -34,6 +35,9 @@ namespace OSS.Tools.TimerJob
         ///  运行状态
         /// </summary>
         public bool IsRunning { get; private set; }
+
+        public string JobName { get; protected set; }
+
 
         /// <summary>
         ///   开始任务

@@ -31,18 +31,18 @@ namespace OSS.Tools.TimerJob
         }
 
         /// <inheritdoc />
-        protected BaseTimerTrigger(TimeSpan dueTime, TimeSpan periodTime, Func<CancellationToken, Task> startAction, Func<CancellationToken, Task> stopAction)
+        protected BaseTimerTrigger(TimeSpan dueTime, TimeSpan periodTime,string jobName, Func<CancellationToken, Task> startAction, Func<CancellationToken, Task> stopAction)
         {
             _dueTime = dueTime;
             _periodTime = periodTime;
-            _jobExcutor = new InternalExecutor(startAction, stopAction);
+            _jobExcutor = new InternalExecutor(jobName,startAction, stopAction);
         }
         /// <inheritdoc />
-        protected BaseTimerTrigger(TimeSpan dueTime, TimeSpan periodTime, Func<CancellationToken, Task> startAction)
+        protected BaseTimerTrigger(TimeSpan dueTime, TimeSpan periodTime, string jobName, Func<CancellationToken, Task> startAction)
         {
             _dueTime = dueTime;
             _periodTime = periodTime;
-            _jobExcutor = new InternalExecutor(startAction, null);
+            _jobExcutor = new InternalExecutor(jobName, startAction, null);
         }
 
         #region 扩展方法
@@ -112,9 +112,9 @@ namespace OSS.Tools.TimerJob
         /// </summary>
         /// <param name="cancellationToken"></param>
         /// <returns></returns>
-        public virtual async Task StartAsync(CancellationToken cancellationToken)
+        public virtual Task StartAsync(CancellationToken cancellationToken)
         {
-            await StartTimerTrigger(cancellationToken);
+            return StartTimerTrigger(cancellationToken);
         }
 
         /// <summary>
@@ -122,7 +122,7 @@ namespace OSS.Tools.TimerJob
         /// </summary>
         /// <param name="cancellationToken"></param>
         /// <returns></returns>
-        public async Task StopAsync(CancellationToken cancellationToken)
+        public virtual async Task StopAsync(CancellationToken cancellationToken)
         {
             await _jobExcutor.StopJob(cancellationToken);
             StopTimerTrigger();

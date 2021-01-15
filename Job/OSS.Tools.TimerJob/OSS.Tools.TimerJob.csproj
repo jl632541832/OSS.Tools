@@ -7,7 +7,7 @@
     <PackageIconUrl>http://img1.osscore.cn/static/oss_net.png</PackageIconUrl>
     <Authors>OSSCore</Authors>
     <Description>Timer Job 基础类封装实现</Description>
-    <Version>1.0.1.3</Version>
+    <Version>1.0.1.5</Version>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">

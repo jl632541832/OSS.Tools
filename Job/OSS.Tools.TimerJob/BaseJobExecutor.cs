@@ -14,7 +14,12 @@ namespace OSS.Tools.TimerJob
         ///  运行状态
         /// </summary>
         public bool IsRunning { get; private set; }
-        
+
+        /// <summary>
+        ///  工作名称
+        /// </summary>
+        public string JobName { get; }
+
         /// <summary>
         ///   开始任务
         /// </summary>
