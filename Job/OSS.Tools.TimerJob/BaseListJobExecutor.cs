@@ -92,13 +92,16 @@ namespace OSS.Tools.TimerJob
         /// </summary>
         public Task StopJob(CancellationToken cancellationToken)
         {
-            IsRunning = false;
+            StopJob();
             return Task.CompletedTask;
         }
 
-        public Task StopJob()
+        /// <summary>
+        /// 结束任务
+        /// </summary>
+        public void StopJob()
         {
-            return StopJob(CancellationToken.None);
+            IsRunning = false;
         }
 
         /// <summary>
