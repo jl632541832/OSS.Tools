@@ -15,7 +15,7 @@ namespace OSS.Tools.TimerJob
         private readonly TimeSpan _periodTime;
         
         private readonly IJobExecutor _jobExcutor;
-        private CancellationToken _cancellationToken;
+        private CancellationToken _cancellationToken=CancellationToken.None;
 
         /// <summary>
         /// 构造函数
@@ -79,7 +79,10 @@ namespace OSS.Tools.TimerJob
         /// <returns></returns>
         private Task StartTimerTrigger(CancellationToken cancellationToken)
         {
-            _cancellationToken = cancellationToken;
+            if (cancellationToken!=CancellationToken.None)
+            {
+                _cancellationToken = cancellationToken;
+            }
 
             if (_timer == null)
                 _timer = new Timer(ExcuteJob, null, _dueTime, _periodTime);
