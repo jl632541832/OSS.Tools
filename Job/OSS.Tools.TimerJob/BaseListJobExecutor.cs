@@ -10,10 +10,9 @@ namespace OSS.Tools.TimerJob
     ///  从 GetExecuteSource() 获取执行数据源，循环并通过 ExecuteItem() 执行个体任务，直到没有数据源返回
     ///       如果执行时间过长，重复触发同一实例时 如果当前任务还在进行中，则不做任何处理
     /// </summary>
-    public abstract class BaseListJobExecutor<IType> : IJobExecutor
+    public abstract class BaseListJobExecutor<IType> : BaseInternalExecutor
     {
-        private bool _isRunning = false;
-        private bool _jobCommandStarted = false;
+    
         private readonly bool _isExecuteOnce;
 
 
@@ -35,45 +34,18 @@ namespace OSS.Tools.TimerJob
             _isExecuteOnce = getSourceOnce;
         }
 
-        /// <summary>
-        /// 任务名称
-        /// </summary>
-        public string JobName { get; protected set; }
-
-        /// <summary>
-        ///  运行状态
-        /// </summary>
-        public StatusFlag StatusFlag
-        {
-            get
-            {
-                if (_jobCommandStarted && _isRunning)
-                    return StatusFlag.Running;
-                if (_jobCommandStarted && !_isRunning)
-                    return StatusFlag.Waiting;
-                if (!_jobCommandStarted && _isRunning)
-                    return StatusFlag.Stopping;
-                return StatusFlag.Stopped;
-            }
-        }
+        
 
         #region 任务接口实现
 
-        /// <summary>
-        ///   开始任务
-        /// </summary>
-        public async Task StartJob(CancellationToken cancellationToken)
+
+        internal override async Task InternalStartJob(CancellationToken cancellationToken)
         {
-            //  任务依然在执行中，不需要再次唤起
-            if (StatusFlag != StatusFlag.Waiting)
-                return;
-
-            _isRunning = _jobCommandStarted = true;
-
             var pageIndex = 0;
             IList<IType> list; // 结清实体list
 
             await OnBegin();
+
             while (IsStillRunning(cancellationToken)
                    && (list = await GetExecuteSource(pageIndex++))?.Count > 0)
             {
@@ -89,26 +61,6 @@ namespace OSS.Tools.TimerJob
             }
 
             await OnEnd();
-            _isRunning = false;
-        }
-
-
-
-        /// <summary>
-        /// 结束任务
-        /// </summary>
-        public Task StopJob(CancellationToken cancellationToken)
-        {
-            _jobCommandStarted = false;
-            return Task.CompletedTask;
-        }
-
-        /// <summary>
-        /// 结束任务
-        /// </summary>
-        public Task StopJob()
-        {
-            return StopJob(CancellationToken.None);
         }
 
         private bool IsStillRunning(CancellationToken cancellationToken)
@@ -135,18 +87,16 @@ namespace OSS.Tools.TimerJob
         /// <param name="index">在数据源中的索引</param>
         protected abstract Task ExecuteItem(IType item, int index);
 
-
         /// <summary>
         ///  此轮任务开始
         /// </summary>
         protected virtual Task OnBegin()
         {
             return Task.CompletedTask;
-        }
-
+        }  
         /// <summary>
-        ///  此轮任务结束
-        /// </summary>
+           ///  此轮任务开始
+           /// </summary>
         protected virtual Task OnEnd()
         {
             return Task.CompletedTask;

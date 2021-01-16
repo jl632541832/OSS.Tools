@@ -46,10 +46,10 @@ namespace OSS.Tools.TimerJob
            
         /// <inheritdoc />
         public InternalExecutor(string jobName, Func<CancellationToken, Task> startAction, Func<CancellationToken, Task> stopAction)
+            :base(jobName)
         {
             _startAction = startAction;
             _stopAction = stopAction;
-            JobName = jobName;
         }
             
         protected override Task Executing(CancellationToken cancellationToken)
@@ -57,9 +57,10 @@ namespace OSS.Tools.TimerJob
             return _startAction?.Invoke(cancellationToken) ?? Task.CompletedTask;
         }
 
-        protected override Task Stopped(CancellationToken cancellationToken)
+        protected override Task OnStoped(CancellationToken cancellationToken)
         {
-            return _stopAction?.Invoke(cancellationToken) ??Task.CompletedTask;
+            return _stopAction?.Invoke(cancellationToken) ?? Task.CompletedTask;
         }
+      
     }
 }
