@@ -12,10 +12,14 @@ namespace OSS.Tools.TimerJob
         private Timer _timer;
 
         private readonly TimeSpan _dueTime;
-        private readonly TimeSpan _periodTime;
-        
-        private readonly IJobExecutor _jobExcutor;
+        private readonly TimeSpan _periodTime;       
+ 
         private CancellationToken _cancellationToken=CancellationToken.None;
+
+        /// <summary>
+        ///  工作执行者
+        /// </summary>
+        public IJobExecutor JobExcutor { get; }
 
         /// <summary>
         /// 构造函数
@@ -27,7 +31,7 @@ namespace OSS.Tools.TimerJob
         {
             _dueTime = dueTime;
             _periodTime = periodTime;
-            _jobExcutor = jobExcutor;
+            JobExcutor = jobExcutor;
         }
 
         /// <inheritdoc />
@@ -35,14 +39,14 @@ namespace OSS.Tools.TimerJob
         {
             _dueTime = dueTime;
             _periodTime = periodTime;
-            _jobExcutor = new InternalExecutor(jobName,startAction, stopAction);
+            JobExcutor = new InternalExecutor(jobName,startAction, stopAction);
         }
         /// <inheritdoc />
         protected BaseTimerTrigger(TimeSpan dueTime, TimeSpan periodTime, string jobName, Func<CancellationToken, Task> startAction)
         {
             _dueTime = dueTime;
             _periodTime = periodTime;
-            _jobExcutor = new InternalExecutor(jobName, startAction, null);
+            JobExcutor = new InternalExecutor(jobName, startAction, null);
         }
 
         #region 扩展方法
@@ -127,13 +131,13 @@ namespace OSS.Tools.TimerJob
         /// <returns></returns>
         public virtual async Task StopAsync(CancellationToken cancellationToken)
         {
-            await _jobExcutor.StopJob(cancellationToken);
+            await JobExcutor.StopJob(cancellationToken);
             StopTimerTrigger();
         }
 
         private void ExcuteJob(object obj)
         {
-            _jobExcutor?.StartJob(_cancellationToken).Wait(_cancellationToken);
+            JobExcutor?.StartJob(_cancellationToken).Wait(_cancellationToken);
         }
 
 
