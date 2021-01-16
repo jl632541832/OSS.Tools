@@ -35,7 +35,8 @@ namespace OSS.Tools.TimerJob
     {
         Waiting,
         Running,
-        Stoped
+        Stopping,
+        Stopped
     }
 
     internal class InternalExecutor : BaseJobExecutor

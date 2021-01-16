@@ -8,7 +8,7 @@ namespace OSS.Tools.TimerJob
     /// <summary>
     ///  列表循环处理任务执行
     ///  从 GetExecuteSource() 获取执行数据源，循环并通过 ExecuteItem() 执行个体任务，直到没有数据源返回
-    ///       如果执行时间过长，重复触发时 当前任务还在进行中，则不做任何处理
+    ///       如果执行时间过长，重复触发同一实例时 如果当前任务还在进行中，则不做任何处理
     /// </summary>
     public abstract class BaseListJobExecutor<IType> : IJobExecutor
     {
@@ -51,8 +51,9 @@ namespace OSS.Tools.TimerJob
                     return StatusFlag.Running;
                 if (_jobCommandStarted && !_isRunning)
                     return StatusFlag.Waiting;
-
-                return StatusFlag.Stoped;
+                if (!_jobCommandStarted && _isRunning)
+                    return StatusFlag.Stopping;
+                return StatusFlag.Stopped;
             }
         }
 
@@ -64,7 +65,7 @@ namespace OSS.Tools.TimerJob
         public async Task StartJob(CancellationToken cancellationToken)
         {
             //  任务依然在执行中，不需要再次唤起
-            if (_isRunning)
+            if (StatusFlag != StatusFlag.Waiting)
                 return;
 
             _isRunning = _jobCommandStarted = true;
@@ -110,6 +111,12 @@ namespace OSS.Tools.TimerJob
             return StopJob(CancellationToken.None);
         }
 
+        private bool IsStillRunning(CancellationToken cancellationToken)
+        {
+            return StatusFlag == StatusFlag.Running
+                   && !cancellationToken.IsCancellationRequested;
+        }
+
         #endregion
 
         #region 扩展方法
@@ -146,13 +153,6 @@ namespace OSS.Tools.TimerJob
         }
 
         #endregion
-
-
-        private bool IsStillRunning(CancellationToken cancellationToken)
-        {
-            return _jobCommandStarted
-                   && !cancellationToken.IsCancellationRequested;
-        }
 
     }
 }

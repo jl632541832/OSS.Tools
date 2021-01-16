@@ -28,8 +28,9 @@ namespace OSS.Tools.TimerJob
                     return StatusFlag.Running;
                 if (_jobCommandStarted && !_isRunning)
                     return StatusFlag.Waiting;
-
-                return StatusFlag.Stoped;
+                if (!_jobCommandStarted && _isRunning)
+                    return StatusFlag.Stopping;
+                return StatusFlag.Stopped;
             }
         }
 
@@ -40,7 +41,7 @@ namespace OSS.Tools.TimerJob
         public async Task StartJob(CancellationToken cancellationToken)
         {
             //  任务依然在执行中，不需要再次唤起
-            if (_isRunning)
+            if (StatusFlag!=StatusFlag.Waiting)
                 return;
 
             _isRunning = _jobCommandStarted = true;
