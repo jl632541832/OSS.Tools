@@ -12,12 +12,12 @@ namespace OSS.Tools.TimerJob
         /// <summary>
         ///  运行状态
         /// </summary>
-         bool IsRunning { get;  }
+        StatusFlag StatusFlag { get; }
 
         /// <summary>
         ///  工作名称
         /// </summary>
-         string JobName { get; }
+        string JobName { get; }
 
         /// <summary>
         /// 开始任务
@@ -30,16 +30,19 @@ namespace OSS.Tools.TimerJob
         Task StopJob(CancellationToken cancellationToken);
     }
 
-    internal class InternalExecutor : IJobExecutor
+
+    public enum StatusFlag
     {
-        public string JobName { get; }
+        Waiting,
+        Running,
+        Stoped
+    }
 
-        public bool IsRunning { get; private set; }
-
-
+    internal class InternalExecutor : BaseJobExecutor
+    {
         private readonly Func<CancellationToken, Task> _startAction;
         private readonly Func<CancellationToken, Task> _stopAction;
-
+           
         /// <inheritdoc />
         public InternalExecutor(string jobName, Func<CancellationToken, Task> startAction, Func<CancellationToken, Task> stopAction)
         {
@@ -47,17 +50,15 @@ namespace OSS.Tools.TimerJob
             _stopAction = stopAction;
             JobName = jobName;
         }
-
-        public Task StartJob(CancellationToken cancellationToken)
+            
+        protected override Task Executing(CancellationToken cancellationToken)
         {
-            IsRunning = true;
             return _startAction?.Invoke(cancellationToken) ?? Task.CompletedTask;
         }
 
-        public async Task StopJob(CancellationToken cancellationToken)
+        protected override Task Stopped(CancellationToken cancellationToken)
         {
-            await _stopAction?.Invoke(cancellationToken);
-            IsRunning = false;
+            return _stopAction?.Invoke(cancellationToken) ??Task.CompletedTask;
         }
     }
 }

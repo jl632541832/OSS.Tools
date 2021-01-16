@@ -12,7 +12,10 @@ namespace OSS.Tools.TimerJob
     /// </summary>
     public abstract class BaseListJobExecutor<IType> : IJobExecutor
     {
+        private bool _isRunning = false;
+        private bool _jobCommandStarted = false;
         private readonly bool _isExecuteOnce;
+
 
         /// <summary>
         ///  列表任务执行者
@@ -20,24 +23,40 @@ namespace OSS.Tools.TimerJob
         protected BaseListJobExecutor(string jobName):this(jobName,false)
         {
         }
-        
+
         /// <summary>
         ///  列表任务执行者
         /// </summary>
-        /// <param name="executeOnce">是否只获取一次数据源</param>
-        protected BaseListJobExecutor(string jobName,bool executeOnce)
+        /// <param name="jobName"></param>
+        /// <param name="getSourceOnce">是否只获取一次数据源</param>
+        protected BaseListJobExecutor(string jobName,bool getSourceOnce)
         {
             JobName = jobName;
-            _isExecuteOnce = executeOnce;
+            _isExecuteOnce = getSourceOnce;
         }
+
+        /// <summary>
+        /// 任务名称
+        /// </summary>
+        public string JobName { get; protected set; }
 
         /// <summary>
         ///  运行状态
         /// </summary>
-        public bool IsRunning { get; private set; }
+        public StatusFlag StatusFlag
+        {
+            get
+            {
+                if (_jobCommandStarted && _isRunning)
+                    return StatusFlag.Running;
+                if (_jobCommandStarted && !_isRunning)
+                    return StatusFlag.Waiting;
 
-        public string JobName { get; protected set; }
+                return StatusFlag.Stoped;
+            }
+        }
 
+        #region 任务接口实现
 
         /// <summary>
         ///   开始任务
@@ -45,16 +64,17 @@ namespace OSS.Tools.TimerJob
         public async Task StartJob(CancellationToken cancellationToken)
         {
             //  任务依然在执行中，不需要再次唤起
-            if (IsRunning)
+            if (_isRunning)
                 return;
 
-            IsRunning = true;
-            var pageIndex=0;
+            _isRunning = _jobCommandStarted = true;
+
+            var pageIndex = 0;
             IList<IType> list; // 结清实体list
 
             await OnBegin();
             while (IsStillRunning(cancellationToken)
-                   && (list =await GetExecuteSource(pageIndex++))?.Count > 0)
+                   && (list = await GetExecuteSource(pageIndex++))?.Count > 0)
             {
                 for (var i = 0; IsStillRunning(cancellationToken) && i < list?.Count; i++)
                 {
@@ -68,14 +88,31 @@ namespace OSS.Tools.TimerJob
             }
 
             await OnEnd();
-            IsRunning = false;
+            _isRunning = false;
         }
 
-        private bool IsStillRunning(CancellationToken cancellationToken)
+
+
+        /// <summary>
+        /// 结束任务
+        /// </summary>
+        public Task StopJob(CancellationToken cancellationToken)
         {
-            return IsRunning
-                   && !cancellationToken.IsCancellationRequested;
+            _jobCommandStarted = false;
+            return Task.CompletedTask;
         }
+
+        /// <summary>
+        /// 结束任务
+        /// </summary>
+        public Task StopJob()
+        {
+            return StopJob(CancellationToken.None);
+        }
+
+        #endregion
+
+        #region 扩展方法
 
         /// <summary>
         /// 获取list数据源, 此方法会被循环调用
@@ -91,22 +128,6 @@ namespace OSS.Tools.TimerJob
         /// <param name="index">在数据源中的索引</param>
         protected abstract Task ExecuteItem(IType item, int index);
 
-        /// <summary>
-        /// 结束任务
-        /// </summary>
-        public Task StopJob(CancellationToken cancellationToken)
-        {
-            StopJob();
-            return Task.CompletedTask;
-        }
-
-        /// <summary>
-        /// 结束任务
-        /// </summary>
-        public void StopJob()
-        {
-            IsRunning = false;
-        }
 
         /// <summary>
         ///  此轮任务开始
@@ -123,6 +144,15 @@ namespace OSS.Tools.TimerJob
         {
             return Task.CompletedTask;
         }
-        
+
+        #endregion
+
+
+        private bool IsStillRunning(CancellationToken cancellationToken)
+        {
+            return _jobCommandStarted
+                   && !cancellationToken.IsCancellationRequested;
+        }
+
     }
 }
