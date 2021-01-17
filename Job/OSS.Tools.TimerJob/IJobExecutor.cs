@@ -22,14 +22,13 @@ namespace OSS.Tools.TimerJob
         /// <summary>
         /// 开始任务
         /// </summary>
-        Task StartJob(CancellationToken cancellationToken);
+        Task StartAsync(CancellationToken cancellationToken);
 
         /// <summary>
         ///  结束任务
         /// </summary>
-        Task StopJob(CancellationToken cancellationToken);
+        Task StopAsync(CancellationToken cancellationToken);
     }
-
 
     public enum StatusFlag
     {
@@ -52,7 +51,7 @@ namespace OSS.Tools.TimerJob
             _stopAction = stopAction;
         }
             
-        protected override Task Executing(CancellationToken cancellationToken)
+        protected override Task OnStarted(CancellationToken cancellationToken)
         {
             return _startAction?.Invoke(cancellationToken) ?? Task.CompletedTask;
         }

@@ -19,13 +19,13 @@ namespace OSS.Tools.TimerJob
 
         internal override Task InternalStartJob(CancellationToken cancellationToken)
         {
-            return Executing(cancellationToken);
+            return OnStarted(cancellationToken);
         }
 
         /// <summary>
         ///  任务执行
         /// </summary>
-        protected abstract Task Executing(CancellationToken cancellationToken);
+        protected abstract Task OnStarted(CancellationToken cancellationToken);
 
     }
 }

@@ -38,7 +38,7 @@ namespace OSS.Tools.TimerJob
         /// <summary>
         ///   开始任务
         /// </summary>
-        public async Task StartJob(CancellationToken cancellationToken)
+        public async Task StartAsync(CancellationToken cancellationToken)
         {
             //  任务依然在执行中，不需要再次唤起
             if (_isRunning)
@@ -60,14 +60,14 @@ namespace OSS.Tools.TimerJob
         /// </summary>
         public Task StopJob()
         {
-            return StopJob(CancellationToken.None);
+            return StopAsync(CancellationToken.None);
         }
 
 
         /// <summary>
         /// 结束任务
         /// </summary>
-        public Task StopJob(CancellationToken cancellationToken)
+        public Task StopAsync(CancellationToken cancellationToken)
         {
             _jobCommandStarted = false;
             return OnStoped(cancellationToken);
