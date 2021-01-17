@@ -33,7 +33,13 @@ namespace OSS.Tools.TimerJob
                 return StatusFlag.Stopped;
             }
         }
-
+        /// <summary>
+        ///   开始任务
+        /// </summary>
+        public Task StartAsync()
+        {
+            return StartAsync(CancellationToken.None);
+        }
 
         /// <summary>
         ///   开始任务
@@ -58,11 +64,10 @@ namespace OSS.Tools.TimerJob
         /// <summary>
         /// 结束任务
         /// </summary>
-        public Task StopJob()
+        public Task StopAsync()
         {
             return StopAsync(CancellationToken.None);
         }
-
 
         /// <summary>
         /// 结束任务
