@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netcoreapp2.2</TargetFramework>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
 
     <IsPackable>false</IsPackable>
   </PropertyGroup>
@@ -19,6 +19,7 @@
     <ProjectReference Include="..\..\Config\OSS.Tools.Config\OSS.Tools.Config.csproj" />
     <ProjectReference Include="..\..\Config\OSS.Tools.DirConfig\OSS.Tools.DirConfig.csproj" />
     <ProjectReference Include="..\..\Log\OSS.Tools.Log\OSS.Tools.Log.csproj" />
+    <ProjectReference Include="..\..\OSS.Tools.DataStack\OSS.Tools.DataStack.csproj" />
   </ItemGroup>
 
 </Project>
