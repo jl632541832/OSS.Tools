@@ -31,11 +31,11 @@ namespace OSS.Tools.Http.Extention
         /// 发送请求
         /// </summary>
         /// <param name="request">请求的参数</param>
-        /// <param name="client"></param>
+        /// <param name="sourceName"></param>
         /// <returns>自定义的Response结果</returns>
-        public static Task<HttpResponseMessage> RestSend(this OssHttpRequest request, HttpClient client = null)
+        public static Task<HttpResponseMessage> RestSend(this OssHttpRequest request, string sourceName=null)
         {
-            return RestSend(request, HttpCompletionOption.ResponseContentRead, CancellationToken.None, client);
+            return RestSend(request, HttpCompletionOption.ResponseContentRead, CancellationToken.None, sourceName);
         }
 
         /// <summary>
@@ -43,12 +43,12 @@ namespace OSS.Tools.Http.Extention
         /// </summary>
         /// <param name="request">请求的参数</param>
         /// <param name="completionOption"></param>
-        /// <param name="client"></param>
+        /// <param name="sourceName"></param>
         /// <returns>自定义的Response结果</returns>
         public static Task<HttpResponseMessage> RestSend(this OssHttpRequest request,
-            HttpCompletionOption completionOption, HttpClient client = null)
+            HttpCompletionOption completionOption, string sourceName=null)
         {
-            return RestSend(request, completionOption, CancellationToken.None, client);
+            return RestSend(request, completionOption, CancellationToken.None, sourceName);
         }
 
         /// <summary>
@@ -57,30 +57,17 @@ namespace OSS.Tools.Http.Extention
         /// <param name="request">请求的参数</param>
         /// <param name="completionOption"></param>
         /// <param name="token"></param>
-        /// <param name="client"></param>
+        /// <param name="sourceName"></param>
         /// <returns>自定义的Response结果</returns>
         public static Task<HttpResponseMessage> RestSend(this OssHttpRequest request,
             HttpCompletionOption completionOption,
-            CancellationToken token,
-            HttpClient client = null)
+            CancellationToken token, string sourceName=null)
         {
-            return (client ?? GetDefaultClient()).RestSend(request, completionOption, token);
+            return HttpClientHelper.CreateClient(sourceName).RestSend(request, completionOption, token);
         }
 
         #endregion
 
-        private static HttpClient _Client=null;
-        /// <summary>
-        /// 配置请求处理类
-        /// </summary>
-        /// <returns></returns>
-        private static HttpClient GetDefaultClient()
-        {
-            if (_Client != null) return _Client;
-
-            var handler = new HttpClientHandler {UseProxy = false};
-
-            return  _Client = new HttpClient(handler);
-        }
+       
     }
 }
