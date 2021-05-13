@@ -10,36 +10,56 @@ namespace OSS.Tools.TimerJob
     public interface IJobExecutor
     {
         /// <summary>
+        ///  运行状态
+        /// </summary>
+        StatusFlag StatusFlag { get; }
+
+        /// <summary>
+        ///  工作名称
+        /// </summary>
+        string JobName { get; }
+
+        /// <summary>
         /// 开始任务
         /// </summary>
-        Task StartJob(CancellationToken cancellationToken);
+        Task StartAsync(CancellationToken cancellationToken);
 
         /// <summary>
         ///  结束任务
         /// </summary>
-        Task StopJob(CancellationToken cancellationToken);
+        Task StopAsync(CancellationToken cancellationToken);
     }
 
-    internal class InternalExecutor : IJobExecutor
+    public enum StatusFlag
+    {
+        Waiting,
+        Running,
+        Stopping,
+        Stopped
+    }
+
+    internal class InternalExecutor : BaseJobExecutor
     {
         private readonly Func<CancellationToken, Task> _startAction;
         private readonly Func<CancellationToken, Task> _stopAction;
-        
+           
         /// <inheritdoc />
-        public InternalExecutor(Func<CancellationToken, Task> startAction, Func<CancellationToken, Task> stopAction)
+        public InternalExecutor(string jobName, Func<CancellationToken, Task> startAction, Func<CancellationToken, Task> stopAction)
+            :base(jobName)
         {
             _startAction = startAction;
             _stopAction = stopAction;
         }
-
-        public Task StartJob(CancellationToken cancellationToken)
+            
+        protected override Task OnStarted(CancellationToken cancellationToken)
         {
             return _startAction?.Invoke(cancellationToken) ?? Task.CompletedTask;
         }
 
-        public Task StopJob(CancellationToken cancellationToken)
+        protected override Task OnStoped(CancellationToken cancellationToken)
         {
             return _stopAction?.Invoke(cancellationToken) ?? Task.CompletedTask;
         }
+      
     }
 }

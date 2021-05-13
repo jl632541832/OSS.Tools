@@ -18,7 +18,7 @@ using Microsoft.Extensions.Caching.Memory;
 namespace OSS.Tools.Cache
 {
     /// <summary>
-    /// 
+    /// 默认缓存实现
     /// </summary>
     public class DefaultToolCache : IToolCache
     {

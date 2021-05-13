@@ -64,7 +64,7 @@ namespace OSS.Tools.Cache
         [Obsolete("请使用 SetAsync")]
         public static bool Set<T>(string key, T obj, TimeSpan slidingExpiration,string sourceName = "default")
         {
-            return SetAsync(key, obj, slidingExpiration).Result;
+            return SetAsync(key, obj, slidingExpiration,sourceName).Result;
         }
 
         /// <summary>
@@ -79,7 +79,7 @@ namespace OSS.Tools.Cache
         [Obsolete("请使用 SetAbsoluteAsync")]
         public static bool Set<T>(string key, T obj, DateTime absoluteExpiration,string sourceName = "default")
         {
-            return SetAbsoluteAsync(key,obj,TimeSpan.FromTicks((absoluteExpiration-DateTime.Now).Ticks)).Result;
+            return SetAbsoluteAsync(key,obj,TimeSpan.FromTicks((absoluteExpiration-DateTime.Now).Ticks),sourceName).Result;
         }
 
         /// <summary> 
@@ -144,7 +144,7 @@ namespace OSS.Tools.Cache
         [Obsolete("请使用 GetAsync")]
         public static T Get<T>(string key, string sourceName = "default")
         {
-            return GetAsync<T>(key).Result;
+            return GetAsync<T>(key,sourceName).Result;
         }
 
         /// <summary>
@@ -202,20 +202,21 @@ namespace OSS.Tools.Cache
         public static async Task<RType> GetOrSetAsync<RType>(string cacheKey, Func<Task<RType>> createFunc
             , TimeSpan? slidingExpiration, TimeSpan? absoluteExpiration, string sourceName)
         {
-            var obj =await GetAsync<RType>(cacheKey);
-            if (obj != null)
+            var obj = await GetAsync<RType>(cacheKey, sourceName);
+            if (obj != null && !obj.Equals(default(RType)))
                 return obj;
 
             if (createFunc == null)
                 return default;
 
             var data = await createFunc.Invoke();
-            if (data == null)
+            if (data == null || data.Equals(default(RType)))
                 return default;
 
             await SetAsync(cacheKey, data, absoluteExpiration, slidingExpiration, sourceName);
             return data;
         }
+
         #endregion
 
         #region 缓存获取（击穿保护）
@@ -275,7 +276,7 @@ namespace OSS.Tools.Cache
             if (getFunc == null)
                 throw new ArgumentNullException("获取原始数据方法(getFunc)不能为空!");
 
-            var obj = await GetAsync<ProtectCacheData<RType>>(cacheKey);
+            var obj = await GetAsync<ProtectCacheData<RType>>(cacheKey, sourceName);
             if (obj != null)
                 return obj.Data;
 
@@ -310,10 +311,7 @@ namespace OSS.Tools.Cache
         [Obsolete("请使用 RemoveAsync")]
         public static bool Remove(string key, string sourceName = "default")
         {
-            if (SourceFormat != null)
-                sourceName = SourceFormat.Invoke(sourceName);
-
-            return RemoveAsync(key).Result;
+            return RemoveAsync(key,sourceName).Result;
         }
     }
 

@@ -7,43 +7,50 @@ namespace OSS.Tools.TimerJob
     /// <summary>
     ///   定时器基础类
     /// </summary>
-    public class BaseTimerTrigger : IDisposable
+    public class TimerTriggerJob :BaseJobExecutor, IDisposable
     {
         private Timer _timer;
 
         private readonly TimeSpan _dueTime;
-        private readonly TimeSpan _periodTime;
-        
-        private readonly IJobExecutor _jobExcutor;
-        private CancellationToken _cancellationToken;
+        private readonly TimeSpan _periodTime;       
+ 
+        private CancellationToken _cancellationToken=CancellationToken.None;
+
+        #region 构造函数
+
+        /// <summary>
+        ///  工作执行者
+        /// </summary>
+        public IJobExecutor JobExcutor { get; }
 
         /// <summary>
         /// 构造函数
         /// </summary>
+        /// <param name="triggerJobName">触发器名称</param>
         /// <param name="dueTime">到期开始执行时间</param>
         /// <param name="periodTime">间隔时间</param>
         /// <param name="jobExcutor">任务执行者</param>
-        protected BaseTimerTrigger(TimeSpan dueTime, TimeSpan periodTime, IJobExecutor jobExcutor)
+        protected TimerTriggerJob(string triggerJobName, TimeSpan dueTime, TimeSpan periodTime, IJobExecutor jobExcutor)
+            : base(triggerJobName)
         {
             _dueTime = dueTime;
             _periodTime = periodTime;
-            _jobExcutor = jobExcutor;
+            JobExcutor = jobExcutor;
         }
 
         /// <inheritdoc />
-        protected BaseTimerTrigger(TimeSpan dueTime, TimeSpan periodTime, Func<CancellationToken, Task> startAction, Func<CancellationToken, Task> stopAction)
+        protected TimerTriggerJob(string triggerJobName, TimeSpan dueTime, TimeSpan periodTime, string executeJobName, Func<CancellationToken, Task> startAction, Func<CancellationToken, Task> stopAction)
+        : this(triggerJobName, dueTime, periodTime, new InternalExecutor(executeJobName, startAction, stopAction))
         {
-            _dueTime = dueTime;
-            _periodTime = periodTime;
-            _jobExcutor = new InternalExecutor(startAction, stopAction);
         }
+
         /// <inheritdoc />
-        protected BaseTimerTrigger(TimeSpan dueTime, TimeSpan periodTime, Func<CancellationToken, Task> startAction)
+        protected TimerTriggerJob(string triggerJobName, TimeSpan dueTime, TimeSpan periodTime, string executeJobName, Func<CancellationToken, Task> startAction)
+           : this(triggerJobName, dueTime, periodTime, executeJobName, startAction, null)
         {
-            _dueTime = dueTime;
-            _periodTime = periodTime;
-            _jobExcutor = new InternalExecutor(startAction, null);
         }
+        #endregion
+
 
         #region 扩展方法
 
@@ -70,8 +77,19 @@ namespace OSS.Tools.TimerJob
         }
 
         #endregion
+        
+        protected override Task OnStarted(CancellationToken cancellationToken)
+        {
+            return StartTimerTrigger(cancellationToken);
+        }
+
+        protected override Task OnStoped(CancellationToken cancellationToken)
+        {
+            return StopTimerTrigger(cancellationToken);
+        }
 
         #region  基础方法
+
 
         /// <summary>
         ///   配置并触发定时器    
@@ -79,7 +97,10 @@ namespace OSS.Tools.TimerJob
         /// <returns></returns>
         private Task StartTimerTrigger(CancellationToken cancellationToken)
         {
-            _cancellationToken = cancellationToken;
+            if (cancellationToken != CancellationToken.None)
+            {
+                _cancellationToken = cancellationToken;
+            }
 
             if (_timer == null)
                 _timer = new Timer(ExcuteJob, null, _dueTime, _periodTime);
@@ -89,14 +110,20 @@ namespace OSS.Tools.TimerJob
             return Task.CompletedTask;
         }
 
+
         /// <summary>
         ///  停止定时器
         /// </summary>
-        private void StopTimerTrigger()
+        private Task StopTimerTrigger(CancellationToken cancellationToken)
         {
             _timer?.Change(Timeout.Infinite, Timeout.Infinite);
+            return JobExcutor.StopAsync(cancellationToken);
         }
 
+        private void ExcuteJob(object obj)
+        {
+            JobExcutor?.StartAsync(_cancellationToken).Wait(_cancellationToken);
+        }
 
 
         /// <inheritdoc />
@@ -106,34 +133,6 @@ namespace OSS.Tools.TimerJob
         }
 
         #endregion
-
-        /// <summary>
-        ///  系统级任务执行启动
-        /// </summary>
-        /// <param name="cancellationToken"></param>
-        /// <returns></returns>
-        public virtual async Task StartAsync(CancellationToken cancellationToken)
-        {
-            await StartTimerTrigger(cancellationToken);
-        }
-
-        /// <summary>
-        ///  系统级任务执行关闭
-        /// </summary>
-        /// <param name="cancellationToken"></param>
-        /// <returns></returns>
-        public async Task StopAsync(CancellationToken cancellationToken)
-        {
-            await _jobExcutor.StopJob(cancellationToken);
-            StopTimerTrigger();
-        }
-
-        private void ExcuteJob(object obj)
-        {
-            _jobExcutor?.StartJob(_cancellationToken).Wait(_cancellationToken);
-        }
-
-
 
 
     }
